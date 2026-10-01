@@ -1,6 +1,6 @@
 // js/storage.js
 // Общие утилиты для работы со списком «Заметки» через localStorage.
-
+ 
 const STORAGE_KEY = 'trading-signals-watchlist';
 
 function loadWatchlist() {
