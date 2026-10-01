@@ -61,6 +61,21 @@ async function loadRealData(ticker) {
   return data;
 }
 
+// ===== Тост =====
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ===== Счётчик заметок в шапке =====
+function updateNotesBadge() {
+  const count = loadWatchlist().length;
+  document.getElementById('notesCount').textContent = count;
+}
+
 // ===== Метрики бэктеста =====
 function metricCard(label, value, cls = 'neutral') {
   return `
@@ -115,6 +130,16 @@ function renderAnalysis(data) {
 
   document.getElementById('reasons').innerHTML =
     reasons.map(r => `<li>${r}</li>`).join('');
+
+  return analysis;
+}
+
+// ===== Текущее состояние для кнопки «В заметки» =====
+let currentState = null;
+
+function updateAddButton() {
+  const btn = document.getElementById('addToNotes');
+  btn.disabled = !currentState;
 }
 
 // ===== Основной рендер =====
@@ -130,6 +155,8 @@ async function render() {
     document.getElementById('stats').innerHTML =
       '<b style="color:#ef5350">Быстрая EMA должна быть меньше медленной.</b>';
     document.getElementById('metrics').innerHTML = '';
+    currentState = null;
+    updateAddButton();
     return;
   }
 
@@ -142,6 +169,8 @@ async function render() {
     document.getElementById('stats').innerHTML =
       `<b style="color:#ef5350">Ошибка загрузки: ${err.message}</b>`;
     document.getElementById('metrics').innerHTML = '';
+    currentState = null;
+    updateAddButton();
     return;
   }
 
@@ -189,13 +218,59 @@ async function render() {
     `<span style="color:#ef5350">SELL ${sells}</span>)`;
 
   renderMetrics(result);
-  renderAnalysis(data);
+  const analysis = renderAnalysis(data);
+
+  // Сохраняем состояние для кнопки «В заметки»
+  currentState = {
+    ticker,
+    price: lastBar.close,
+    verdict: analysis.verdict,
+    verdictClass: analysis.verdictClass,
+    score: analysis.score,
+    emaFast: fastPeriod,
+    emaSlow: slowPeriod,
+  };
+  updateAddButton();
 
   chart.timeScale().fitContent();
   equityChart.timeScale().fitContent();
 }
 
+// ===== Кнопка «В заметки» =====
+document.getElementById('addToNotes').addEventListener('click', () => {
+  if (!currentState) return;
+
+  const entry = {
+    ticker: currentState.ticker,
+    addedAt: new Date().toISOString(),
+    priceAtAdd: currentState.price,
+    emaFast: currentState.emaFast,
+    emaSlow: currentState.emaSlow,
+  };
+
+  const { action } = addOrUpdateWatchlist(entry);
+  updateNotesBadge();
+
+  showToast(
+    action === 'added'
+      ? `${entry.ticker} добавлен в заметки`
+      : `${entry.ticker} обновлён в заметках`
+  );
+});
+
 // ===== Инициализация =====
 document.getElementById('reload').addEventListener('click', render);
 document.getElementById('ticker').addEventListener('change', render);
+
+// Обработка ?ticker= из URL (переход со страницы заметок)
+(function initFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const t = params.get('ticker');
+  if (!t) return;
+  const select = document.getElementById('ticker');
+  const exists = Array.from(select.options).some(o => o.value === t);
+  if (exists) select.value = t;
+})();
+
+updateNotesBadge();
 render();
