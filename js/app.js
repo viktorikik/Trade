@@ -26,53 +26,41 @@ const candleSeries = chart.addCandlestickSeries({
 const emaFastSeries = chart.addLineSeries({ color: '#26a69a', lineWidth: 2 });
 const emaSlowSeries = chart.addLineSeries({ color: '#ef5350', lineWidth: 2 });
 
-// Реагируем на ресайз окна
-window.addEventListener('resize', () => {
+// Ресайз
+function resizeChart() {
   chart.applyOptions({ width: chartEl.clientWidth });
-});
-chart.applyOptions({ width: chartEl.clientWidth });
+}
+window.addEventListener('resize', resizeChart);
+resizeChart();
 
-// ===== Синтетические данные (шаг 1) =====
-// На шаге 2 заменим на реальные котировки из data/{ticker}.json
-function generateSyntheticData(ticker, days = 250) {
-  // Простой seeded random, чтобы для одного тикера данные были стабильны
-  let seed = 0;
-  for (const ch of ticker) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-  const rand = () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return seed / 0xffffffff;
-  };
+// ===== Загрузка реальных данных =====
+// Кэш в памяти, чтобы не дёргать fetch при каждом пересчёте EMA
+const dataCache = new Map();
 
-  const data = [];
-  let price = 100 + rand() * 50;
-  const today = new Date();
-  for (let i = days; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const wd = d.getDay();
-    if (wd === 0 || wd === 6) continue;
-
-    const drift = (rand() - 0.48) * 2.5;
-    price = Math.max(1, price + drift);
-
-    const open = price + (rand() - 0.5) * 1.5;
-    const close = price + (rand() - 0.5) * 1.5;
-    const high = Math.max(open, close) + rand() * 1.5;
-    const low = Math.min(open, close) - rand() * 1.5;
-
-    data.push({
-      time: d.toISOString().slice(0, 10),
-      open: +open.toFixed(2),
-      high: +high.toFixed(2),
-      low: +low.toFixed(2),
-      close: +close.toFixed(2),
-    });
+async function loadRealData(ticker) {
+  if (dataCache.has(ticker)) {
+    return dataCache.get(ticker);
   }
+
+  const url = `./data/${ticker}.json`;
+  const resp = await fetch(url);
+
+  if (!resp.ok) {
+    throw new Error(`Не удалось загрузить ${url}: HTTP ${resp.status}`);
+  }
+
+  const data = await resp.json();
+
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`Файл ${url} пустой или не массив`);
+  }
+
+  dataCache.set(ticker, data);
   return data;
 }
 
 // ===== Основной рендер =====
-function render() {
+async function render() {
   const ticker = document.getElementById('ticker').value;
   const fastPeriod = parseInt(document.getElementById('emaFast').value, 10);
   const slowPeriod = parseInt(document.getElementById('emaSlow').value, 10);
@@ -83,7 +71,17 @@ function render() {
     return;
   }
 
-  const data = generateSyntheticData(ticker);
+  let data;
+  try {
+    document.getElementById('stats').innerHTML = 'Загрузка данных…';
+    data = await loadRealData(ticker);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('stats').innerHTML =
+      `<b style="color:#ef5350">Ошибка загрузки: ${err.message}</b>`;
+    return;
+  }
+
   const closes = data.map(d => d.close);
 
   const fast = ema(closes, fastPeriod);
@@ -91,10 +89,14 @@ function render() {
 
   candleSeries.setData(data);
   emaFastSeries.setData(
-    data.map((d, i) => (fast[i] == null ? null : { time: d.time, value: +fast[i].toFixed(2) })).filter(Boolean)
+    data
+      .map((d, i) => (fast[i] == null ? null : { time: d.time, value: +fast[i].toFixed(2) }))
+      .filter(Boolean)
   );
   emaSlowSeries.setData(
-    data.map((d, i) => (slow[i] == null ? null : { time: d.time, value: +slow[i].toFixed(2) })).filter(Boolean)
+    data
+      .map((d, i) => (slow[i] == null ? null : { time: d.time, value: +slow[i].toFixed(2) }))
+      .filter(Boolean)
   );
 
   const signals = findCrossovers(fast, slow);
@@ -112,11 +114,15 @@ function render() {
   const buys = signals.filter(s => s.type === 'buy').length;
   const sells = signals.filter(s => s.type === 'sell').length;
 
+  const lastBar = data[data.length - 1];
+
   document.getElementById('stats').innerHTML =
     `Тикер: <b>${ticker}</b> · EMA <b>${fastPeriod}/${slowPeriod}</b> · ` +
-    `Баров: <b>${data.length}</b> · Сигналов: <b>${signals.length}</b> ` +
-    `(<span style="color:#26a69a">BUY ${buys}</span> / <span style="color:#ef5350">SELL ${sells}</span>) · ` +
-    `<span style="color:#8b949e">синтетические данные (шаг 1)</span>`;
+    `Баров: <b>${data.length}</b> · ` +
+    `Последний: <b>${lastBar.time}</b> @ <b>${lastBar.close.toFixed(2)}</b> · ` +
+    `Сигналов: <b>${signals.length}</b> ` +
+    `(<span style="color:#26a69a">BUY ${buys}</span> / ` +
+    `<span style="color:#ef5350">SELL ${sells}</span>)`;
 
   chart.timeScale().fitContent();
 }
