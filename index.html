@@ -11,7 +11,7 @@
     <h1>Trading Signals MVP</h1>
 
     <div class="controls">
-      <label>Тикер:
+      <label title="Код акции на бирже: SBER — Сбербанк, GAZP — Газпром, LKOH — Лукойл">Тикер:
         <select id="ticker">
           <option value="SBER">SBER</option>
           <option value="GAZP">GAZP</option>
@@ -21,22 +21,22 @@
           <option value="NVTK">NVTK</option>
         </select>
       </label>
-      <label>EMA быстрая:
+      <label title="Средняя цена за N дней. Быстрая EMA реагирует на изменения быстро, медленная — плавно">EMA быстрая:
         <input id="emaFast" type="number" value="9" min="2" max="100" />
       </label>
-      <label>EMA медленная:
+      <label title="Средняя цена за N дней. Медленная EMA показывает общий тренд. Должна быть больше быстрой">EMA медленная:
         <input id="emaSlow" type="number" value="21" min="2" max="200" />
       </label>
     </div>
 
     <div class="controls">
-      <label>Капитал, ₽:
+      <label title="Сколько денег ты вкладываешь в стратегию на старте">Капитал, ₽:
         <input id="capital" type="number" value="100000" min="1000" step="1000" />
       </label>
-      <label>Комиссия, %:
+      <label title="Процент, который брокер берёт с каждой сделки. Обычно 0.03–0.05%">Комиссия, %:
         <input id="commission" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
-      <label>Проскальзывание, %:
+      <label title="Разница между ожидаемой и реальной ценой сделки. Покупаешь чуть дороже, продаёшь чуть дешевле">Проскальзывание, %:
         <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
       <button id="reload">Пересчитать</button>
