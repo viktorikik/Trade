@@ -1,133 +1,42 @@
-:root {
-  --bg: #0e1116;
-  --panel: #161b22;
-  --text: #d1d4dc;
-  --muted: #8b949e;
-  --border: #2a2e39;
-  --green: #26a69a;
-  --red: #ef5350;
-  --accent: #4a9eff;
-}
+/* ... (остальные стили) ... */
 
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-header {
-  padding: 16px 20px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-}
-
-h1 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.controls label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-}
-
-.controls select,
-.controls input {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 14px;
-}
-
-.controls input { width: 90px; }
-
-.controls button {
-  background: var(--green);
-  color: #000;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.controls button:hover { opacity: 0.9; }
-
-.stats {
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.stats b { color: var(--text); }
-
-/* ===== Метрики бэктеста ===== */
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+.verdict {
+  padding: 12px 20px;
+  border-radius: 8px;
   margin-top: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+.verdict.strong-buy { background: rgba(38, 166, 154, 0.2); border: 1px solid #26a69a; color: #26a69a; }
+.verdict.buy { background: rgba(38, 166, 154, 0.1); border: 1px solid #26a69a; color: #26a69a; }
+.verdict.sell { background: rgba(239, 83, 80, 0.2); border: 1px solid #ef5350; color: #ef5350; }
+.verdict.neutral { background: rgba(139, 148, 158, 0.1); border: 1px solid #8b949e; color: #8b949e; }
 
-.metric {
+.verdict-main { font-size: 20px; }
+.verdict-score { font-size: 13px; color: var(--muted); }
+
+.analysis-details {
+  margin-top: 10px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 10px 14px;
 }
-
-.metric .label {
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.metric .value {
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-.metric .value.good { color: var(--green); }
-.metric .value.bad  { color: var(--red); }
-.metric .value.neutral { color: var(--text); }
-
-/* ===== Графики ===== */
-#chart {
-  width: 100%;
-  height: 55vh;
-  min-height: 320px;
-}
-
-.equity-title {
-  padding: 10px 20px 4px;
+.indicator-values {
+  display: flex;
+  gap: 20px;
   font-size: 13px;
   color: var(--muted);
-  background: var(--panel);
-  border-top: 1px solid var(--border);
+  margin-bottom: 8px;
 }
-
-#equityChart {
-  width: 100%;
-  height: 28vh;
-  min-height: 180px;
+.indicator-values b { color: var(--text); }
+.reasons-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
 }
