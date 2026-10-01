@@ -6,6 +6,7 @@
   --border: #2a2e39;
   --green: #26a69a;
   --red: #ef5350;
+  --accent: #4a9eff;
 }
 
 * { box-sizing: border-box; }
@@ -36,6 +37,7 @@ h1 {
   gap: 16px;
   align-items: center;
   font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .controls label {
@@ -55,7 +57,7 @@ h1 {
   font-size: 14px;
 }
 
-.controls input { width: 70px; }
+.controls input { width: 90px; }
 
 .controls button {
   background: var(--green);
@@ -77,10 +79,55 @@ h1 {
 
 .stats b { color: var(--text); }
 
+/* ===== Метрики бэктеста ===== */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.metric {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.metric .label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric .value {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.metric .value.good { color: var(--green); }
+.metric .value.bad  { color: var(--red); }
+.metric .value.neutral { color: var(--text); }
+
+/* ===== Графики ===== */
 #chart {
   width: 100%;
-  /* Временный фикс для теста */
-  height: 600px; 
-  /* Или попробуй современное свойство, если браузер поддерживает: */
-  /* height: calc(100dvh - 120px); */
+  height: 55vh;
+  min-height: 320px;
+}
+
+.equity-title {
+  padding: 10px 20px 4px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+
+#equityChart {
+  width: 100%;
+  height: 28vh;
+  min-height: 180px;
 }
