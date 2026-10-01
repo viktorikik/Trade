@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Заметки — Trading Signals MVP</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <h1>📝 Заметки</h1>
+      <a href="index.html" class="notes-link">📈 К графику</a>
+    </div>
+    <div class="controls">
+      <button id="refresh" class="secondary">Обновить</button>
+      <button id="clearAll" class="danger">🗑 Очистить всё</button>
+    </div>
+    <div id="notesStats" class="stats"></div>
+  </header>
+
+  <main>
+    <div id="notesGrid" class="notes-grid"></div>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <p>Пока здесь пусто.</p>
+      <p>Открой <a href="index.html">основную страницу</a>, выбери тикер и нажми <b>«📝 В заметки»</b>.</p>
+    </div>
+  </main>
+
+  <!-- ===== Тост-уведомление ===== -->
+  <div id="toast" class="toast"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/indicators.js"></script>
+  <script src="js/notes.js"></script>
+</body>
+</html>
