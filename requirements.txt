@@ -1,0 +1,3 @@
+apimoex
+pandas
+requests
