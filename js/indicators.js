@@ -1,12 +1,15 @@
 // js/indicators.js
+// Технические индикаторы и функции анализа. Без внешних зависимостей.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
+  if (values.length < period) return out;
   let sum = 0;
-  for (let i = 0; i < values.length; i++) {
-    sum += values[i];
-    if (i >= period) sum -= values[i - period];
-    if (i >= period - 1) out[i] = sum / period;
+  for (let i = 0; i < period; i++) sum += values[i];
+  out[period - 1] = sum / period;
+  for (let i = period; i < values.length; i++) {
+    sum += values[i] - values[i - period];
+    out[i] = sum / period;
   }
   return out;
 }
@@ -26,6 +29,23 @@ function ema(values, period) {
   return out;
 }
 
+// Пересечения двух линий (для меток BUY/SELL на графике)
+function findCrossovers(fast, slow) {
+  const signals = [];
+  for (let i = 1; i < fast.length; i++) {
+    const fPrev = fast[i - 1], sPrev = slow[i - 1];
+    const fNow = fast[i], sNow = slow[i];
+    if (fPrev == null || sPrev == null || fNow == null || sNow == null) continue;
+
+    const prevDiff = fPrev - sPrev;
+    const nowDiff = fNow - sNow;
+
+    if (prevDiff <= 0 && nowDiff > 0) signals.push({ index: i, type: 'buy' });
+    if (prevDiff >= 0 && nowDiff < 0) signals.push({ index: i, type: 'sell' });
+  }
+  return signals;
+}
+
 function rsi(closes, period = 14) {
   const out = new Array(closes.length).fill(null);
   if (closes.length < period + 1) return out;
@@ -37,7 +57,7 @@ function rsi(closes, period = 14) {
   }
   let avgGain = gains / period;
   let avgLoss = losses / period;
-  out[period] = 100 - 100 / (1 + avgGain / avgLoss);
+  out[period] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
 
   for (let i = period + 1; i < closes.length; i++) {
     const diff = closes[i] - closes[i - 1];
@@ -56,15 +76,19 @@ function macd(closes, fast = 12, slow = 26, signal = 9) {
   const macdLine = closes.map((_, i) =>
     emaFast[i] != null && emaSlow[i] != null ? emaFast[i] - emaSlow[i] : null
   );
-  const signalLine = ema(macdLine.filter(v => v != null), signal);
-  // Выравниваем signalLine по индексам macdLine
+
+  // Сигнальная линия — EMA от непустых значений MACD
+  const validMacd = macdLine.filter(v => v != null);
+  const signalRaw = ema(validMacd, signal);
+
   const signalAligned = new Array(closes.length).fill(null);
   let j = 0;
   for (let i = 0; i < macdLine.length; i++) {
-    if (macdLine[i] != null && j < signalLine.length) {
-      signalAligned[i] = signalLine[j++];
+    if (macdLine[i] != null && j < signalRaw.length) {
+      signalAligned[i] = signalRaw[j++];
     }
   }
+
   return { macdLine, signalLine: signalAligned };
 }
 
@@ -83,9 +107,7 @@ function bollingerBands(closes, period = 20, mult = 2) {
   return { middle, upper, lower };
 }
 
-/**
- * Комплексный анализ рынка. Возвращает объект с вердиктом и обоснованием.
- */
+// Комплексный анализ рынка. Возвращает вердикт, баллы и список причин.
 function analyzeMarket(data) {
   const closes = data.map(d => d.close);
   const volumes = data.map(d => d.volume);
@@ -98,7 +120,7 @@ function analyzeMarket(data) {
   const bb = bollingerBands(closes);
   const volumeSma = sma(volumes, 20);
 
-  const i = closes.length - 1; // последний бар
+  const i = closes.length - 1;
   const lastClose = closes[i];
   const reasons = [];
   let score = 0;
@@ -119,26 +141,32 @@ function analyzeMarket(data) {
   }
 
   // 2. Моментум (RSI)
-  if (rsi14[i] < 30) {
-    score += 2;
-    reasons.push(`✅ RSI перепродан (${rsi14[i].toFixed(1)}) — возможен отскок вверх`);
-  } else if (rsi14[i] > 70) {
-    score -= 2;
-    reasons.push(`❌ RSI перекуплен (${rsi14[i].toFixed(1)}) — возможна коррекция`);
-  } else if (rsi14[i] > 50) {
-    score += 1;
-    reasons.push(`🔼 RSI выше 50 (${rsi14[i].toFixed(1)}) — бычий моментум`);
-  } else {
-    reasons.push(`🔽 RSI ниже 50 (${rsi14[i].toFixed(1)}) — медвежий моментум`);
+  if (rsi14[i] != null) {
+    if (rsi14[i] < 30) {
+      score += 2;
+      reasons.push(`✅ RSI перепродан (${rsi14[i].toFixed(1)}) — возможен отскок вверх`);
+    } else if (rsi14[i] > 70) {
+      score -= 2;
+      reasons.push(`❌ RSI перекуплен (${rsi14[i].toFixed(1)}) — возможна коррекция`);
+    } else if (rsi14[i] > 50) {
+      score += 1;
+      reasons.push(`🔼 RSI выше 50 (${rsi14[i].toFixed(1)}) — бычий моментум`);
+    } else {
+      reasons.push(`🔽 RSI ниже 50 (${rsi14[i].toFixed(1)}) — медвежий моментум`);
+    }
   }
 
   // 3. Сила тренда (MACD)
-  if (macdData.macdLine[i] > macdData.signalLine[i]) {
-    score += 2;
-    reasons.push('✅ MACD выше сигнальной линии — бычий импульс');
-  } else {
-    score -= 2;
-    reasons.push('❌ MACD ниже сигнальной линии — медвежий импульс');
+  const macdNow = macdData.macdLine[i];
+  const signalNow = macdData.signalLine[i];
+  if (macdNow != null && signalNow != null) {
+    if (macdNow > signalNow) {
+      score += 2;
+      reasons.push('✅ MACD выше сигнальной линии — бычий импульс');
+    } else {
+      score -= 2;
+      reasons.push('❌ MACD ниже сигнальной линии — медвежий импульс');
+    }
   }
 
   // 4. Волатильность (Bollinger Bands)
@@ -150,20 +178,32 @@ function analyzeMarket(data) {
     reasons.push('❌ Цена у верхней полосы Боллинджера — зона перекупленности');
   }
 
-  // 5. Объем
+  // 5. Объём
   if (volumeSma[i] != null && volumes[i] > volumeSma[i]) {
     score += 1;
-    reasons.push('✅ Объем выше среднего — движение подтверждено');
+    reasons.push('✅ Объём выше среднего — движение подтверждено');
   } else {
-    reasons.push('⚠️ Объем ниже среднего — движению не хватает силы');
+    reasons.push('⚠️ Объём ниже среднего — движению не хватает силы');
   }
 
   // Вердикт
   let verdict, verdictClass;
-  if (score >= 5) { verdict = 'СИЛЬНО КУПИТЬ'; verdictClass = 'strong-buy'; }
-  else if (score >= 3) { verdict = 'КУПИТЬ'; verdictClass = 'buy'; }
-  else if (score <= -3) { verdict = 'ПРОДАТЬ'; verdictClass = 'sell'; }
-  else { verdict = 'НЕЙТРАЛЬНО'; verdictClass = 'neutral'; }
+  if (score >= 5)       { verdict = 'СИЛЬНО КУПИТЬ'; verdictClass = 'strong-buy'; }
+  else if (score >= 3)  { verdict = 'КУПИТЬ';        verdictClass = 'buy'; }
+  else if (score <= -3) { verdict = 'ПРОДАТЬ';       verdictClass = 'sell'; }
+  else                  { verdict = 'НЕЙТРАЛЬНО';   verdictClass = 'neutral'; }
 
-  return { verdict, verdictClass, score, reasons, indicators: { rsi: rsi14[i], macd: macdData, bb } };
+  return {
+    verdict,
+    verdictClass,
+    score,
+    reasons,
+    indicators: {
+      rsi: rsi14[i],
+      macd: {
+        macdValue: macdNow,
+        signalValue: signalNow,
+      },
+    },
+  };
 }
