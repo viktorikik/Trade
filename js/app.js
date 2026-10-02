@@ -76,7 +76,6 @@ async function loadRealData(ticker) {
   return payload;
 }
 
-// ===== Тост =====
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -85,7 +84,6 @@ function showToast(msg) {
   el._timer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// ===== Заметки =====
 function updateNotesBadge() {
   const count = loadWatchlist().length;
   document.getElementById('notesCount').textContent = count;
@@ -108,8 +106,9 @@ function renderMetricsInto(elId, r) {
   const totalCls = r.totalReturnPct > 0 ? 'good' : r.totalReturnPct < 0 ? 'bad' : 'neutral';
   const alphaCls = r.alphaPct > 0 ? 'good' : r.alphaPct < 0 ? 'bad' : 'neutral';
   const ddCls    = r.maxDrawdownPct < -20 ? 'bad' : r.maxDrawdownPct < -10 ? 'neutral' : 'good';
+  const divCls   = r.totalDividends > 0 ? 'good' : 'neutral';
 
-  document.getElementById(elId).innerHTML = [
+  const cards = [
     metricCard('Итог портфеля', fmtRub(r.finalValue), totalCls),
     metricCard('Доходность',    fmtPct(r.totalReturnPct), totalCls),
     metricCard('Buy & Hold',    fmtPct(r.bhReturnPct), r.bhReturnPct > 0 ? 'good' : 'bad'),
@@ -118,7 +117,14 @@ function renderMetricsInto(elId, r) {
     metricCard('Сделок',        `${r.tradesCount} (win ${r.winRatePct.toFixed(0)}%)`),
     metricCard('Комиссии съели', fmtRub(r.totalFees)),
     metricCard('Ср. длительность', `${Math.round(r.avgTradeDays)} дн.`),
-  ].join('');
+  ];
+
+  if (r.totalDividends > 0) {
+    cards.push(metricCard('Дивиденды (gross)', fmtRub(r.totalDividends), divCls));
+    cards.push(metricCard('НДФЛ 13%', fmtRub(r.totalDividendTax), 'neutral'));
+  }
+
+  document.getElementById(elId).innerHTML = cards.join('');
 }
 
 // ===== Анализ =====
@@ -150,28 +156,68 @@ function renderAnalysis(data) {
   return analysis;
 }
 
-// ===== Секция дивидендов =====
-function renderDividendSection(payload, gapDates, usedAdjusted) {
+// ===== Секция дивидендов с таблицей =====
+function renderDividendSection(payload, result, useAdjusted) {
   const section = document.getElementById('dividendSection');
-  const divs = payload.dividends || [];
+  const allDivs = payload.dividends || [];
 
-  if (divs.length === 0) {
+  if (allDivs.length === 0) {
     section.style.display = 'none';
     return;
   }
 
-  const total = divs.reduce((s, d) => s + d.amount, 0);
+  const total = allDivs.reduce((s, d) => s + d.amount, 0);
+  const totalNet = result.totalDividends - result.totalDividendTax;
 
   document.getElementById('dividendSummary').innerHTML =
-    `💰 Дивидендов за период: <b>${divs.length}</b> · ` +
+    `💰 Дивидендов за период: <b>${allDivs.length}</b> · ` +
     `Суммарно: <b>${total.toFixed(2)} ₽</b> на акцию · ` +
-    `Корректировка: <b>${usedAdjusted ? 'включена' : 'выключена'}</b>`;
+    `Начислено в бэктест: <b>${result.totalDividends.toFixed(2)} ₽</b> gross ` +
+    `(<b>${totalNet.toFixed(2)} ₽</b> после НДФЛ) · ` +
+    `Корректировка графика: <b>${useAdjusted ? 'вкл' : 'выкл'}</b>`;
 
-  document.getElementById('dividendList').innerHTML = divs
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .map(d => `<span class="dividend-chip" title="Размер дивиденда: ${d.amount} ₽">${d.date} · ${d.amount} ₽</span>`)
-    .join('');
+  // Карта: дата отсечки -> событие в бэктесте
+  const eventsByDate = new Map();
+  for (const e of result.dividendEvents) {
+    eventsByDate.set(e.date, e);
+  }
+
+  const sorted = [...allDivs].sort((a, b) => b.date.localeCompare(a.date));
+
+  const rows = sorted.map(d => {
+    const ev = eventsByDate.get(d.date);
+    const received = ev
+      ? `${ev.shares} акц. × ${ev.amountPerShare.toFixed(2)} ₽ = <b>${ev.net.toFixed(2)} ₽</b>`
+      : '<span class="muted">позиции не было</span>';
+    const shareCount = ev ? ev.shares : '—';
+    return `
+      <tr>
+        <td>${d.date}</td>
+        <td><b>${d.amount.toFixed(2)} ₽</b></td>
+        <td>${shareCount}</td>
+        <td>${received}</td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('dividendTable').innerHTML = `
+    <table class="div-table">
+      <thead>
+        <tr>
+          <th>Дата отсечки</th>
+          <th>Дивиденд на акцию</th>
+          <th>Акций в позиции</th>
+          <th>Получено (после НДФЛ)</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="div-note">
+      ℹ️ Дивиденд начисляется на каждую акцию в позиции в день отсечки.
+      Например, 1 лот SBER = 10 акций, значит выплата × 10.
+      НДФЛ 13% удерживается автоматически.
+    </p>
+  `;
 
   section.style.display = 'block';
 }
@@ -213,7 +259,7 @@ function renderStrategyParams() {
       </label>
     `;
   } else {
-    wrap.innerHTML = `<span class="hint">У Buy &amp; Hold нет параметров — одна покупка в начале и удержание до конца.</span>`;
+    wrap.innerHTML = `<span class="hint">У Buy &amp; Hold нет параметров.</span>`;
   }
 }
 
@@ -291,52 +337,50 @@ async function render() {
     return;
   }
 
-  // === Применяем корректировку на дивиденды ===
-  const useAdj = useDividends && payload.dividends.length > 0;
-  let analysisData = payload.candles;
-  let gapDates = [];
+  // === Реальные данные (для бэктеста и отображения) ===
+  const realData = payload.candles;
 
-  if (useAdj) {
-    const res = applyDividendAdjustment(payload.candles, payload.dividends);
-    analysisData = res.adjusted;
+  // === Скорректированные данные (для индикаторов и сигналов) ===
+  let adjustedData = realData;
+  let gapDates = [];
+  if (useDividends && payload.dividends.length > 0) {
+    const res = applyDividendAdjustment(realData, payload.dividends);
+    adjustedData = res.adjusted;
     gapDates = res.gapDates;
   }
 
-  // Данные для отображения свечей — тоже скорректированные, если useAdj.
-  // Иначе график и индикаторы будут «разъезжаться».
-  const displayData = useAdj ? analysisData : payload.candles;
-
-  const closes = analysisData.map(d => d.close);
+  const closes = adjustedData.map(d => d.close);
   const strategy = STRATEGIES[strategyId];
-  const signals = strategy.generate(analysisData, params);
+  const signals = strategy.generate(adjustedData, params);
 
-  candleSeries.setData(displayData);
+  // На графике показываем скорректированные цены (чтобы гэп не пугал),
+  // но бэктест исполняется на реальных.
+  candleSeries.setData(adjustedData);
 
   if (strategyId === 'ema') {
     const fastArr = ema(closes, params.fast);
     const slowArr = ema(closes, params.slow);
     emaFastSeries.setData(
-      displayData.map((d, i) => fastArr[i] == null ? null : { time: d.time, value: +fastArr[i].toFixed(2) }).filter(Boolean)
+      adjustedData.map((d, i) => fastArr[i] == null ? null : { time: d.time, value: +fastArr[i].toFixed(2) }).filter(Boolean)
     );
     emaSlowSeries.setData(
-      displayData.map((d, i) => slowArr[i] == null ? null : { time: d.time, value: +slowArr[i].toFixed(2) }).filter(Boolean)
+      adjustedData.map((d, i) => slowArr[i] == null ? null : { time: d.time, value: +slowArr[i].toFixed(2) }).filter(Boolean)
     );
   } else {
     emaFastSeries.setData([]);
     emaSlowSeries.setData([]);
   }
 
-  // === Маркеры: сигналы + дни дивидендных гэпов ===
+  // === Маркеры ===
   const markers = signals.map(s => ({
-    time: analysisData[s.index].time,
+    time: adjustedData[s.index].time,
     position: s.type === 'buy' ? 'belowBar' : 'aboveBar',
     color: s.type === 'buy' ? '#26a69a' : '#ef5350',
     shape: s.type === 'buy' ? 'arrowUp' : 'arrowDown',
     text: s.type === 'buy' ? 'BUY' : 'SELL',
   }));
 
-  // Метки D на дни гэпов (только если показываем скорректированный график)
-  if (useAdj) {
+  if (useDividends) {
     for (const g of gapDates) {
       markers.push({
         time: g.date,
@@ -346,7 +390,6 @@ async function render() {
         text: 'D',
       });
     }
-    // Lightweight Charts требует отсортированные по времени маркеры
     markers.sort((a, b) => a.time.localeCompare(b.time));
   }
 
@@ -357,18 +400,18 @@ async function render() {
     commissionPct:  isNaN(commission) ? 0.05 : commission,
     slippagePct:    isNaN(slippage) ? 0.05 : slippage,
     lotSize:        payload.lotSize,
+    dividends:      useDividends ? payload.dividends : [],
   };
 
-  // Бэктест считаем на analysisData (adjusted), а данные свечей — displayData
-  // Фактически для корректного расчета используем adjusted и для бэктеста
-  const result = runBacktest(analysisData, signals, backtestOptions);
+  // Бэктест исполняем на РЕАЛЬНЫХ ценах, но с явным начислением дивидендов
+  const result = runBacktest(realData, signals, backtestOptions);
   currentLastResult = { ticker, strategyId, params, result, payload };
 
   equitySeries.setData(result.equity);
   renderMetricsInto('metrics', result);
 
   if (useSplit) {
-    const split = runSplitBacktest(analysisData, signals, backtestOptions, 0.7);
+    const split = runSplitBacktest(realData, signals, backtestOptions, 0.7);
     renderMetricsInto('trainMetrics', split.train);
     renderMetricsInto('testMetrics', split.test);
     document.getElementById('splitSection').style.display = 'block';
@@ -376,32 +419,25 @@ async function render() {
     document.getElementById('splitSection').style.display = 'none';
   }
 
-  const lastBar = analysisData[analysisData.length - 1];
-  const rawLastBar = payload.candles[payload.candles.length - 1];
+  const lastBar = realData[realData.length - 1];
   const buys  = signals.filter(s => s.type === 'buy').length;
   const sells = signals.filter(s => s.type === 'sell').length;
 
   document.getElementById('stats').innerHTML =
     `Тикер: <b>${ticker}</b> (${payload.name}) · Лот: <b>${payload.lotSize}</b> · ` +
     `Стратегия: <b>${strategy.label}</b> · ` +
-    `Баров: <b>${analysisData.length}</b> · Последний: <b>${lastBar.time}</b> ` +
-    `@ <b>${lastBar.close.toFixed(2)}</b>` +
-    (useAdj && Math.abs(lastBar.close - rawLastBar.close) > 0.01
-      ? ` <span style="color:#8b949e">(реальная: ${rawLastBar.close.toFixed(2)})</span>`
-      : '') +
-    ` · Сигналов: <b>${signals.length}</b> ` +
+    `Баров: <b>${realData.length}</b> · Последний: <b>${lastBar.time}</b> ` +
+    `@ <b>${lastBar.close.toFixed(2)}</b> · ` +
+    `Сигналов: <b>${signals.length}</b> ` +
     `(<span style="color:#26a69a">BUY ${buys}</span> / ` +
     `<span style="color:#ef5350">SELL ${sells}</span>)`;
 
-  // Секция дивидендов
-  renderDividendSection(payload, gapDates, useAdj);
-
-  // Анализ считаем на adjusted (это правильнее для теханализа)
-  renderAnalysis(analysisData);
+  renderDividendSection(payload, result, useDividends);
+  renderAnalysis(adjustedData);
 
   currentState = {
     ticker,
-    price: rawLastBar.close, // в заметки сохраняем реальную цену
+    price: lastBar.close,
     lotSize: payload.lotSize,
     strategyId,
     params,
@@ -462,6 +498,7 @@ document.getElementById('optimize').addEventListener('click', async () => {
     commissionPct:  isNaN(commission) ? 0.05 : commission,
     slippagePct:    isNaN(slippage) ? 0.05 : slippage,
     lotSize:        payload.lotSize,
+    dividends:      useDividends ? payload.dividends : [],
   });
 
   btn.disabled = false;
@@ -509,7 +546,6 @@ document.getElementById('optimize').addEventListener('click', async () => {
     </table>
     <p class="opt-warning">
       ⚠️ Лучшая комбинация на истории не гарантирует лучший результат в будущем.
-      Включи Out-of-sample 70/30, чтобы проверить её на новых данных.
     </p>
   `;
   document.getElementById('optimizerSection').style.display = 'block';
@@ -532,6 +568,8 @@ document.getElementById('exportCsv').addEventListener('click', () => {
     return;
   }
   const { ticker, strategyId, result } = currentLastResult;
+
+  // Секция сделок
   const header = 'entry_date,exit_date,entry_price,exit_price,shares,lots,pnl,pnl_pct,fees,open_at_end\n';
   const rows = result.trades.map(t => [
     t.entryTime,
@@ -546,8 +584,25 @@ document.getElementById('exportCsv').addEventListener('click', () => {
     t.openAtEnd ? 1 : 0,
   ].join(',')).join('\n');
 
-  downloadBlob(`${ticker}_${strategyId}_trades.csv`, header + rows);
-  showToast(`Скачано: ${result.trades.length} сделок`);
+  let text = header + rows;
+
+  // Добавляем дивидендные события отдельным блоком
+  if (result.dividendEvents.length > 0) {
+    text += '\n\n# Dividends\n';
+    text += 'date,amount_per_share,shares,lots,gross,tax,net\n';
+    text += result.dividendEvents.map(e => [
+      e.date,
+      e.amountPerShare.toFixed(4),
+      e.shares,
+      e.lots,
+      e.gross.toFixed(2),
+      e.tax.toFixed(2),
+      e.net.toFixed(2),
+    ].join(',')).join('\n');
+  }
+
+  downloadBlob(`${ticker}_${strategyId}_trades.csv`, text);
+  showToast(`Скачано: ${result.trades.length} сделок, ${result.dividendEvents.length} дивидендов`);
 });
 
 document.getElementById('exportSummary').addEventListener('click', async () => {
@@ -563,21 +618,22 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
   const slippage = parseFloat(document.getElementById('slippage').value);
   const useDividends = document.getElementById('useDividends').checked;
 
-  const rows = [['ticker', 'strategy', 'params', 'return_pct', 'bh_return_pct', 'alpha_pct', 'max_dd_pct', 'trades', 'win_rate_pct', 'fees_rub'].join(',')];
+  const rows = [['ticker', 'strategy', 'params', 'return_pct', 'bh_return_pct', 'alpha_pct', 'max_dd_pct', 'trades', 'win_rate_pct', 'fees_rub', 'dividends_gross', 'dividends_tax'].join(',')];
 
   for (const t of tickers) {
     try {
       const payload = await loadRealData(t);
-      let d = payload.candles;
+      let sigData = payload.candles;
       if (useDividends && payload.dividends.length > 0) {
-        d = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
+        sigData = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
       }
-      const signals = STRATEGIES[strategyId].generate(d, params);
-      const r = runBacktest(d, signals, {
+      const signals = STRATEGIES[strategyId].generate(sigData, params);
+      const r = runBacktest(payload.candles, signals, {
         initialCapital: isNaN(capital) ? 100000 : capital,
         commissionPct:  isNaN(commission) ? 0.05 : commission,
         slippagePct:    isNaN(slippage) ? 0.05 : slippage,
         lotSize:        payload.lotSize,
+        dividends:      useDividends ? payload.dividends : [],
       });
       rows.push([
         t,
@@ -590,9 +646,11 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
         r.tradesCount,
         r.winRatePct.toFixed(0),
         r.totalFees.toFixed(2),
+        r.totalDividends.toFixed(2),
+        r.totalDividendTax.toFixed(2),
       ].join(','));
     } catch (err) {
-      rows.push([t, strategyId, 'error', '', '', '', '', '', '', err.message].join(','));
+      rows.push([t, strategyId, 'error', '', '', '', '', '', '', '', '', err.message].join(','));
     }
   }
 
