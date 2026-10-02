@@ -3,13 +3,9 @@
 Возвращает словарь {ticker: [{date, amount}, ...]}.
 
 Источник: https://smart-lab.ru/q/{TICKER}/dividend/
-
-Логика: страница содержит несколько таблиц. Ищем ту, где есть
-колонка с датой (в формате DD.MM.YYYY) и колонка с числовым
-значением дивиденда. CSS-фильтр не используем, потому что
-вёрстка Smart-Lab меняется и классы нестабильны.
 """
 
+import io
 import re
 import sys
 import time
@@ -32,13 +28,11 @@ DATE_RE = re.compile(r"^\d{2}\.\d{2}\.\d{4}$")
 
 
 def parse_amount(raw) -> float | None:
-    """Извлекает число из строки типа '25,00 ₽' или '1 234.5'."""
     if raw is None or (isinstance(raw, float) and pd.isna(raw)):
         return None
     s = str(raw)
     s = s.replace("₽", "").replace("\xa0", "").replace(" ", "")
     s = s.replace(",", ".")
-    # Оставляем только цифры и точку
     s = re.sub(r"[^\d.]", "", s)
     if not s:
         return None
@@ -49,16 +43,11 @@ def parse_amount(raw) -> float | None:
     return val if val > 0 else None
 
 
-def find_dividend_table(tables: list[pd.DataFrame]) -> pd.DataFrame | None:
-    """
-    Ищет таблицу, где есть колонка с датами DD.MM.YYYY и колонка
-    с числовыми значениями (дивиденд).
-    """
+def find_dividend_table(tables: list[pd.DataFrame]):
     for df in tables:
         if df.shape[1] < 3 or df.shape[0] < 1:
             continue
 
-        # Ищем столбец с датами
         date_col = None
         for col_idx in range(df.shape[1]):
             sample = df.iloc[:, col_idx].dropna().astype(str).head(5)
@@ -72,7 +61,6 @@ def find_dividend_table(tables: list[pd.DataFrame]) -> pd.DataFrame | None:
         if date_col is None:
             continue
 
-        # Ищем столбец с числами (дивиденд)
         amount_col = None
         for col_idx in range(df.shape[1]):
             if col_idx == date_col:
@@ -80,7 +68,6 @@ def find_dividend_table(tables: list[pd.DataFrame]) -> pd.DataFrame | None:
             sample = df.iloc[:, col_idx].dropna().head(5)
             if len(sample) == 0:
                 continue
-            # Пробуем распарсить как числа
             parsed = [parse_amount(v) for v in sample]
             parsed_ok = [v for v in parsed if v is not None and v > 0]
             if len(parsed_ok) >= max(1, len(sample) // 2):
@@ -90,13 +77,12 @@ def find_dividend_table(tables: list[pd.DataFrame]) -> pd.DataFrame | None:
         if amount_col is None:
             continue
 
-        return df, date_col, amount_col  # type: ignore
+        return df, date_col, amount_col
 
     return None
 
 
 def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
-    """Возвращает список дивидендов по тикеру."""
     url = SMARTLAB_URL.format(ticker=ticker.upper())
 
     try:
@@ -108,8 +94,9 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
 
     print(f"  [{ticker}] HTTP {resp.status_code}, длина HTML: {len(resp.text)} символов", flush=True)
 
+    # ВАЖНО: оборачиваем в StringIO, иначе pandas принимает строку за путь к файлу
     try:
-        tables = pd.read_html(resp.text, header=0)
+        tables = pd.read_html(io.StringIO(resp.text), header=0)
     except ValueError as e:
         print(f"  [{ticker}] pandas не нашёл ни одной таблицы: {e}", file=sys.stderr)
         return []
@@ -124,14 +111,6 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
     found = find_dividend_table(tables)
     if found is None:
         print(f"  [{ticker}] не удалось найти таблицу с дивидендами", file=sys.stderr)
-        # Сохраняем HTML для отладки
-        debug_path = f"/tmp/{ticker}_smartlab.html"
-        try:
-            with open(debug_path, "w", encoding="utf-8") as f:
-                f.write(resp.text)
-            print(f"  [{ticker}] HTML сохранён в {debug_path}", file=sys.stderr)
-        except Exception:
-            pass
         return []
 
     df, date_col, amount_col = found
@@ -164,7 +143,6 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
 
         result.append({"date": date_iso, "amount": round(amount, 4)})
 
-    # Убираем дубликаты
     seen = set()
     unique = []
     for d in result:
