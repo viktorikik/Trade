@@ -35,11 +35,7 @@ header {
   margin-bottom: 12px;
 }
 
-h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
+h1 { margin: 0; font-size: 18px; font-weight: 600; }
 
 .notes-link {
   display: inline-flex;
@@ -54,7 +50,6 @@ h1 {
   border-radius: 6px;
   transition: background 0.15s;
 }
-
 .notes-link:hover { background: rgba(74, 158, 255, 0.1); }
 
 .notes-badge {
@@ -85,8 +80,7 @@ h1 {
   color: var(--muted);
 }
 
-.controls select,
-.controls input {
+.controls select, .controls input {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -96,11 +90,7 @@ h1 {
 }
 
 .controls input { width: 90px; }
-
-.controls input[type="checkbox"] {
-  width: auto;
-  accent-color: var(--green);
-}
+.controls input[type="checkbox"] { width: auto; accent-color: var(--green); }
 
 .controls button {
   background: var(--green);
@@ -112,7 +102,6 @@ h1 {
   cursor: pointer;
   font-size: 14px;
 }
-
 .controls button:hover { opacity: 0.9; }
 .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -121,7 +110,6 @@ h1 {
   color: var(--accent);
   border: 1px solid var(--accent);
 }
-
 .controls button.secondary:hover { background: rgba(74, 158, 255, 0.1); }
 .controls button.secondary:disabled {
   color: var(--muted);
@@ -134,59 +122,66 @@ h1 {
   color: var(--red);
   border: 1px solid var(--red);
 }
-
 .controls button.danger:hover { background: rgba(239, 83, 80, 0.1); }
 
-.hint {
-  color: var(--muted);
-  font-size: 13px;
-  font-style: italic;
-}
+.hint { color: var(--muted); font-size: 13px; font-style: italic; }
 
 .stats {
   margin-top: 10px;
   font-size: 13px;
   color: var(--muted);
+  line-height: 1.7;
 }
-
 .stats b { color: var(--text); }
 
-/* ===== Дивиденды ===== */
-.dividend-section {
+.badge-adjusted {
+  display: inline-block;
+  background: rgba(74, 158, 255, 0.15);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-left: 4px;
+  cursor: help;
+  vertical-align: middle;
+}
+
+/* ===== Корпоративные действия ===== */
+.corp-section {
   margin-top: 12px;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--yellow);
+  border-left: 3px solid var(--accent);
   border-radius: 8px;
   padding: 12px 14px;
 }
 
-.dividend-header {
+.corp-header {
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 10px;
   line-height: 1.6;
 }
+.corp-header b { color: var(--text); }
 
-.dividend-header b { color: var(--text); }
+.corp-table-wrap { overflow-x: auto; }
 
-.dividend-table-wrap {
-  overflow-x: auto;
-}
-
-.div-table {
+.corp-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 
-.div-table th, .div-table td {
+.corp-table th, .corp-table td {
   padding: 7px 10px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
 
-.div-table th {
+.corp-table th {
   color: var(--muted);
   font-weight: 600;
   font-size: 11px;
@@ -194,10 +189,11 @@ h1 {
   letter-spacing: 0.4px;
 }
 
-.div-table td b { color: var(--text); }
-.div-table .muted { color: var(--muted); font-style: italic; }
+.corp-table td b { color: var(--text); }
+.corp-table td .good { color: var(--green); }
+.corp-table td .muted { color: var(--muted); font-style: italic; }
 
-.div-note {
+.corp-note {
   margin: 10px 0 0;
   font-size: 12px;
   color: var(--muted);
@@ -289,7 +285,6 @@ h1 {
   line-height: 1.7;
   color: var(--text);
 }
-
 .reasons-list li { margin-bottom: 2px; }
 
 /* ===== Секции ===== */
@@ -326,7 +321,7 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
-/* ===== Таблица оптимизации ===== */
+/* ===== Оптимизация ===== */
 .optimizer-results {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -437,7 +432,6 @@ h1 {
   text-decoration: none;
   letter-spacing: 0.5px;
 }
-
 .note-ticker:hover { text-decoration: underline; }
 
 .note-name { font-size: 12px; color: var(--muted); margin-top: -4px; }
@@ -452,7 +446,6 @@ h1 {
   border-radius: 4px;
   line-height: 1;
 }
-
 .note-delete:hover { color: var(--red); background: rgba(239, 83, 80, 0.1); }
 
 .note-verdict { margin-top: 0; padding: 6px 12px; font-size: 14px; }
@@ -465,7 +458,6 @@ h1 {
   font-size: 13px;
   color: var(--muted);
 }
-
 .note-row b { color: var(--text); font-weight: 600; }
 .note-row b.good { color: var(--green); }
 .note-row b.bad  { color: var(--red); }
@@ -486,7 +478,6 @@ h1 {
   font-size: 15px;
   line-height: 1.7;
 }
-
 .empty-state a { color: var(--accent); }
 
 /* ===== Тост ===== */
@@ -510,11 +501,7 @@ h1 {
   max-width: calc(100vw - 40px);
   text-align: center;
 }
-
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
 @media (max-width: 700px) {
   .notes-grid { grid-template-columns: 1fr; }
