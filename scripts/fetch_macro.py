@@ -3,6 +3,7 @@
 Сохраняет в data/macro.json.
 
 Все запросы к MOEX ISS — с retry и уменьшенным timeout (15 сек).
+Ключевая ставка парсится напрямую регуляркой (без pandas.read_html).
 """
 
 import io
@@ -33,7 +34,10 @@ HEADERS = {
     "Accept-Language": "ru-RU,ru;q=0.9",
 }
 
-MAX_REASONABLE_RATE = 100.0
+# Санити-границы для ключевой ставки. Исторически (с 2013) она
+# была в диапазоне 4.25% – 20%. Всё, что вне (0, 25), — точно баг.
+MIN_RATE = 0.0
+MAX_RATE = 25.0
 
 REQUEST_TIMEOUT = 15
 RETRY_ATTEMPTS = 2
@@ -124,48 +128,29 @@ def fetch_usdrub(session):
     return _fetch_iss_history_paginated(session, ISS_USD, "USD/RUB")
 
 
-def _parse_rate_value(raw):
-    """Парсит ставку: '14,00' -> 14.0, '1400' -> 14.0, '14%' -> 14.0."""
-    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
-        return None
-
-    s = str(raw).strip()
-    if not s or s.lower() in ("nan", "none", "—", "-"):
-        return None
-
-    s = s.replace("%", "").replace("\xa0", "").replace(" ", "")
-    s = re.sub(r"[^\d.,\-]", "", s)
-    if not s or s in ("-", ".", ",", ".,"):
-        return None
-
-    s = s.replace(",", ".")
-
-    if s.count(".") > 1:
-        parts = s.split(".")
-        s = parts[0] + "." + "".join(parts[1:])
-
-    try:
-        val = float(s)
-    except ValueError:
-        return None
-
-    # Защита от разделителя тысяч: 1400 -> 14.0
-    if val >= 100:
-        val = val / 100
-
-    if not (0 < val < MAX_REASONABLE_RATE):
-        return None
-
-    return round(val, 4)
+# Регулярка ищет пары: <td>ДД.ММ.ГГГГ</td> ... <td>число с запятой</td>
+# Допускаем:
+#   - атрибуты у <td>
+#   - пробелы/переводы строк
+#   - неразрывные пробелы (\xa0)
+#   - ставку в виде "14,00" или "7,5"
+_KEYRATE_ROW_RE = re.compile(
+    r'<td[^>]*>\s*(\d{2}\.\d{2}\.\d{4})\s*</td>'
+    r'.{0,200}?'
+    r'<td[^>]*>\s*(\d{1,3}[,.]\d{1,2})\s*</td>',
+    re.DOTALL,
+)
 
 
 def fetch_key_rate():
-    """Тянет историю ключевой ставки ЦБ через HTML-таблицу."""
+    """Тянет историю ключевой ставки ЦБ через парсинг HTML регуляркой."""
     params = {
         "UniDbQuery.Posted": "True",
         "UniDbQuery.From": "01.01.2023",
         "UniDbQuery.To": date.today().strftime("%d.%m.%Y"),
     }
+
+    # Retry для запроса к cbr.ru
     last_err = None
     resp = None
     for attempt in range(1, RETRY_ATTEMPTS + 1):
@@ -190,64 +175,79 @@ def fetch_key_rate():
         print(f"  [KeyRate] все попытки провалились: {last_err}", file=sys.stderr)
         return None
 
-    try:
-        tables = pd.read_html(io.StringIO(resp.text), header=0, dtype=str)
-    except Exception as e:
-        print(f"  [KeyRate] pandas не нашёл таблиц: {e}", file=sys.stderr)
+    html = resp.text
+    print(f"  [KeyRate] HTTP {resp.status_code}, длина HTML: {len(html)} символов", flush=True)
+
+    matches = _KEYRATE_ROW_RE.findall(html)
+    print(f"  [KeyRate] найдено HTML-пар (дата, ставка): {len(matches)}", flush=True)
+
+    if not matches:
+        # Покажем первые 500 символов, чтобы понять структуру
+        snippet = html[:500].replace("\n", " ")
+        print(f"  [KeyRate] первые 500 символов HTML: {snippet}", file=sys.stderr)
         return None
 
-    print(f"  [KeyRate] найдено таблиц: {len(tables)}", flush=True)
+    # Покажем первые 3 сырых совпадения
+    print(f"  [KeyRate] первые 3 сырых совпадения:", flush=True)
+    for date_raw, rate_raw in matches[:3]:
+        print(f"    ({date_raw!r}, {rate_raw!r})", flush=True)
 
-    for i, df in enumerate(tables):
-        cols_lower = [str(c).strip().lower() for c in df.columns]
-        if "дата" not in cols_lower or "ставка" not in cols_lower:
+    result = []
+    skipped_range = 0
+    skipped_parse = 0
+
+    for date_str, rate_str in matches:
+        # Ставка: "14,00" -> "14.00" -> 14.0
+        rate_clean = rate_str.replace(",", ".")
+        try:
+            rate_val = float(rate_clean)
+        except ValueError:
+            skipped_parse += 1
             continue
 
-        print(f"  [KeyRate] таблица #{i}: колонки = {list(df.columns)}", flush=True)
-        print(f"  [KeyRate] первые 3 строки (сырые):", flush=True)
-        for j, row in df.head(3).iterrows():
-            print(f"    {dict(row)}", flush=True)
+        # Санити-фильтр: ключевая ставка всегда в (0, 25)
+        if not (MIN_RATE < rate_val < MAX_RATE):
+            skipped_range += 1
+            continue
 
-        date_col = df.columns[cols_lower.index("дата")]
-        rate_col = df.columns[cols_lower.index("ставка")]
+        # Дата
+        try:
+            d_obj = pd.to_datetime(date_str, format="%d.%m.%Y")
+        except Exception:
+            skipped_parse += 1
+            continue
 
-        result = []
-        skipped = 0
-        for _, row in df.iterrows():
-            d_raw = row[date_col]
-            r_raw = row[rate_col]
-            if pd.isna(d_raw) or pd.isna(r_raw):
-                continue
-            try:
-                d_obj = pd.to_datetime(str(d_raw).strip(), format="%d.%m.%Y")
-            except Exception:
-                continue
+        result.append({
+            "date": d_obj.strftime("%Y-%m-%d"),
+            "rate": round(rate_val, 4),
+        })
 
-            rate_val = _parse_rate_value(r_raw)
-            if rate_val is None:
-                skipped += 1
-                continue
+    if skipped_parse:
+        print(f"  [KeyRate] пропущено (не распарсилось): {skipped_parse}", flush=True)
+    if skipped_range:
+        print(f"  [KeyRate] пропущено (вне диапазона 0..25): {skipped_range}", flush=True)
 
-            result.append({
-                "date": d_obj.strftime("%Y-%m-%d"),
-                "rate": rate_val,
-            })
+    # Уникализация по дате (иногда CBR отдаёт дубли)
+    seen = set()
+    unique = []
+    for r in result:
+        if r["date"] not in seen:
+            seen.add(r["date"])
+            unique.append(r)
 
-        if skipped > 0:
-            print(f"  [KeyRate] пропущено (не прошли валидацию): {skipped}", flush=True)
+    unique.sort(key=lambda x: x["date"])
 
-        result.sort(key=lambda x: x["date"])
-        if result:
-            print(
-                f"  [KeyRate] взято {len(result)} точек, "
-                f"первая: {result[0]['date']} @ {result[0]['rate']}%, "
-                f"последняя: {result[-1]['date']} @ {result[-1]['rate']}%",
-                flush=True,
-            )
-        return result
+    if unique:
+        print(
+            f"  [KeyRate] взято {len(unique)} точек, "
+            f"первая: {unique[0]['date']} @ {unique[0]['rate']}%, "
+            f"последняя: {unique[-1]['date']} @ {unique[-1]['rate']}%",
+            flush=True,
+        )
+    else:
+        print("  [KeyRate] после фильтрации не осталось точек", file=sys.stderr)
 
-    print("  [KeyRate] таблица с 'Дата'/'Ставка' не найдена", file=sys.stderr)
-    return None
+    return unique or None
 
 
 def compute_changes(history):
@@ -326,7 +326,6 @@ def main():
             "history": imoex,
         }
     elif old_payload.get("imoex"):
-        # Не перезаписываем хорошие старые данные плохими новыми
         print("  [IMOEX] новых данных нет, оставляем старые", file=sys.stderr)
         payload["imoex"] = old_payload["imoex"]
 
