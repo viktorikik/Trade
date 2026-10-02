@@ -7639,31 +7639,32 @@
   "dividends": [
     {
       "date": "2023-06-01",
-      "amount": 7.8
+      "amount": 438.0
     },
     {
       "date": "2023-12-14",
-      "amount": 6.5
+      "amount": 447.0
     },
     {
       "date": "2024-05-06",
-      "amount": 6.2
+      "amount": 498.0
     },
     {
       "date": "2024-12-16",
-      "amount": 7.6
+      "amount": 514.0
     },
     {
       "date": "2025-06-02",
-      "amount": 8.0
+      "amount": 541.0
     },
     {
       "date": "2026-01-09",
-      "amount": 6.8
+      "amount": 397.0
     },
     {
       "date": "2026-04-30",
-      "amount": 5.1
+      "amount": 278.0
     }
-  ]
+  ],
+  "splits": []
 }
