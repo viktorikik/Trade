@@ -1,6 +1,6 @@
 """
 Скачивает дневные свечи с MOEX ISS напрямую через requests.
-Сохраняет в data/{ticker}.json в формате Lightweight Charts.
+Сохраняет в data/{ticker}.json с метаданными (размер лота, имя).
 """
 
 import json
@@ -18,24 +18,57 @@ BOARD = "TQBR"
 START_DATE = "2023-01-01"
 OUTPUT_DIR = Path("data")
 
-# Явно указываем, какие колонки тянем с ISS
 COLUMNS = "TRADEDATE,OPEN,HIGH,LOW,CLOSE,VOLUME"
 
-# Праздники РФ, когда торгов нет вообще (МСК)
 MARKET_HOLIDAYS = {
     (1, 1), (1, 2), (1, 7), (3, 8), (5, 9), (12, 31),
 }
 
-ISS_BASE = "https://iss.moex.com/iss/history/engines/stock/markets/shares/boards"
+ISS_BASE = "https://iss.moex.com/iss"
+ISS_HISTORY = f"{ISS_BASE}/history/engines/stock/markets/shares/boards"
+ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 
 
 def is_trading_day(d: date) -> bool:
     return (d.month, d.day) not in MARKET_HOLIDAYS
 
 
-def fetch_ticker(session: requests.Session, ticker: str) -> list[dict] | None:
+def fetch_security_info(session: requests.Session, ticker: str) -> dict:
+    """Возвращает {lotSize, name} для тикера."""
+    url = f"{ISS_SECURITIES}/{BOARD}/securities/{ticker}.json"
+    params = {
+        "iss.meta": "off",
+        "securities.columns": "SECID,SHORTNAME,LOTSIZE",
+    }
+    try:
+        resp = session.get(url, params=params, timeout=30)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"  [{ticker}] не удалось получить метаданные: {e}", file=sys.stderr)
+        return {"lotSize": 1, "name": ticker}
+
+    block = resp.json().get("securities", {})
+    cols = block.get("columns", [])
+    rows = block.get("data", [])
+    if not rows:
+        return {"lotSize": 1, "name": ticker}
+
+    d = dict(zip(cols, rows[0]))
+    lot_size = d.get("LOTSIZE") or 1
+    try:
+        lot_size = int(lot_size)
+    except (TypeError, ValueError):
+        lot_size = 1
+
+    return {
+        "lotSize": lot_size,
+        "name": d.get("SHORTNAME") or ticker,
+    }
+
+
+def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
     """Постранично скачивает всю историю по тикеру."""
-    url = f"{ISS_BASE}/{BOARD}/securities/{ticker}.json"
+    url = f"{ISS_HISTORY}/{BOARD}/securities/{ticker}.json"
     all_rows: list[list] = []
     columns: list[str] | None = None
     start = 0
@@ -67,12 +100,10 @@ def fetch_ticker(session: requests.Session, ticker: str) -> list[dict] | None:
         all_rows.extend(page_rows)
         start += len(page_rows)
 
-        # ISS отдаёт максимум 100 строк за раз.
-        # Если пришло меньше — это была последняя страница.
         if len(page_rows) < 100:
             break
 
-        time.sleep(0.2)  # вежливая пауза, чтобы не долбить ISS
+        time.sleep(0.2)
 
     if not all_rows or columns is None:
         print(f"  [{ticker}] пустой ответ (нет торгов?)", file=sys.stderr)
@@ -118,18 +149,33 @@ def main() -> int:
     written = 0
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
+
         for ticker in TICKERS:
-            print(f"[{ticker}] тянем...", flush=True)
-            rows = fetch_ticker(session, ticker)
-            if rows is None:
+            print(f"[{ticker}] тянем метаданные...", flush=True)
+            info = fetch_security_info(session, ticker)
+
+            print(f"[{ticker}] тянем свечи...", flush=True)
+            candles = fetch_candles(session, ticker)
+            if candles is None:
                 continue
+
+            payload = {
+                "ticker": ticker,
+                "name": info["name"],
+                "lotSize": info["lotSize"],
+                "candles": candles,
+            }
 
             out_path = OUTPUT_DIR / f"{ticker}.json"
             out_path.write_text(
-                json.dumps(rows, ensure_ascii=False, indent=2),
+                json.dumps(payload, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
-            print(f"  [{ticker}] сохранено {len(rows)} баров → {out_path}", flush=True)
+            print(
+                f"  [{ticker}] {info['name']} · лот {info['lotSize']} · "
+                f"{len(candles)} баров → {out_path}",
+                flush=True,
+            )
             written += 1
 
     print(f"\nГотово. Обновлено тикеров: {written}/{len(TICKERS)}", flush=True)
