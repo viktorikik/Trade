@@ -1,11 +1,12 @@
 // js/backtest.js
-// Long-only бэктест с учётом размера лота, комиссий и проскальзывания.
+// Long-only бэктест с учётом лота, комиссий, проскальзывания и дивидендов.
 
 function runBacktest(data, signals, options = {}) {
   const initialCapital = options.initialCapital ?? 100000;
   const commissionPct  = options.commissionPct   ?? 0.05;
   const slippagePct    = options.slippagePct     ?? 0.05;
   const lotSize        = options.lotSize         ?? 1;
+  const dividends      = options.dividends       ?? [];
 
   const commission = commissionPct / 100;
   const slippage   = slippagePct / 100;
@@ -13,14 +14,52 @@ function runBacktest(data, signals, options = {}) {
   const signalByIndex = new Map();
   for (const s of signals) signalByIndex.set(s.index, s.type);
 
+  // Карта: дата отсечки -> дивиденд на акцию
+  const divByDate = new Map();
+  for (const d of dividends) {
+    if (d.date && Number(d.amount) > 0) {
+      divByDate.set(d.date, Number(d.amount));
+    }
+  }
+
   let cash = initialCapital;
   let shares = 0;
   let position = null;
   const trades = [];
   const equity = [];
+  const dividendEvents = [];
+  let totalDividends = 0;
+  let totalDividendTax = 0;
+
+  // НДФЛ на дивиденды — 13%
+  const DIVIDEND_TAX = 0.13;
 
   for (let i = 0; i < data.length; i++) {
     const bar = data[i];
+
+    // === Начисление дивидендов ===
+    // Если держим позицию в день отсечки — получаем дивиденды на каждую акцию
+    if (shares > 0 && divByDate.has(bar.time)) {
+      const amountPerShare = divByDate.get(bar.time);
+      const gross = shares * amountPerShare;
+      const tax = gross * DIVIDEND_TAX;
+      const net = gross - tax;
+
+      cash += net;
+      totalDividends += gross;
+      totalDividendTax += tax;
+
+      dividendEvents.push({
+        date: bar.time,
+        amountPerShare: +amountPerShare.toFixed(4),
+        shares,
+        lots: Math.floor(shares / lotSize),
+        gross: +gross.toFixed(2),
+        tax: +tax.toFixed(2),
+        net: +net.toFixed(2),
+      });
+    }
+
     const prevSignal = i > 0 ? signalByIndex.get(i - 1) : undefined;
 
     if (prevSignal === 'buy' && shares === 0) {
@@ -121,7 +160,6 @@ function runBacktest(data, signals, options = {}) {
   const winRatePct = trades.length > 0 ? (winningTrades / trades.length) * 100 : 0;
   const alphaPct = totalReturnPct - bhReturnPct;
 
-  // Средняя длительность сделки в барах
   const avgTradeDays = trades.length > 0
     ? trades.reduce((s, t) => {
         const a = new Date(t.entryTime);
@@ -144,10 +182,12 @@ function runBacktest(data, signals, options = {}) {
     avgTradeDays,
     lotSize,
     equity,
+    totalDividends: +totalDividends.toFixed(2),
+    totalDividendTax: +totalDividendTax.toFixed(2),
+    dividendEvents,
   };
 }
 
-// Разбивает данные на train/test и прогоняет бэктест отдельно на каждой части.
 function runSplitBacktest(data, signals, options, splitRatio = 0.7) {
   const splitIdx = Math.floor(data.length * splitRatio);
 
