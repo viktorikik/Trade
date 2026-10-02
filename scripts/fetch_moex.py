@@ -2,6 +2,10 @@
 Скачивает дневные свечи с MOEX ISS, дивиденды и фундаментал со Smart-Lab,
 макро-контекст (IMOEX, USD/RUB, ключевая ставка).
 Сохраняет в data/{ticker}.json и data/macro.json.
+
+Все запросы к MOEX ISS — с retry и уменьшенным timeout (15 сек).
+Если тикер не загрузился после 2 попыток — пропускаем его,
+старый JSON остаётся нетронутым.
 """
 
 import json
@@ -34,6 +38,11 @@ ISS_BASE = "https://iss.moex.com/iss"
 ISS_HISTORY = f"{ISS_BASE}/history/engines/stock/markets/shares/boards"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 
+# Таймауты и retry
+REQUEST_TIMEOUT = 15          # секунд на один запрос
+RETRY_ATTEMPTS = 2            # всего попыток (1 изначальная + 1 повторная)
+RETRY_DELAY = 3               # пауза между попытками
+
 # ===== Сплиты (дробления акций) =====
 SPLITS = {
     "GMKN": [
@@ -46,24 +55,45 @@ def is_trading_day(d: date) -> bool:
     return (d.month, d.day) not in MARKET_HOLIDAYS
 
 
+def _get_with_retry(session, url, params, label):
+    """
+    Делает GET с retry. Возвращает Response или None.
+    Логирует каждую неудачную попытку.
+    """
+    last_err = None
+    for attempt in range(1, RETRY_ATTEMPTS + 1):
+        try:
+            resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            return resp
+        except Exception as e:
+            last_err = e
+            if attempt < RETRY_ATTEMPTS:
+                print(
+                    f"    [{label}] попытка {attempt} не удалась ({type(e).__name__}), "
+                    f"повтор через {RETRY_DELAY}с",
+                    file=sys.stderr,
+                )
+                time.sleep(RETRY_DELAY)
+    print(f"    [{label}] все {RETRY_ATTEMPTS} попытки провалились: {last_err}", file=sys.stderr)
+    return None
+
+
 def fetch_security_info(session: requests.Session, ticker: str) -> dict:
     url = f"{ISS_SECURITIES}/{BOARD}/securities/{ticker}.json"
     params = {
         "iss.meta": "off",
         "securities.columns": "SECID,SHORTNAME,LOTSIZE",
     }
-    try:
-        resp = session.get(url, params=params, timeout=30)
-        resp.raise_for_status()
-    except Exception as e:
-        print(f"  [{ticker}] не удалось получить метаданные: {e}", file=sys.stderr)
-        return {"lotSize": 1, "name": ticker}
+    resp = _get_with_retry(session, url, params, f"{ticker} meta")
+    if resp is None:
+        return {"lotSize": 1, "name": ticker, "ok": False}
 
     block = resp.json().get("securities", {})
     cols = block.get("columns", [])
     rows = block.get("data", [])
     if not rows:
-        return {"lotSize": 1, "name": ticker}
+        return {"lotSize": 1, "name": ticker, "ok": False}
 
     d = dict(zip(cols, rows[0]))
     lot_size = d.get("LOTSIZE") or 1
@@ -72,7 +102,7 @@ def fetch_security_info(session: requests.Session, ticker: str) -> dict:
     except (TypeError, ValueError):
         lot_size = 1
 
-    return {"lotSize": lot_size, "name": d.get("SHORTNAME") or ticker}
+    return {"lotSize": lot_size, "name": d.get("SHORTNAME") or ticker, "ok": True}
 
 
 def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
@@ -88,12 +118,18 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
             "history.columns": COLUMNS,
             "start": start,
         }
-        try:
-            resp = session.get(url, params=params, timeout=30)
-            resp.raise_for_status()
-        except Exception as e:
-            print(f"  [{ticker}] ошибка запроса: {e}", file=sys.stderr)
-            return None
+        resp = _get_with_retry(session, url, params, f"{ticker} candles start={start}")
+        if resp is None:
+            # Если не получили даже первую страницу — совсем плохо
+            if start == 0:
+                return None
+            # Если не получили следующую — возвращаем то, что успели
+            print(
+                f"    [{ticker}] оборвались на странице start={start}, "
+                f"уже собрано {len(all_rows)} строк",
+                file=sys.stderr,
+            )
+            break
 
         block = resp.json().get("history", {})
         page_cols = block.get("columns", [])
@@ -167,6 +203,7 @@ def main() -> int:
         print(f"  [macro] непредвиденная ошибка: {e}", file=sys.stderr)
 
     written = 0
+    skipped = 0
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
 
@@ -177,11 +214,24 @@ def main() -> int:
             print(f"[{ticker}] тянем свечи...", flush=True)
             candles = fetch_candles(session, ticker)
             if candles is None:
+                print(
+                    f"  [{ticker}] свечи не получены — старый JSON не трогаем",
+                    file=sys.stderr,
+                )
+                skipped += 1
                 continue
 
             dividends = dividends_map.get(ticker, [])
             splits = SPLITS.get(ticker, [])
             fundamentals = fundamentals_map.get(ticker)
+
+            # Если метаданные не получились, но свечи есть — берём имя как есть
+            if not info.get("ok", True) and len(candles) > 0:
+                print(
+                    f"  [{ticker}] метаданные не получены, используем имя={ticker}, лот=1",
+                    file=sys.stderr,
+                )
+                info = {"lotSize": 1, "name": ticker, "ok": False}
 
             payload = {
                 "ticker": ticker,
@@ -212,7 +262,11 @@ def main() -> int:
             )
             written += 1
 
-    print(f"\nГотово. Обновлено тикеров: {written}/{len(TICKERS)}", flush=True)
+    print(
+        f"\nГотово. Обновлено тикеров: {written}/{len(TICKERS)}"
+        + (f", пропущено: {skipped}" if skipped else ""),
+        flush=True,
+    )
     return 0 if written > 0 else 1
 
 
