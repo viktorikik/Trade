@@ -33,14 +33,34 @@ const equitySeries = equityChart.addAreaSeries({
   lineWidth: 2,
 });
 
+// Мини-график IMOEX (в секции макро)
+const macroChartEl = document.getElementById('macroChart');
+const macroChart = macroChartEl ? LightweightCharts.createChart(macroChartEl, {
+  layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
+  grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
+  rightPriceScale: { borderColor: '#2a2e39' },
+  timeScale: { borderColor: '#2a2e39', timeVisible: false },
+  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+}) : null;
+const macroSeries = macroChart ? macroChart.addAreaSeries({
+  lineColor: '#4a9eff',
+  topColor: 'rgba(74, 158, 255, 0.3)',
+  bottomColor: 'rgba(74, 158, 255, 0.0)',
+  lineWidth: 2,
+}) : null;
+
 function resizeCharts() {
   chart.applyOptions({ width: chartEl.clientWidth });
   equityChart.applyOptions({ width: equityEl.clientWidth });
+  if (macroChart && macroChartEl) {
+    macroChart.applyOptions({ width: macroChartEl.clientWidth });
+  }
 }
 window.addEventListener('resize', resizeCharts);
 resizeCharts();
 
 const dataCache = new Map();
+let macroCache = null;
 
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
@@ -72,6 +92,24 @@ async function loadRealData(ticker) {
   if (payload.candles.length === 0) throw new Error(`Файл data/${ticker}.json пустой`);
   dataCache.set(ticker, payload);
   return payload;
+}
+
+async function loadMacroData() {
+  if (macroCache !== null) return macroCache;
+  try {
+    const resp = await fetch('./data/macro.json');
+    if (!resp.ok) {
+      console.warn(`[macro] не удалось загрузить macro.json: HTTP ${resp.status}`);
+      macroCache = null;
+      return null;
+    }
+    macroCache = await resp.json();
+    return macroCache;
+  } catch (err) {
+    console.warn(`[macro] ошибка загрузки: ${err.message}`);
+    macroCache = null;
+    return null;
+  }
 }
 
 function showToast(msg) {
@@ -228,7 +266,6 @@ function renderRiskSection(adjustedData, options) {
   const fmtRub = v => v.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ₽';
   const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
 
-  // Подзаголовок: цена, лот, риск
   const subEl = document.getElementById('riskSubtitle');
   if (subEl) {
     subEl.textContent =
@@ -236,8 +273,12 @@ function renderRiskSection(adjustedData, options) {
       `Риск на сделку: ${risk.riskPct.toFixed(2)}% (${fmtRub(risk.maxRiskRub)})`;
   }
 
-  // Стилизация класса рекомендованной позиции
   const lotsCls = risk.recommendedLots > 0 ? 'good' : 'bad';
+  const lotWord = (n) => {
+    if (n === 1) return 'лот';
+    if (n >= 2 && n <= 4) return 'лота';
+    return 'лотов';
+  };
 
   const cards = [
     {
@@ -264,7 +305,7 @@ function renderRiskSection(adjustedData, options) {
     {
       key: 'Рекомендованный размер',
       full: `чтобы риск ≤ ${risk.riskPct.toFixed(1)}% капитала`,
-      value: `${risk.recommendedLots} лот${risk.recommendedLots === 1 ? '' : risk.recommendedLots >= 2 && risk.recommendedLots <= 4 ? 'а' : 'ов'}`,
+      value: `${risk.recommendedLots} ${lotWord(risk.recommendedLots)}`,
       subvalue: `${risk.recommendedShares} акц. · ${fmtRub(risk.positionValue)} (${risk.positionPct.toFixed(1)}% капитала)`,
       cls: lotsCls,
     },
@@ -288,7 +329,6 @@ function renderRiskSection(adjustedData, options) {
     </div>
   `).join('');
 
-  // Плюс предупреждение, если позиция не влезает или наоборот ограничена риском
   let warnHtml = '';
   if (risk.noCash) {
     warnHtml = `<div class="risk-warn">⚠️ Капитала не хватает даже на 1 лот (${fmtRub(risk.price * risk.lotSize)}).</div>`;
@@ -299,6 +339,67 @@ function renderRiskSection(adjustedData, options) {
   }
 
   document.getElementById('riskMetrics').innerHTML = html + warnHtml;
+  section.style.display = 'block';
+}
+
+// ===== Макро-контекст =====
+function renderMacroSection(macroData) {
+  const section = document.getElementById('macroSection');
+  if (!section) return;
+
+  const analysis = analyzeMacro(macroData);
+  if (!analysis) {
+    section.style.display = 'none';
+    return;
+  }
+
+  // Шапка
+  const updatedEl = document.getElementById('macroUpdatedAt');
+  if (updatedEl) {
+    updatedEl.textContent = analysis.updatedAt ? `Обновлено: ${analysis.updatedAt}` : '';
+  }
+
+  // Карточки
+  const cardsHtml = analysis.cards.map(c => {
+    const changesHtml = c.changes && c.changes.length > 0
+      ? `<div class="macro-card-changes">
+          ${c.changes.map(ch => `
+            <div class="macro-change">
+              <span class="macro-change-label">${ch.label}</span>
+              <span class="macro-change-value ${_changeCls(ch.value)}">${_fmtChange(ch.value)}</span>
+            </div>
+          `).join('')}
+         </div>`
+      : `<div class="macro-card-changes macro-card-changes-empty">—</div>`;
+
+    return `
+      <div class="macro-card">
+        <div class="macro-card-head">
+          <div class="macro-card-key">${c.key}</div>
+          <div class="macro-card-date">${c.date || ''}</div>
+        </div>
+        <div class="macro-card-value">${c.value}</div>
+        <div class="macro-card-full">${c.full}</div>
+        ${changesHtml}
+        <div class="macro-card-hint">${c.hint}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('macroMetrics').innerHTML = cardsHtml;
+
+  // График
+  const chartWrap = document.querySelector('.macro-chart-wrap');
+  if (analysis.chartData && analysis.chartData.length > 0 && macroSeries) {
+    macroSeries.setData(analysis.chartData);
+    if (macroChart) {
+      macroChart.timeScale().fitContent();
+      macroChart.applyOptions({ width: macroChartEl.clientWidth });
+    }
+    if (chartWrap) chartWrap.style.display = '';
+  } else {
+    if (chartWrap) chartWrap.style.display = 'none';
+  }
+
   section.style.display = 'block';
 }
 
@@ -509,6 +610,7 @@ async function render() {
     document.getElementById('corpSection').style.display = 'none';
     document.getElementById('fundamentalSection').style.display = 'none';
     document.getElementById('riskSection').style.display = 'none';
+    document.getElementById('macroSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -528,6 +630,7 @@ async function render() {
     document.getElementById('corpSection').style.display = 'none';
     document.getElementById('fundamentalSection').style.display = 'none';
     document.getElementById('riskSection').style.display = 'none';
+    document.getElementById('macroSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -647,6 +750,15 @@ async function render() {
     atrMultiplier: 2,
     rawPrice: rawLastBar.close,
   });
+
+  // Макро-контекст (загружается отдельно, не зависит от тикера)
+  try {
+    const macroData = await loadMacroData();
+    renderMacroSection(macroData);
+  } catch (err) {
+    console.warn('[macro] не удалось отрисовать:', err);
+    document.getElementById('macroSection').style.display = 'none';
+  }
 
   currentState = {
     ticker,
