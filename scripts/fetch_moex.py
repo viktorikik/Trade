@@ -1,6 +1,6 @@
 """
-Скачивает дневные свечи с MOEX ISS напрямую через requests.
-Сохраняет в data/{ticker}.json с метаданными (размер лота, имя).
+Скачивает дневные свечи и дивиденды с MOEX ISS.
+Сохраняет в data/{ticker}.json.
 """
 
 import json
@@ -64,6 +64,55 @@ def fetch_security_info(session: requests.Session, ticker: str) -> dict:
         "lotSize": lot_size,
         "name": d.get("SHORTNAME") or ticker,
     }
+
+
+def fetch_dividends(session: requests.Session, ticker: str) -> list[dict]:
+    """
+    Возвращает список дивидендов [{date: YYYY-MM-DD, amount: float}].
+    Источник — MOEX ISS. Данные могут быть неполными.
+    """
+    url = f"{ISS_BASE}/securities/{ticker}/dividends.json"
+    params = {"iss.meta": "off"}
+    try:
+        resp = session.get(url, params=params, timeout=30)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"  [{ticker}] не удалось получить дивиденды: {e}", file=sys.stderr)
+        return []
+
+    block = resp.json().get("dividends", {})
+    cols = block.get("columns", [])
+    rows = block.get("data", [])
+    if not rows:
+        return []
+
+    try:
+        idx_date = cols.index("registryclosedate")
+        idx_value = cols.index("value")
+    except ValueError:
+        print(f"  [{ticker}] неожиданный формат дивидендов: {cols}", file=sys.stderr)
+        return []
+
+    result = []
+    for row in rows:
+        date_val = row[idx_date]
+        amount = row[idx_value]
+        if date_val is None or amount is None:
+            continue
+        try:
+            amount = float(amount)
+        except (TypeError, ValueError):
+            continue
+        if amount <= 0:
+            continue
+        date_str = str(date_val)[:10]
+        # Оставляем только те, что попадают в диапазон данных
+        if date_str < START_DATE:
+            continue
+        result.append({"date": date_str, "amount": round(amount, 4)})
+
+    result.sort(key=lambda x: x["date"])
+    return result
 
 
 def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
@@ -159,11 +208,15 @@ def main() -> int:
             if candles is None:
                 continue
 
+            print(f"[{ticker}] тянем дивиденды...", flush=True)
+            dividends = fetch_dividends(session, ticker)
+
             payload = {
                 "ticker": ticker,
                 "name": info["name"],
                 "lotSize": info["lotSize"],
                 "candles": candles,
+                "dividends": dividends,
             }
 
             out_path = OUTPUT_DIR / f"{ticker}.json"
@@ -173,7 +226,7 @@ def main() -> int:
             )
             print(
                 f"  [{ticker}] {info['name']} · лот {info['lotSize']} · "
-                f"{len(candles)} баров → {out_path}",
+                f"{len(candles)} баров · {len(dividends)} дивидендов → {out_path}",
                 flush=True,
             )
             written += 1
