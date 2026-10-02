@@ -7636,5 +7636,10 @@
       "volume": 1417007
     }
   ],
-  "dividends": []
+  "dividends": [
+    {
+      "date": "2026-10-09",
+      "amount": 22026.0
+    }
+  ]
 }
