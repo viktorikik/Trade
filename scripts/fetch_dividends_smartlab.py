@@ -1,6 +1,22 @@
 """
-Парсит историю дивидендов с Smart-Lab.
-Возвращает словарь {ticker: [{date, amount}, ...]}.
+Парсит фундаментальные показатели с Smart-Lab.
+Возвращает {ticker: fundamentals_dict | None}.
+
+Структура fundamentals:
+{
+  "asOf": "LTM",
+  "source": "smart-lab.ru",
+  "metrics": {
+    "pe": 3.35, "pb": 0.73, "roe": 24.0, "roa": 3.0,
+    "eps": 86.6, "divYield": 13.6,
+    "netProfitBln": 1869, "capitalizationBln": 6255, "equityBln": 8537
+  },
+  "history": [
+    {"year": "2021", "pe": 5.28, "roe": 24.2, ...},
+    ...
+    {"year": "LTM", "pe": 3.35, "roe": 24.0, ...}
+  ]
+}
 """
 
 import io
@@ -11,7 +27,7 @@ import time
 import pandas as pd
 import requests
 
-SMARTLAB_URL = "https://smart-lab.ru/q/{ticker}/dividend/"
+SMARTLAB_URL = "https://smart-lab.ru/q/{ticker}/f/"
 
 HEADERS = {
     "User-Agent": (
@@ -22,308 +38,182 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
-DATE_RE = re.compile(r"^\d{2}\.\d{2}\.\d{4}$")
+YEAR_RE = re.compile(r'^(20\d{2}|LTM)$', re.IGNORECASE)
 
-# Санити-порог: дивиденд не может быть больше 50% цены акции.
-# Всё, что выше — считаем ошибкой парсинга и отбрасываем.
-MAX_DIVIDEND_TO_PRICE = 0.5
+# Метрики, которые тянем. Ключ — внутреннее имя, значение — список
+# regex-паттернов для поиска строки в таблице по её названию.
+# Паттерны заякорены на начало строки, чтобы не схватить лишнее.
+METRIC_PATTERNS = {
+    "pe": [r'^P\s*/\s*E\b'],
+    "pb": [r'^P\s*/\s*B\b'],
+    "roe": [r'^ROE\b'],
+    "roa": [r'^ROA\b'],
+    "eps": [r'^EPS\b'],
+    "divYield": [
+        r'^Див\.?\s*доход.*\bао\b',
+        r'^Див\.?\s*доход.*\bап\b',  # fallback, если ао нет
+        r'^Дивидендная\s*доходность',
+    ],
+    "netProfitBln": [r'^Чистая\s+прибыль'],
+    "capitalizationBln": [r'^Капитализация'],
+    "equityBln": [r'^Капитал(?!изация)'],
+}
 
 
-def parse_amount(raw):
-    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+def parse_number(raw):
+    """
+    Парсит число из ячейки: '1 251' -> 1251, '17.7%' -> 17.7,
+    '0.000' -> 0.0, '—' -> None.
+    """
+    if raw is None:
         return None
-    s = str(raw)
-    s = s.replace("₽", "").replace("\xa0", "").replace(" ", "")
+    if isinstance(raw, float) and pd.isna(raw):
+        return None
+
+    s = str(raw).strip()
+    if not s or s in ("—", "–", "-", "n/a", "N/A", "nan", "None"):
+        return None
+
+    s = s.replace("%", "").replace("₽", "")
+    s = s.replace("\xa0", "").replace(" ", "")
     s = s.replace(",", ".")
-    s = re.sub(r"[^\d.]", "", s)
-    if not s:
+    s = re.sub(r"[^\d.\-]", "", s)
+
+    if not s or s in ("-", ".", "-.", "--"):
         return None
+
     try:
-        val = float(s)
+        return float(s)
     except ValueError:
         return None
-    return val if val > 0 else None
 
 
-def looks_like_year(value):
-    if value is None:
-        return False
-    if value != int(value):
-        return False
-    return 1900 <= value <= 2100
-
-
-# =====================================================
-# Чтение таблиц с самостоятельным поиском строки заголовка
-# =====================================================
-def _detect_header_row(raw):
+def find_year_header_row(df):
     """
-    Ищет строку, которая выглядит как заголовок колонок
-    (содержит ключевые слова 'дата', 'дивиденд', 'цена', 'доходность' и т.п.).
-    Это нужно, потому что у Smart-Lab бывает МНОГОУРОВНЕВЫЙ заголовок,
-    и pandas с header=0 ошибочно принимает первую строку данных за заголовок.
+    Ищет в DataFrame строку, в которой >= 3 значений выглядят как годы
+    (2021, 2022, ..., LTM). Возвращает индекс строки или None.
     """
-    keywords = [
-        "дата", "дивиденд", "цена", "доходность", "период",
-        "выплат", "стоимость", "t-1", "t+1", "закрытия", "отсечк",
-    ]
-    best_row = None
-    best_score = 0
-
-    for i in range(min(6, len(raw))):
-        row = raw.iloc[i]
-        score = 0
+    max_scan = min(20, len(df))
+    for i in range(max_scan):
+        row = df.iloc[i]
+        year_count = 0
         for v in row:
             if pd.isna(v):
                 continue
-            s = str(v).strip().lower()
-            if not s or len(s) > 80:
-                # слишком длинное — это скорее подпись к секции, не колонка
-                continue
-            if any(kw in s for kw in keywords):
-                score += 1
-        if score > best_score:
-            best_score = score
-            best_row = i
-
-    # Требуем минимум 2 совпадения, иначе считаем что заголовков нет
-    if best_score >= 2:
-        return best_row
+            s = str(v).strip()
+            if YEAR_RE.match(s):
+                year_count += 1
+        if year_count >= 3:
+            return i
     return None
 
 
-def _table_from_raw(raw, header_row):
-    """Преобразует сырую таблицу в DataFrame с правильным заголовком."""
-    headers = []
-    seen = {}
-    for v in raw.iloc[header_row].tolist():
-        h = str(v).strip() if not pd.isna(v) else "unnamed"
-        if not h:
-            h = "unnamed"
-        if h in seen:
-            seen[h] += 1
-            h = f"{h}_{seen[h]}"
-        else:
-            seen[h] = 0
-        headers.append(h)
-
-    df = raw.iloc[header_row + 1:].copy().reset_index(drop=True)
-    df.columns = headers
-    # Убираем полностью пустые колонки и строки
-    df = df.dropna(axis=1, how="all")
-    df = df.dropna(how="all").reset_index(drop=True)
-    return df
-
-
-def read_tables_robust(html):
+def collect_year_columns(df, header_row_idx):
     """
-    Читает таблицы, самостоятельно определяя строку заголовка.
-    Возвращает список DataFrame с нормальными именами колонок.
+    Возвращает {col_idx: year_name} для найденной строки заголовков.
+    year_name приводится к верхнему регистру ('ltm' -> 'LTM').
     """
-    try:
-        raw_tables = pd.read_html(io.StringIO(html), header=None)
-    except ValueError:
-        return []
-    except Exception:
-        return []
-
-    result = []
-    for raw in raw_tables:
-        header_row = _detect_header_row(raw)
-        if header_row is None:
+    row = df.iloc[header_row_idx]
+    cols = {}
+    for col_idx, v in enumerate(row):
+        if pd.isna(v):
             continue
-        t = _table_from_raw(raw, header_row)
-        if t is not None and t.shape[1] >= 3 and t.shape[0] >= 1:
-            result.append(t)
-    return result
+        s = str(v).strip()
+        if YEAR_RE.match(s):
+            cols[col_idx] = s.upper()
+    return cols
 
 
-# =====================================================
-# Оценка колонок
-# =====================================================
-def header_score(header):
+def find_metric_row(df, patterns, start_idx):
     """
-    Оценка заголовка как кандидата на 'сумма дивиденда в рублях'.
-    Чем выше — тем больше похоже на нужную колонку.
+    Ищет строку, первая колонка которой матчит хотя бы один из patterns.
+    Начинает поиск со start_idx. Возвращает индекс строки или None.
     """
-    h = str(header).strip().lower()
-
-    # Очень длинный заголовок — скорее подпись к секции, чем колонка
-    if len(h) > 60:
-        return -50.0
-
-    score = 0.0
-
-    # Точное совпадение — идеально
-    exact = {
-        "дивиденд", "дивиденд, руб", "дивиденд, руб.",
-        "дивиденд (руб)", "дивиденд (руб.)", "dividend",
-        "дивиденды", "дивиденды, руб", "дивиденды, руб.",
-    }
-    if h in exact:
-        score += 30
-
-    # Смысловые бонусы
-    if "дивиденд" in h:
-        score += 10
-    if "выплат" in h:
-        score += 6
-    if "на акцию" in h or "на 1 акцию" in h:
-        score += 6
-    if "₽" in h or "руб" in h or "rub" in h:
-        score += 5
-
-    # Явные признаки "неправильной" колонки
-    if "%" in h or "процент" in h:
-        score -= 15
-    if "доходность" in h:
-        score -= 15
-    if "период" in h:
-        score -= 12
-    if "год" in h or "year" in h:
-        score -= 12
-    if "t-1" in h or "t+1" in h:
-        score -= 6
-
-    # Цена/стоимость акции — это НЕ дивиденд. Сильный штраф.
-    if "цена" in h or "стоимость" in h or "price" in h:
-        score -= 25
-    if "закрыт" in h or "close" in h or "открыт" in h or "open" in h:
-        score -= 15
-    # Колонка с датой — не сумма
-    if "дата" in h or "date" in h:
-        score -= 10
-
-    return score
-
-
-def value_score(df, col_idx):
-    """Оценка значений колонки как кандидата на дивиденды."""
-    sample = df.iloc[:, col_idx].dropna().head(20)
-    if len(sample) == 0:
-        return -1.0
-
-    parsed = [parse_amount(v) for v in sample]
-    valid = [v for v in parsed if v is not None and v > 0]
-    if not valid:
-        return -1.0
-
-    total = len(valid)
-    year_penalty = sum(1 for v in valid if looks_like_year(v))
-    if year_penalty == total:
-        return -1.0
-
-    score = 0.0
-    score -= year_penalty * 2.0
-
-    # Если все значения в диапазоне 1..20 — вероятно проценты
-    all_small = all(v <= 20 for v in valid)
-    if all_small:
-        score -= 5.0
-
-    # Типичный диапазон дивидендов в рублях — бонус
-    typical = sum(1 for v in valid if 0.1 <= v <= 500)
-    score += typical * 0.5
-
-    # Дивиденды часто имеют копейки — небольшой бонус
-    has_decimals = sum(1 for v in valid if v != int(v))
-    score += has_decimals * 0.3
-
-    # Подозрительно большие значения (>5000) — вероятно, цена в копейках
-    suspicious_large = sum(1 for v in valid if v > 5000)
-    score -= suspicious_large * 3.0
-
-    # Разброс > 100x — подозрительно (у настоящих дивидендов обычно < 20x)
-    if len(valid) >= 3:
-        mx, mn = max(valid), min(valid)
-        if mn > 0 and mx / mn > 100:
-            score -= 3.0
-
-    return score
-
-
-def find_date_column(df):
-    """Ищет колонку с датами формата ДД.ММ.ГГГГ."""
-    for col_idx in range(df.shape[1]):
-        sample = df.iloc[:, col_idx].dropna().astype(str).head(15)
-        if len(sample) == 0:
+    for i in range(start_idx, len(df)):
+        v = df.iloc[i, 0]
+        if pd.isna(v):
             continue
-        matches = sample.str.match(DATE_RE).sum()
-        if matches >= max(1, len(sample) // 3):
-            return col_idx
+        s = str(v).strip()
+        # Убираем возможный '?' и пробелы в конце — Smart-Lab их добавляет
+        s = re.sub(r"\s*\?\s*$", "", s)
+        for pat in patterns:
+            if re.match(pat, s):
+                return i
     return None
 
 
-def find_amount_column(df, date_col):
-    """Ищет колонку с суммой дивиденда."""
-    best_col = None
-    best_score = -1e9
-
-    for col_idx in range(df.shape[1]):
-        if col_idx == date_col:
+def is_fundamentals_table(df):
+    """
+    Проверка: это таблица с фундаменталом? Признаки:
+    есть строка с годами и есть строка с 'P/E' или 'ROE'.
+    """
+    header_row = find_year_header_row(df)
+    if header_row is None:
+        return None
+    for i in range(header_row + 1, min(header_row + 60, len(df))):
+        v = df.iloc[i, 0]
+        if pd.isna(v):
             continue
+        s = str(v).strip()
+        if re.match(r"^P\s*/\s*E\b", s) or re.match(r"^ROE\b", s):
+            return header_row
+    return None
 
-        h = df.columns[col_idx]
-        h_score = header_score(h)
 
-        # Явно "не та" колонка по заголовку
-        if h_score <= -15:
-            continue
-
-        # Если колонка сама состоит из дат — пропускаем
-        v_sample = df.iloc[:, col_idx].dropna().astype(str).head(15)
-        if len(v_sample) > 0:
-            date_matches = v_sample.str.match(DATE_RE).sum()
-            if date_matches >= len(v_sample) // 2:
-                continue
-
-        v_score = value_score(df, col_idx)
-
-        total = h_score * 2.0 + v_score * 1.5
-
-        if total > best_score:
-            best_score = total
-            best_col = col_idx
-
-    # Даже если не нашли идеальную колонку, не берём откровенно плохую
-    if best_col is None or best_score < 5:
+def extract_fundamentals(df, header_row_idx):
+    """Извлекает метрики и историю из найденной таблицы."""
+    year_cols = collect_year_columns(df, header_row_idx)
+    if not year_cols:
         return None
 
-    return best_col
+    # Сортируем годы: обычные годы по возрастанию, LTM — в конце
+    sorted_years = sorted(
+        year_cols.items(),
+        key=lambda x: (x[1] == "LTM", x[1] if x[1] != "LTM" else "ZZZZ"),
+    )
+    last_col_idx, last_year_name = sorted_years[-1]
+
+    # Находим все нужные строки
+    metric_rows = {}
+    for metric_name, patterns in METRIC_PATTERNS.items():
+        row_idx = find_metric_row(df, patterns, header_row_idx + 1)
+        if row_idx is not None:
+            metric_rows[metric_name] = row_idx
+
+    if not metric_rows:
+        return None
+
+    # Текущие значения (из LTM или последнего года)
+    metrics = {}
+    for metric_name, row_idx in metric_rows.items():
+        v = parse_number(df.iloc[row_idx, last_col_idx])
+        if v is not None:
+            metrics[metric_name] = v
+
+    if not metrics:
+        return None
+
+    # История по годам
+    history = []
+    for col_idx, year_name in sorted_years:
+        entry = {"year": year_name}
+        for metric_name, row_idx in metric_rows.items():
+            v = parse_number(df.iloc[row_idx, col_idx])
+            if v is not None:
+                entry[metric_name] = v
+        if len(entry) > 1:  # не только 'year'
+            history.append(entry)
+
+    return {
+        "asOf": last_year_name,
+        "source": "smart-lab.ru",
+        "metrics": metrics,
+        "history": history,
+    }
 
 
-def find_dividend_table(tables):
-    """
-    Ищет среди таблиц ту, где есть колонка с датами и колонка с дивидендами.
-    Возвращает (df, date_col, amount_col) или None.
-    """
-    best = None
-    best_total = -1.0
-
-    for df in tables:
-        if df.shape[1] < 3 or df.shape[0] < 1:
-            continue
-
-        date_col = find_date_column(df)
-        if date_col is None:
-            continue
-
-        amount_col = find_amount_column(df, date_col)
-        if amount_col is None:
-            continue
-
-        h_score = header_score(df.columns[amount_col])
-        v_score = value_score(df, amount_col)
-        total = h_score * 2.0 + v_score * 1.5
-
-        if total > best_total:
-            best_total = total
-            best = (df, date_col, amount_col)
-
-    return best
-
-
-def fetch_dividends_for_ticker(ticker, start_date):
+def fetch_fundamentals_for_ticker(ticker):
+    """Возвращает dict с фундаменталом или None."""
     url = SMARTLAB_URL.format(ticker=ticker.upper())
 
     try:
@@ -331,86 +221,58 @@ def fetch_dividends_for_ticker(ticker, start_date):
         resp.raise_for_status()
     except Exception as e:
         print(f"  [{ticker}] ошибка запроса к Smart-Lab: {e}", file=sys.stderr)
-        return []
+        return None
 
     print(
         f"  [{ticker}] HTTP {resp.status_code}, длина HTML: {len(resp.text)} символов",
         flush=True,
     )
 
-    tables = read_tables_robust(resp.text)
-    if not tables:
-        print(f"  [{ticker}] не удалось прочитать таблицы", file=sys.stderr)
-        return []
+    try:
+        tables = pd.read_html(io.StringIO(resp.text), header=None)
+    except ValueError as e:
+        print(f"  [{ticker}] pandas не нашёл таблиц: {e}", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"  [{ticker}] ошибка парсинга HTML: {e}", file=sys.stderr)
+        return None
 
     print(f"  [{ticker}] найдено таблиц: {len(tables)}", flush=True)
 
-    found = find_dividend_table(tables)
-    if found is None:
-        print(f"  [{ticker}] не удалось найти таблицу с дивидендами", file=sys.stderr)
-        return []
-
-    df, date_col, amount_col = found
-    date_header = str(df.columns[date_col])[:60]
-    amount_header = str(df.columns[amount_col])[:60]
-    print(
-        f"  [{ticker}] таблица дивидендов: дата='{date_header}' (столбец {date_col}), "
-        f"сумма='{amount_header}' (столбец {amount_col})",
-        flush=True,
-    )
-
-    print(f"  [{ticker}] первые строки:", flush=True)
-    for i, row in df.head(3).iterrows():
-        d = row.iloc[date_col]
-        a = row.iloc[amount_col]
-        print(f"    дата={d!r}  сумма={a!r}", flush=True)
-
-    result = []
-    for _, row in df.iterrows():
-        date_raw = row.iloc[date_col]
-        amount_raw = row.iloc[amount_col]
-
-        if pd.isna(date_raw):
+    for df in tables:
+        if df.shape[1] < 4 or df.shape[0] < 5:
+            continue
+        header_row = is_fundamentals_table(df)
+        if header_row is None:
             continue
 
-        date_str_raw = str(date_raw).strip()
-        if not DATE_RE.match(date_str_raw):
+        result = extract_fundamentals(df, header_row)
+        if result is None:
             continue
 
-        try:
-            date_obj = pd.to_datetime(date_str_raw, format="%d.%m.%Y")
-        except Exception:
-            continue
+        print(
+            f"  [{ticker}] фундаментал: asOf={result['asOf']}, "
+            f"метрик найдено: {len(result['metrics'])}",
+            flush=True,
+        )
+        for k, v in result["metrics"].items():
+            print(f"    {k}: {v}", flush=True)
+        return result
 
-        date_iso = date_obj.strftime("%Y-%m-%d")
-        if date_iso < start_date:
-            continue
-
-        amount = parse_amount(amount_raw)
-        if amount is None or looks_like_year(amount):
-            continue
-
-        result.append({"date": date_iso, "amount": round(amount, 4)})
-
-    seen = set()
-    unique = []
-    for d in result:
-        key = (d["date"], d["amount"])
-        if key not in seen:
-            seen.add(key)
-            unique.append(d)
-
-    unique.sort(key=lambda x: x["date"])
-    return unique
+    print(f"  [{ticker}] не нашли таблицу с фундаменталом", file=sys.stderr)
+    return None
 
 
-def fetch_all(tickers, start_date):
+def fetch_all(tickers):
+    """Возвращает {ticker: fundamentals | None}."""
     result = {}
     for ticker in tickers:
-        print(f"[{ticker}] тянем дивиденды со Smart-Lab...", flush=True)
-        divs = fetch_dividends_for_ticker(ticker, start_date)
-        result[ticker] = divs
-        print(f"  [{ticker}] итого найдено {len(divs)} дивидендов", flush=True)
+        print(f"[{ticker}] тянем фундаментал со Smart-Lab...", flush=True)
+        try:
+            result[ticker] = fetch_fundamentals_for_ticker(ticker)
+        except Exception as e:
+            print(f"  [{ticker}] непредвиденная ошибка: {e}", file=sys.stderr)
+            result[ticker] = None
         time.sleep(0.7)
     return result
 
@@ -421,8 +283,10 @@ if __name__ == "__main__":
         if len(sys.argv) > 1
         else ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
     )
-    data = fetch_all(tickers, "2023-01-01")
-    for t, divs in data.items():
-        print(f"\n{t}:")
-        for d in divs:
-            print(f"  {d['date']} — {d['amount']} ₽")
+    data = fetch_all(tickers)
+    print("\n=== ИТОГ ===")
+    for t, f in data.items():
+        if f is None:
+            print(f"{t}: не удалось получить данные")
+        else:
+            print(f"{t}: {len(f['metrics'])} метрик, asOf={f['asOf']}")
