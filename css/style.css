@@ -503,6 +503,193 @@ h1 { margin: 0; font-size: 18px; font-weight: 600; }
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+/* ===== Фундаментальный анализ ===== */
+.fundamental-section {
+  margin-top: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.fundamental-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.fundamental-header .section-title {
+  margin: 0 0 6px 0;
+}
+
+.fundamental-asof {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.fundamental-verdict-box {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.fundamental-metrics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 600px) {
+  .fundamental-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fundamental-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+}
+
+.fundamental-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.fundamental-card-key {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.fundamental-card-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.fundamental-card-badge.good {
+  color: var(--green);
+  background: rgba(38, 166, 154, 0.15);
+}
+
+.fundamental-card-badge.bad {
+  color: var(--red);
+  background: rgba(239, 83, 80, 0.15);
+}
+
+.fundamental-card-badge.neutral {
+  color: var(--yellow);
+  background: rgba(212, 167, 44, 0.15);
+}
+
+.fundamental-card-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.fundamental-card-full {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.fundamental-card-hint {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.fundamental-history-wrap {
+  margin: 12px 0;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.fundamental-history-wrap summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 4px 0;
+  user-select: none;
+  list-style: none;
+}
+
+.fundamental-history-wrap summary::-webkit-details-marker {
+  display: none;
+}
+
+.fundamental-history-wrap summary::before {
+  content: "▸ ";
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.fundamental-history-wrap[open] summary::before {
+  content: "▾ ";
+}
+
+.fundamental-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.fundamental-history-table th,
+.fundamental-history-table td {
+  padding: 6px 4px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.fundamental-history-table th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.fundamental-history-table td:first-child,
+.fundamental-history-table th:first-child {
+  text-align: left;
+}
+
+.fundamental-history-table td b { color: var(--text); }
+
+.fundamental-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 12px 0 0 0;
+  padding: 10px 12px;
+  background: rgba(74, 158, 255, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+}
+
+.fundamental-note b { color: var(--text); }
+
 @media (max-width: 700px) {
   .notes-grid { grid-template-columns: 1fr; }
   .header-top { flex-direction: column; align-items: flex-start; }
