@@ -15,7 +15,6 @@
       </a>
     </div>
 
-    <!-- ===== Основные параметры ===== -->
     <div class="controls">
       <label title="Код акции на бирже">Тикер:
         <select id="ticker">
@@ -39,7 +38,6 @@
 
     <div class="controls" id="strategyParams"></div>
 
-    <!-- ===== Параметры бэктеста ===== -->
     <div class="controls">
       <label title="Сколько денег ты вкладываешь в стратегию на старте">Капитал, ₽:
         <input id="capital" type="number" value="100000" min="1000" step="1000" />
@@ -54,13 +52,12 @@
         <input id="useSplit" type="checkbox" />
         Out-of-sample 70/30
       </label>
-      <label title="Учитывать дивидендные гэпы: цены до отсечек корректируются, а на графике появляются метки D">
+      <label title="Корректировать график на дивидендные гэпы и начислять дивиденды в бэктест (с учётом НДФЛ 13%)">
         <input id="useDividends" type="checkbox" checked />
         Учитывать дивиденды
       </label>
     </div>
 
-    <!-- ===== Кнопки действий ===== -->
     <div class="controls">
       <button id="reload">Пересчитать</button>
       <button id="optimize" class="secondary" title="Перебрать все пары EMA и показать топ-10">🔬 Оптимизировать EMA</button>
@@ -78,7 +75,7 @@
       <div class="dividend-header">
         <span id="dividendSummary"></span>
       </div>
-      <div id="dividendList" class="dividend-list"></div>
+      <div id="dividendTable" class="dividend-table-wrap"></div>
     </div>
 
     <div id="verdict" class="verdict"></div>
