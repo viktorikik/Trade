@@ -1,5 +1,5 @@
 // js/indicators.js
-// Технические индикаторы и функции анализа. Без внешних зависимостей.
+// Технические индикаторы, функции анализа и корректировка на дивиденды.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
@@ -106,10 +106,65 @@ function bollingerBands(closes, period = 20, mult = 2) {
 }
 
 // =====================================================
+// Дивидендная корректировка (backward adjustment)
+// =====================================================
+//
+// Логика: для каждого дивиденда находим день отсечки (registryclosedate),
+// затем корректируем все бары ДО него на коэффициент
+//   factor = (close_до_отсечки − дивиденд) / close_до_отсечки
+// Это сшивает историю так, чтобы дивидендный гэп не выглядел как падение.
+
+function applyDividendAdjustment(data, dividends) {
+  if (!dividends || dividends.length === 0) {
+    return { adjusted: data, gapDates: [] };
+  }
+
+  const adjusted = data.map(d => ({ ...d }));
+  const gapDates = [];
+
+  const sortedDivs = [...dividends]
+    .filter(d => d.date && Number(d.amount) > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  for (const div of sortedDivs) {
+    // Индекс первого бара на/после даты отсечки
+    let exIdx = -1;
+    for (let i = 0; i < adjusted.length; i++) {
+      if (adjusted[i].time >= div.date) {
+        exIdx = i;
+        break;
+      }
+    }
+    // Если дата отсечки раньше начала данных или совпадает с первым баром — пропускаем
+    if (exIdx <= 0) continue;
+
+    const refPrice = adjusted[exIdx - 1].close;
+    if (!(refPrice > 0)) continue;
+
+    const factor = (refPrice - div.amount) / refPrice;
+    if (factor <= 0 || factor >= 1) continue;
+
+    for (let i = 0; i < exIdx; i++) {
+      adjusted[i].open  *= factor;
+      adjusted[i].high  *= factor;
+      adjusted[i].low   *= factor;
+      adjusted[i].close *= factor;
+    }
+
+    gapDates.push({
+      date: adjusted[exIdx].time,
+      amount: div.amount,
+      factor: +factor.toFixed(6),
+    });
+  }
+
+  return { adjusted, gapDates };
+}
+
+// =====================================================
 // Сигналы для разных стратегий
 // =====================================================
 
-// 1. EMA-кроссовер
 function emaCrossoverSignals(data, fastPeriod, slowPeriod) {
   const closes = data.map(d => d.close);
   const fast = ema(closes, fastPeriod);
@@ -117,7 +172,6 @@ function emaCrossoverSignals(data, fastPeriod, slowPeriod) {
   return findCrossovers(fast, slow);
 }
 
-// 2. RSI mean-reversion
 function rsiMeanReversionSignals(data, period = 14, oversold = 30, overbought = 70) {
   const closes = data.map(d => d.close);
   const r = rsi(closes, period);
@@ -136,7 +190,6 @@ function rsiMeanReversionSignals(data, period = 14, oversold = 30, overbought = 
   return signals;
 }
 
-// 3. Bollinger breakout
 function bollingerBreakoutSignals(data, period = 20, mult = 2) {
   const closes = data.map(d => d.close);
   const bb = bollingerBands(closes, period, mult);
@@ -155,7 +208,6 @@ function bollingerBreakoutSignals(data, period = 20, mult = 2) {
   return signals;
 }
 
-// 4. Buy & Hold — одна покупка в начале
 function buyHoldSignals(data) {
   if (data.length < 2) return [];
   return [{ index: 0, type: 'buy' }];
@@ -197,7 +249,7 @@ const STRATEGIES = {
 };
 
 // =====================================================
-// Комплексный анализ рынка (для вердикта)
+// Комплексный анализ рынка
 // =====================================================
 
 function analyzeMarket(data) {
