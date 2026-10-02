@@ -38,11 +38,13 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
-YEAR_RE = re.compile(r'^(20\d{2}|LTM)$', re.IGNORECASE)
+# Год — только 4 цифры (2020-2029)
+YEAR_ONLY_RE = re.compile(r'^(20\d{2})$')
 
-# Метрики, которые тянем. Ключ — внутреннее имя, значение — список
-# regex-паттернов для поиска строки в таблице по её названию.
-# Паттерны заякорены на начало строки, чтобы не схватить лишнее.
+# LTM / TTM в любой обёртке: 'LTM', 'LTM ?', 'LTM (12м)', 'TTM', 'LTM*' и т.п.
+LTM_RE = re.compile(r'(?<![A-Za-z])(LTM|TTM)(?![A-Za-z])', re.IGNORECASE)
+
+# Метрики, которые тянем.
 METRIC_PATTERNS = {
     "pe": [r'^P\s*/\s*E\b'],
     "pb": [r'^P\s*/\s*B\b'],
@@ -51,7 +53,7 @@ METRIC_PATTERNS = {
     "eps": [r'^EPS\b'],
     "divYield": [
         r'^Див\.?\s*доход.*\bао\b',
-        r'^Див\.?\s*доход.*\bап\b',  # fallback, если ао нет
+        r'^Див\.?\s*доход.*\bап\b',
         r'^Дивидендная\s*доходность',
     ],
     "netProfitBln": [r'^Чистая\s+прибыль'],
@@ -62,8 +64,7 @@ METRIC_PATTERNS = {
 
 def parse_number(raw):
     """
-    Парсит число из ячейки: '1 251' -> 1251, '17.7%' -> 17.7,
-    '0.000' -> 0.0, '—' -> None.
+    '1 251' -> 1251, '17.7%' -> 17.7, '0.000' -> 0.0, '—' -> None.
     """
     if raw is None:
         return None
@@ -88,53 +89,72 @@ def parse_number(raw):
         return None
 
 
+def classify_header_cell(v):
+    """
+    Возвращает '2023' / 'LTM' / None для ячейки заголовка таблицы.
+    Устойчиво к мусору вокруг: 'LTM ?', 'LTM (12м)', '2023 ' и т.п.
+    """
+    if v is None or (isinstance(v, float) and pd.isna(v)):
+        return None
+
+    s = str(v).strip()
+    if not s:
+        return None
+
+    # Убираем типовой мусор: '?', '*', неразрывные пробелы, скобочные пояснения
+    s_clean = s.rstrip('?*').strip()
+    # Если что-то вроде 'LTM (12 мес.)' — отрезаем скобку
+    s_clean = re.sub(r'\s*\([^)]*\)\s*$', '', s_clean).strip()
+
+    # Год — ровно 4 цифры
+    if YEAR_ONLY_RE.match(s_clean):
+        return s_clean
+
+    # LTM / TTM в любом контексте
+    if LTM_RE.search(s_clean):
+        return 'LTM'
+
+    return None
+
+
 def find_year_header_row(df):
     """
-    Ищет в DataFrame строку, в которой >= 3 значений выглядят как годы
-    (2021, 2022, ..., LTM). Возвращает индекс строки или None.
+    Ищет строку, в которой >= 3 ячейки выглядят как годы или LTM.
     """
     max_scan = min(20, len(df))
     for i in range(max_scan):
         row = df.iloc[i]
-        year_count = 0
+        count = 0
         for v in row:
-            if pd.isna(v):
-                continue
-            s = str(v).strip()
-            if YEAR_RE.match(s):
-                year_count += 1
-        if year_count >= 3:
+            if classify_header_cell(v) is not None:
+                count += 1
+        if count >= 3:
             return i
     return None
 
 
 def collect_year_columns(df, header_row_idx):
     """
-    Возвращает {col_idx: year_name} для найденной строки заголовков.
-    year_name приводится к верхнему регистру ('ltm' -> 'LTM').
+    Возвращает {col_idx: year_name}. LTM/TTM нормализуются в 'LTM'.
     """
     row = df.iloc[header_row_idx]
     cols = {}
     for col_idx, v in enumerate(row):
-        if pd.isna(v):
-            continue
-        s = str(v).strip()
-        if YEAR_RE.match(s):
-            cols[col_idx] = s.upper()
+        classified = classify_header_cell(v)
+        if classified is not None:
+            cols[col_idx] = classified
     return cols
 
 
 def find_metric_row(df, patterns, start_idx):
     """
     Ищет строку, первая колонка которой матчит хотя бы один из patterns.
-    Начинает поиск со start_idx. Возвращает индекс строки или None.
     """
     for i in range(start_idx, len(df)):
         v = df.iloc[i, 0]
         if pd.isna(v):
             continue
         s = str(v).strip()
-        # Убираем возможный '?' и пробелы в конце — Smart-Lab их добавляет
         s = re.sub(r"\s*\?\s*$", "", s)
         for pat in patterns:
             if re.match(pat, s):
@@ -144,8 +164,7 @@ def find_metric_row(df, patterns, start_idx):
 
 def is_fundamentals_table(df):
     """
-    Проверка: это таблица с фундаменталом? Признаки:
-    есть строка с годами и есть строка с 'P/E' или 'ROE'.
+    Проверка: это таблица с фундаменталом? Возвращает индекс строки-заголовка или None.
     """
     header_row = find_year_header_row(df)
     if header_row is None:
@@ -166,14 +185,14 @@ def extract_fundamentals(df, header_row_idx):
     if not year_cols:
         return None
 
-    # Сортируем годы: обычные годы по возрастанию, LTM — в конце
+    # Сортируем: обычные годы по возрастанию, LTM — в самом конце.
     sorted_years = sorted(
         year_cols.items(),
         key=lambda x: (x[1] == "LTM", x[1] if x[1] != "LTM" else "ZZZZ"),
     )
     last_col_idx, last_year_name = sorted_years[-1]
 
-    # Находим все нужные строки
+    # Находим все нужные строки метрик
     metric_rows = {}
     for metric_name, patterns in METRIC_PATTERNS.items():
         row_idx = find_metric_row(df, patterns, header_row_idx + 1)
@@ -183,7 +202,7 @@ def extract_fundamentals(df, header_row_idx):
     if not metric_rows:
         return None
 
-    # Текущие значения (из LTM или последнего года)
+    # Текущие значения (LTM или последний год)
     metrics = {}
     for metric_name, row_idx in metric_rows.items():
         v = parse_number(df.iloc[row_idx, last_col_idx])
@@ -201,7 +220,7 @@ def extract_fundamentals(df, header_row_idx):
             v = parse_number(df.iloc[row_idx, col_idx])
             if v is not None:
                 entry[metric_name] = v
-        if len(entry) > 1:  # не только 'year'
+        if len(entry) > 1:
             history.append(entry)
 
     return {
@@ -246,17 +265,31 @@ def fetch_fundamentals_for_ticker(ticker):
         if header_row is None:
             continue
 
+        # === DEBUG: показываем, что именно увидел парсер в строке-заголовке ===
+        print(f"  [{ticker}] строка-заголовок (строка {header_row}):", flush=True)
+        header_row_values = []
+        for col_idx, v in enumerate(df.iloc[header_row]):
+            if pd.isna(v):
+                continue
+            classified = classify_header_cell(v)
+            mark = f" -> {classified}" if classified else ""
+            print(f"    col {col_idx}: {v!r}{mark}", flush=True)
+            header_row_values.append((col_idx, v, classified))
+
         result = extract_fundamentals(df, header_row)
         if result is None:
             continue
 
         print(
             f"  [{ticker}] фундаментал: asOf={result['asOf']}, "
-            f"метрик найдено: {len(result['metrics'])}",
+            f"метрик: {len(result['metrics'])}, "
+            f"лет в истории: {len(result['history'])}",
             flush=True,
         )
         for k, v in result["metrics"].items():
             print(f"    {k}: {v}", flush=True)
+        years = [h['year'] for h in result['history']]
+        print(f"    годы в истории: {years}", flush=True)
         return result
 
     print(f"  [{ticker}] не нашли таблицу с фундаменталом", file=sys.stderr)
@@ -289,4 +322,5 @@ if __name__ == "__main__":
         if f is None:
             print(f"{t}: не удалось получить данные")
         else:
-            print(f"{t}: {len(f['metrics'])} метрик, asOf={f['asOf']}")
+            print(f"{t}: {len(f['metrics'])} метрик, asOf={f['asOf']}, "
+                  f"лет: {len(f['history'])}")
