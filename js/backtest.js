@@ -14,12 +14,25 @@ function runBacktest(data, signals, options = {}) {
   const signalByIndex = new Map();
   for (const s of signals) signalByIndex.set(s.index, s.type);
 
-  // Карта: дата отсечки -> дивиденд на акцию
+  // === Санити-фильтр дивидендов ===
+  // Парсер Smart-Lab иногда ошибочно выдаёт цены акций за дивиденды.
+  // Реальный дивиденд почти никогда не превышает 50% цены акции.
+  // Всё, что выше — считаем ошибкой парсинга и отбрасываем,
+  // чтобы не раздувать капитал до небес.
+  const MAX_DIVIDEND_RATIO = 0.5;
   const divByDate = new Map();
   for (const d of dividends) {
-    if (d.date && Number(d.amount) > 0) {
-      divByDate.set(d.date, Number(d.amount));
+    if (!d.date || !(Number(d.amount) > 0)) continue;
+    const amount = Number(d.amount);
+    const bar = data.find(b => b.time === d.date);
+    if (bar && amount > bar.close * MAX_DIVIDEND_RATIO) {
+      console.warn(
+        `[backtest] Пропускаем подозрительный дивиденд ${amount} ₽ ` +
+        `на ${d.date} (цена закрытия ${bar.close} ₽) — вероятно, ошибка парсинга`
+      );
+      continue;
     }
+    divByDate.set(d.date, amount);
   }
 
   let cash = initialCapital;
