@@ -7679,9 +7679,9 @@
       "roe": 2.7,
       "roa": 1.1,
       "eps": 23.4,
-      "divYield": 4.1,
+      "divYield": 4.0,
       "netProfitBln": 248.0,
-      "capitalizationBln": 3618.0
+      "capitalizationBln": 3623.0
     },
     "history": [
       {
@@ -7738,9 +7738,9 @@
         "roe": 2.7,
         "roa": 1.1,
         "eps": 23.4,
-        "divYield": 4.1,
+        "divYield": 4.0,
         "netProfitBln": 248.0,
-        "capitalizationBln": 3618.0
+        "capitalizationBln": 3623.0
       }
     ]
   }
