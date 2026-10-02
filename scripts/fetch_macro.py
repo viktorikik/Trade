@@ -5,6 +5,7 @@
 
 import io
 import json
+import re
 import sys
 import time
 from datetime import date, timedelta
@@ -72,7 +73,6 @@ def _fetch_iss_history_paginated(session, url, label):
         all_rows.extend(page_rows)
         start += len(page_rows)
 
-        # Если страница неполная — это последняя, выходим
         if len(page_rows) < 100:
             break
 
@@ -102,32 +102,46 @@ def fetch_usdrub(session):
 def _parse_rate_value(raw):
     """
     Парсит значение ставки из ячейки.
-    Возвращает float или None.
+    Работает с форматами: '14,00', '14.00', '14', '14,00%'.
+    Защита от бага с разделителем тысяч: '1400' -> 14.0.
     """
     if raw is None or (isinstance(raw, float) and pd.isna(raw)):
         return None
 
     s = str(raw).strip()
+    if not s or s.lower() in ("nan", "none", "—", "-"):
+        return None
+
+    # Убираем всё, кроме цифр, точки, запятой и минуса
     s = s.replace("%", "").replace("\xa0", "").replace(" ", "")
+    s = re.sub(r"[^\d.,\-]", "", s)
+
+    if not s or s in ("-", ".", ",", ".,"):
+        return None
+
+    # Русская запятая → точка
     s = s.replace(",", ".")
 
-    # Убираем всё, кроме цифр, точки и минуса
-    import re
-    s = re.sub(r"[^\d.\-]", "", s)
-
-    if not s or s in ("-", ".", "-."):
-        return None
+    # Если точек больше одной — оставляем только первую (на всякий случай)
+    if s.count(".") > 1:
+        parts = s.split(".")
+        s = parts[0] + "." + "".join(parts[1:])
 
     try:
         val = float(s)
     except ValueError:
         return None
 
-    # Санити-фильтр: ключевая ставка не может быть > 100% или <= 0
+    # Защита от бага pandas с разделителем тысяч:
+    # если получилось 1400 вместо 14.0 — делим на 100
+    if val >= 100:
+        val = val / 100
+
+    # Финальный санити-фильтр
     if not (0 < val < MAX_REASONABLE_RATE):
         return None
 
-    return val
+    return round(val, 4)
 
 
 def fetch_key_rate():
@@ -145,7 +159,9 @@ def fetch_key_rate():
         return None
 
     try:
-        tables = pd.read_html(io.StringIO(resp.text), header=0)
+        # dtype=str — критично! Иначе pandas интерпретирует «14,00»
+        # как число 1400 (запятая = разделитель тысяч в русской локали).
+        tables = pd.read_html(io.StringIO(resp.text), header=0, dtype=str)
     except Exception as e:
         print(f"  [KeyRate] pandas не нашёл таблиц: {e}", file=sys.stderr)
         return None
@@ -153,15 +169,13 @@ def fetch_key_rate():
     print(f"  [KeyRate] найдено таблиц: {len(tables)}", flush=True)
 
     for i, df in enumerate(tables):
-        # Убираем возможные многоуровневые заголовки — оставляем как есть
         cols_lower = [str(c).strip().lower() for c in df.columns]
 
-        # Ищем таблицу, где есть и 'дата', и 'ставка'
         if "дата" not in cols_lower or "ставка" not in cols_lower:
             continue
 
         print(f"  [KeyRate] таблица #{i}: колонки = {list(df.columns)}", flush=True)
-        print(f"  [KeyRate] первые 3 строки:", flush=True)
+        print(f"  [KeyRate] первые 3 строки (сырые):", flush=True)
         for j, row in df.head(3).iterrows():
             print(f"    {dict(row)}", flush=True)
 
