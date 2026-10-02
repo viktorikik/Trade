@@ -1,5 +1,5 @@
 """
-Скачивает дневные свечи с MOEX ISS и дивиденды со Smart-Lab.
+Скачивает дневные свечи с MOEX ISS, дивиденды и фундаментал со Smart-Lab.
 Сохраняет в data/{ticker}.json.
 """
 
@@ -14,6 +14,7 @@ import requests
 
 sys.path.insert(0, str(Path(__file__).parent))
 from fetch_dividends_smartlab import fetch_all as fetch_dividends_smartlab
+from fetch_fundamentals_smartlab import fetch_all as fetch_fundamentals_smartlab
 
 # ===== Конфигурация =====
 TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
@@ -157,6 +158,9 @@ def main() -> int:
     print("=== Загрузка дивидендов со Smart-Lab ===", flush=True)
     dividends_map = fetch_dividends_smartlab(TICKERS, START_DATE)
 
+    print("\n=== Загрузка фундаментала со Smart-Lab ===", flush=True)
+    fundamentals_map = fetch_fundamentals_smartlab(TICKERS)
+
     written = 0
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
@@ -172,6 +176,7 @@ def main() -> int:
 
             dividends = dividends_map.get(ticker, [])
             splits = SPLITS.get(ticker, [])
+            fundamentals = fundamentals_map.get(ticker)
 
             payload = {
                 "ticker": ticker,
@@ -180,6 +185,7 @@ def main() -> int:
                 "candles": candles,
                 "dividends": dividends,
                 "splits": splits,
+                "fundamentals": fundamentals,
             }
 
             out_path = OUTPUT_DIR / f"{ticker}.json"
@@ -187,10 +193,16 @@ def main() -> int:
                 json.dumps(payload, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
+
+            fund_info = (
+                f"фундаментал: {len(fundamentals['metrics'])} метрик (asOf={fundamentals['asOf']})"
+                if fundamentals
+                else "фундаментал: не получен"
+            )
             print(
                 f"  [{ticker}] {info['name']} · лот {info['lotSize']} · "
                 f"{len(candles)} баров · {len(dividends)} дивидендов · "
-                f"{len(splits)} сплитов → {out_path}",
+                f"{len(splits)} сплитов · {fund_info} → {out_path}",
                 flush=True,
             )
             written += 1
