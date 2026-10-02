@@ -17,7 +17,7 @@
 
     <!-- ===== Основные параметры ===== -->
     <div class="controls">
-      <label title="Код акции на бирже: SBER — Сбербанк, GAZP — Газпром, LKOH — Лукойл">Тикер:
+      <label title="Код акции на бирже">Тикер:
         <select id="ticker">
           <option value="SBER">SBER</option>
           <option value="GAZP">GAZP</option>
@@ -27,26 +27,42 @@
           <option value="NVTK">NVTK</option>
         </select>
       </label>
-      <label title="Средняя цена за N дней. Быстрая EMA реагирует на изменения быстро">EMA быстрая:
-        <input id="emaFast" type="number" value="9" min="2" max="100" />
-      </label>
-      <label title="Средняя цена за N дней. Медленная EMA показывает общий тренд">EMA медленная:
-        <input id="emaSlow" type="number" value="21" min="2" max="200" />
+      <label title="Какую стратегию применять в бэктесте">Стратегия:
+        <select id="strategy">
+          <option value="ema">EMA-кроссовер</option>
+          <option value="rsi">RSI mean-reversion</option>
+          <option value="bollinger">Bollinger breakout</option>
+          <option value="buyhold">Buy &amp; Hold</option>
+        </select>
       </label>
     </div>
+
+    <!-- ===== Параметры стратегии (динамически) ===== -->
+    <div class="controls" id="strategyParams"></div>
 
     <!-- ===== Параметры бэктеста ===== -->
     <div class="controls">
       <label title="Сколько денег ты вкладываешь в стратегию на старте">Капитал, ₽:
         <input id="capital" type="number" value="100000" min="1000" step="1000" />
       </label>
-      <label title="Процент, который брокер берёт с каждой сделки. Обычно 0.03–0.05%">Комиссия, %:
+      <label title="Процент, который брокер берёт с каждой сделки">Комиссия, %:
         <input id="commission" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
       <label title="Разница между ожидаемой и реальной ценой сделки">Проскальзывание, %:
         <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
+      <label title="Разбить историю на 70% обучение / 30% проверка. Защита от переобучения.">
+        <input id="useSplit" type="checkbox" />
+        Out-of-sample 70/30
+      </label>
+    </div>
+
+    <!-- ===== Кнопки действий ===== -->
+    <div class="controls">
       <button id="reload">Пересчитать</button>
+      <button id="optimize" class="secondary" title="Перебрать все пары EMA и показать топ-10">🔬 Оптимизировать EMA</button>
+      <button id="exportCsv" class="secondary" title="Скачать все сделки в CSV">📄 Сделки CSV</button>
+      <button id="exportSummary" class="secondary" title="Скачать сводку по всем тикерам">📊 Сводка CSV</button>
       <button id="addToNotes" class="secondary" disabled title="Сохранить текущий тикер в заметки">
         📝 В заметки
       </button>
@@ -65,7 +81,30 @@
     </div>
 
     <!-- ===== Метрики бэктеста ===== -->
-    <div id="metrics" class="metrics"></div>
+    <div id="metricsWrap">
+      <div id="metrics" class="metrics"></div>
+    </div>
+
+    <!-- ===== Блок Out-of-sample ===== -->
+    <div id="splitSection" style="display:none;">
+      <h3 class="section-title">Out-of-sample: обучение vs проверка</h3>
+      <div class="split-grid">
+        <div class="split-col">
+          <div class="split-label">Train (70%)</div>
+          <div id="trainMetrics" class="metrics"></div>
+        </div>
+        <div class="split-col">
+          <div class="split-label">Test (30%)</div>
+          <div id="testMetrics" class="metrics"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Блок оптимизации ===== -->
+    <div id="optimizerSection" style="display:none;">
+      <h3 class="section-title">Топ-10 пар EMA по доходности</h3>
+      <div id="optimizerResults" class="optimizer-results"></div>
+    </div>
   </header>
 
   <main>
@@ -74,13 +113,13 @@
     <div id="equityChart"></div>
   </main>
 
-  <!-- ===== Тост-уведомление ===== -->
   <div id="toast" class="toast"></div>
 
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/indicators.js"></script>
   <script src="js/backtest.js"></script>
+  <script src="js/optimizer.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
