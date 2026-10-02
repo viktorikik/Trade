@@ -1,5 +1,5 @@
 // js/indicators.js
-// Технические индикаторы, корректировка на сплиты и дивиденды, фундаментальный анализ, риск.
+// Технические индикаторы, корректировки, фундаментал, риск, макро.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
@@ -112,7 +112,6 @@ function atr(data, period = 14) {
   const out = new Array(data.length).fill(null);
   if (data.length < period + 1) return out;
 
-  // True Range для каждого бара (начиная с i=1)
   const tr = new Array(data.length).fill(null);
   for (let i = 1; i < data.length; i++) {
     const h = data[i].high;
@@ -121,12 +120,10 @@ function atr(data, period = 14) {
     tr[i] = Math.max(h - l, Math.abs(h - pc), Math.abs(l - pc));
   }
 
-  // Первый ATR = простое среднее TR за первые period баров
   let sum = 0;
   for (let i = 1; i <= period; i++) sum += tr[i];
   out[period] = sum / period;
 
-  // Дальше — сглаживание Уайлдера (тот же метод, что в RSI)
   for (let i = period + 1; i < data.length; i++) {
     out[i] = (out[i - 1] * (period - 1) + tr[i]) / period;
   }
@@ -135,7 +132,7 @@ function atr(data, period = 14) {
 }
 
 // =====================================================
-// Корректировка на сплиты (backward adjustment)
+// Корректировка на сплиты
 // =====================================================
 function applySplitAdjustment(data, splits) {
   if (!splits || splits.length === 0) {
@@ -179,7 +176,7 @@ function applySplitAdjustment(data, splits) {
 }
 
 // =====================================================
-// Корректировка на дивиденды (backward adjustment)
+// Корректировка на дивиденды
 // =====================================================
 function applyDividendAdjustment(data, dividends) {
   if (!dividends || dividends.length === 0) {
@@ -189,7 +186,6 @@ function applyDividendAdjustment(data, dividends) {
   const adjusted = data.map(d => ({ ...d }));
   const gapDates = [];
 
-  // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
   const MAX_DIVIDEND_RATIO = 0.5;
 
   const sortedDivs = [...dividends]
@@ -241,9 +237,6 @@ function applyDividendAdjustment(data, dividends) {
   return { adjusted, gapDates };
 }
 
-// =====================================================
-// Универсальный helper: применяет сплиты, затем дивиденды
-// =====================================================
 function applyCorporateActions(data, payload, options = {}) {
   const useSplits    = options.useSplits    !== false;
   const useDividends = options.useDividends !== false;
@@ -478,7 +471,6 @@ function analyzeFundamentals(payload) {
   const cards = [];
   let score = 0;
 
-  // ---------- P/E ----------
   if (m.pe != null && isFinite(m.pe)) {
     const pe = m.pe;
     let cls, verdict, hint;
@@ -501,14 +493,10 @@ function analyzeFundamentals(payload) {
       cls = 'bad'; verdict = 'очень дорого'; score -= 2;
       hint = `P/E = ${pe.toFixed(1)} — очень высокий. Оправдан только при взрывном росте прибыли.`;
     }
-    cards.push({
-      key: 'P/E', full: 'Цена / Прибыль',
-      value: _fmtRatio(pe), cls, verdict, hint,
-    });
+    cards.push({ key: 'P/E', full: 'Цена / Прибыль', value: _fmtRatio(pe), cls, verdict, hint });
     reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} P/E = ${pe.toFixed(2)} — ${verdict}`);
   }
 
-  // ---------- P/B ----------
   if (m.pb != null && isFinite(m.pb)) {
     const pb = m.pb;
     let cls, verdict, hint;
@@ -530,14 +518,10 @@ function analyzeFundamentals(payload) {
       cls = 'bad'; verdict = 'очень дорого'; score -= 2;
       hint = 'P/B > 5 — рынок оценивает компанию в разы дороже её активов.';
     }
-    cards.push({
-      key: 'P/B', full: 'Цена / Балансовая стоимость',
-      value: _fmtRatio(pb), cls, verdict, hint,
-    });
+    cards.push({ key: 'P/B', full: 'Цена / Балансовая стоимость', value: _fmtRatio(pb), cls, verdict, hint });
     reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} P/B = ${pb.toFixed(2)} — ${verdict}`);
   }
 
-  // ---------- ROE ----------
   if (m.roe != null && isFinite(m.roe)) {
     const roe = m.roe;
     let cls, verdict, hint;
@@ -557,14 +541,10 @@ function analyzeFundamentals(payload) {
       cls = 'bad'; verdict = 'очень слабо'; score -= 2;
       hint = `ROE ${roe.toFixed(1)}% — низкая эффективность использования капитала.`;
     }
-    cards.push({
-      key: 'ROE', full: 'Рентабельность капитала',
-      value: _fmtPercent(roe), cls, verdict, hint,
-    });
+    cards.push({ key: 'ROE', full: 'Рентабельность капитала', value: _fmtPercent(roe), cls, verdict, hint });
     reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} ROE = ${roe.toFixed(1)}% — ${verdict}`);
   }
 
-  // ---------- Дивидендная доходность ----------
   if (m.divYield != null && isFinite(m.divYield)) {
     const dy = m.divYield;
     let cls, verdict, hint;
@@ -584,14 +564,10 @@ function analyzeFundamentals(payload) {
       cls = 'bad'; verdict = 'почти нет'; score -= 2;
       hint = 'Компания почти не платит дивиденды.';
     }
-    cards.push({
-      key: 'Div Yield', full: 'Дивидендная доходность',
-      value: _fmtPercent(dy), cls, verdict, hint,
-    });
+    cards.push({ key: 'Div Yield', full: 'Дивидендная доходность', value: _fmtPercent(dy), cls, verdict, hint });
     reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} Див. доходность = ${dy.toFixed(1)}% — ${verdict}`);
   }
 
-  // ---------- ROA (бонус, без балла) ----------
   if (m.roa != null && isFinite(m.roa)) {
     cards.push({
       key: 'ROA', full: 'Рентабельность активов',
@@ -600,7 +576,6 @@ function analyzeFundamentals(payload) {
     });
   }
 
-  // ---------- EPS (бонус) ----------
   if (m.eps != null && isFinite(m.eps)) {
     cards.push({
       key: 'EPS', full: 'Прибыль на акцию',
@@ -609,7 +584,6 @@ function analyzeFundamentals(payload) {
     });
   }
 
-  // ---------- Чистая прибыль (бонус) ----------
   if (m.netProfitBln != null && isFinite(m.netProfitBln)) {
     cards.push({
       key: 'Чистая прибыль', full: 'за последний год',
@@ -618,7 +592,6 @@ function analyzeFundamentals(payload) {
     });
   }
 
-  // ---------- Капитализация (бонус) ----------
   if (m.capitalizationBln != null && isFinite(m.capitalizationBln)) {
     cards.push({
       key: 'Капитализация', full: 'рыночная стоимость',
@@ -627,7 +600,6 @@ function analyzeFundamentals(payload) {
     });
   }
 
-  // ---------- Итоговый вердикт ----------
   let verdict, verdictClass;
   if (score >= 5)       { verdict = 'ФУНДАМЕНТАЛЬНО ДЁШЕВО';        verdictClass = 'strong-buy'; }
   else if (score >= 2)  { verdict = 'ФУНДАМЕНТАЛЬНО ПРИВЛЕКАТЕЛЬНО'; verdictClass = 'buy'; }
@@ -647,22 +619,15 @@ function analyzeFundamentals(payload) {
 }
 
 // =====================================================
-// Управление риском (Этап A)
+// Управление риском
 // =====================================================
-//
-// Считаем ATR(14), рекомендуемый стоп (цена − atrMultiplier × ATR)
-// и размер позиции, при котором потеря при стопе не превысит
-// заданный процент капитала.
-//
-// Бэктест НЕ трогаем — эта функция только для отображения.
 
 function analyzeRisk(data, options = {}) {
   const capital       = options.capital ?? 100000;
-  const riskPct       = options.riskPct ?? 1;          // % от капитала на сделку
+  const riskPct       = options.riskPct ?? 1;
   const lotSize       = options.lotSize ?? 1;
   const atrPeriod     = options.atrPeriod ?? 14;
-  const atrMultiplier = options.atrMultiplier ?? 2;    // стоп на N × ATR ниже цены
-  // Реальная текущая цена (до корректировок). Если не передана — берём close последнего бара.
+  const atrMultiplier = options.atrMultiplier ?? 2;
   const rawPrice      = options.rawPrice ?? null;
 
   if (!data || data.length < atrPeriod + 1) return null;
@@ -673,14 +638,12 @@ function analyzeRisk(data, options = {}) {
 
   const price = (rawPrice != null && rawPrice > 0) ? rawPrice : data[data.length - 1].close;
   const stopPrice = price - atrMultiplier * lastAtr;
-  const riskPerShare = price - stopPrice;  // = atrMultiplier * lastAtr
+  const riskPerShare = price - stopPrice;
 
-  // Ограничение №1: риск на сделку
   const maxRiskRub = capital * (riskPct / 100);
   const maxSharesByRisk = Math.floor(maxRiskRub / riskPerShare);
   const maxLotsByRisk = Math.floor(maxSharesByRisk / lotSize);
 
-  // Ограничение №2: не потратить больше, чем есть
   const maxLotsByCash = Math.floor(capital / (lotSize * price));
 
   const recommendedLots = Math.max(0, Math.min(maxLotsByRisk, maxLotsByCash));
@@ -711,8 +674,116 @@ function analyzeRisk(data, options = {}) {
     capital,
     riskPct,
     lotSize,
-    // Пометки, если позиция не рекомендуется
     noCash: maxLotsByCash === 0,
     riskCapped: maxLotsByRisk < maxLotsByCash,
+  };
+}
+
+// =====================================================
+// Макро-контекст
+// =====================================================
+//
+// На вход: объект macroData из data/macro.json.
+// Структура:
+//   {
+//     updatedAt: "2026-10-03",
+//     imoex:   { current, date, changePct: {day, month, year}, history },
+//     usdrub:  { current, date, changePct: {day, month, year}, history },
+//     keyRate: { current, date, history }
+//   }
+//
+// Возвращает { cards, chartData, updatedAt } или null.
+
+function _fmtValue(v, digits = 2) {
+  if (v == null || !isFinite(v)) return '—';
+  return Number(v).toLocaleString('ru-RU', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
+}
+
+function _fmtChange(v) {
+  if (v == null || !isFinite(v)) return '—';
+  const sign = v >= 0 ? '+' : '';
+  return sign + Number(v).toFixed(2) + '%';
+}
+
+function _changeCls(v) {
+  if (v == null || !isFinite(v)) return 'neutral';
+  if (v > 0.05) return 'good';
+  if (v < -0.05) return 'bad';
+  return 'neutral';
+}
+
+function analyzeMacro(macroData) {
+  if (!macroData) return null;
+
+  const hasImoex = macroData.imoex && isFinite(macroData.imoex.current);
+  const hasUsd   = macroData.usdrub && isFinite(macroData.usdrub.current);
+  const hasRate  = macroData.keyRate && isFinite(macroData.keyRate.current);
+
+  if (!hasImoex && !hasUsd && !hasRate) return null;
+
+  const cards = [];
+
+  if (hasImoex) {
+    const im = macroData.imoex;
+    const ch = im.changePct || {};
+    cards.push({
+      key: 'IMOEX',
+      full: 'Индекс Мосбиржи',
+      value: _fmtValue(im.current, 2),
+      date: im.date,
+      changes: [
+        { label: 'День',  value: ch.day },
+        { label: 'Мес.',  value: ch.month },
+        { label: 'Год',   value: ch.year },
+      ],
+      hint: 'Главный барометр российского рынка акций. Если он растёт — растут и большинство бумаг.',
+    });
+  }
+
+  if (hasUsd) {
+    const usd = macroData.usdrub;
+    const ch = usd.changePct || {};
+    cards.push({
+      key: 'USD/RUB',
+      full: 'Курс доллара (фиксинг)',
+      value: _fmtValue(usd.current, 4),
+      date: usd.date,
+      changes: [
+        { label: 'День',  value: ch.day },
+        { label: 'Мес.',  value: ch.month },
+        { label: 'Год',   value: ch.year },
+      ],
+      hint: 'Рост курса доллара обычно давит на акции: инвесторы уходят в валюту. Для экспортёров (Газпром, Роснефть) — наоборот, помогает.',
+    });
+  }
+
+  if (hasRate) {
+    const kr = macroData.keyRate;
+    cards.push({
+      key: 'Ключевая ставка',
+      full: 'ЦБ РФ, % годовых',
+      value: _fmtValue(kr.current, 2) + '%',
+      date: kr.date,
+      changes: [],
+      hint: 'Процент, под который ЦБ даёт деньги банкам. Высокая ставка = вклады привлекательнее акций = рынок охлаждается. Низкая = наоборот.',
+    });
+  }
+
+  // Мини-график IMOEX: последние ~90 точек (3 месяца)
+  let chartData = null;
+  if (hasImoex && Array.isArray(macroData.imoex.history)) {
+    const hist = macroData.imoex.history;
+    const slice = hist.slice(-90);
+    chartData = slice.map(h => ({ time: h.time, value: h.close }));
+  }
+
+  return {
+    cards,
+    chartData,
+    updatedAt: macroData.updatedAt || '',
+    imoexChangeDay: hasImoex ? macroData.imoex.changePct?.day : null,
   };
 }
