@@ -44,7 +44,10 @@ const dataCache = new Map();
 
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
-    return { ticker, name: ticker, lotSize: 1, candles: raw, dividends: [], splits: [] };
+    return {
+      ticker, name: ticker, lotSize: 1, candles: raw,
+      dividends: [], splits: [], fundamentals: null,
+    };
   }
   if (raw && Array.isArray(raw.candles)) {
     return {
@@ -54,6 +57,7 @@ function normalizeTickerPayload(raw, ticker) {
       candles: raw.candles,
       dividends: Array.isArray(raw.dividends) ? raw.dividends : [],
       splits: Array.isArray(raw.splits) ? raw.splits : [],
+      fundamentals: raw.fundamentals || null,
     };
   }
   throw new Error('Неизвестный формат файла данных');
@@ -147,13 +151,79 @@ function renderAnalysis(data) {
   return analysis;
 }
 
+// ===== Фундаментальный анализ =====
+function renderFundamentalSection(payload) {
+  const section = document.getElementById('fundamentalSection');
+  if (!section) return;
+
+  const analysis = analyzeFundamentals(payload);
+  if (!analysis) {
+    section.style.display = 'none';
+    return;
+  }
+
+  // Шапка: asOf
+  const asOfEl = document.getElementById('fundamentalAsOf');
+  if (asOfEl) {
+    asOfEl.textContent = analysis.asOf ? `Данные на: ${analysis.asOf}` : '';
+  }
+
+  // Вердикт
+  const vEl = document.getElementById('fundamentalVerdict');
+  vEl.className = `verdict fundamental-verdict-box ${analysis.verdictClass}`;
+  vEl.innerHTML = `
+    <div class="verdict-main">${analysis.verdict}</div>
+    <div class="verdict-score">Сумма баллов: ${analysis.score}</div>
+  `;
+
+  // Карточки метрик
+  const cardsHtml = analysis.cards.map(c => `
+    <div class="fundamental-card">
+      <div class="fundamental-card-head">
+        <div class="fundamental-card-key">${c.key}</div>
+        <div class="fundamental-card-badge ${c.cls}">${c.verdict || ''}</div>
+      </div>
+      <div class="fundamental-card-value">${c.value}</div>
+      <div class="fundamental-card-full">${c.full}</div>
+      <div class="fundamental-card-hint">${c.hint}</div>
+    </div>
+  `).join('');
+  document.getElementById('fundamentalMetrics').innerHTML = cardsHtml;
+
+  // История по годам (таблица)
+  const histWrap = document.querySelector('.fundamental-history-wrap');
+  if (analysis.history && analysis.history.length > 0) {
+    const keys = ['pe', 'pb', 'roe', 'roa', 'eps', 'divYield'];
+    const labels = {
+      pe: 'P/E', pb: 'P/B', roe: 'ROE %', roa: 'ROA %',
+      eps: 'EPS ₽', divYield: 'Div %',
+    };
+    const head = '<tr><th>Год</th>' + keys.map(k => `<th>${labels[k]}</th>`).join('') + '</tr>';
+    const rows = analysis.history.map(h => {
+      const cells = keys.map(k => {
+        const v = h[k];
+        if (v == null) return '<td>—</td>';
+        const digits = (k === 'roe' || k === 'roa' || k === 'divYield') ? 1 : 2;
+        return `<td>${Number(v).toFixed(digits)}</td>`;
+      }).join('');
+      return `<tr><td><b>${h.year}</b></td>${cells}</tr>`;
+    }).join('');
+    document.getElementById('fundamentalHistory').innerHTML =
+      `<table class="fundamental-history-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+    if (histWrap) histWrap.style.display = '';
+  } else {
+    if (histWrap) histWrap.style.display = 'none';
+  }
+
+  section.style.display = 'block';
+}
+
 // ===== Секция корпоративных действий =====
 function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends) {
   const section = document.getElementById('corpSection');
   if (!section) return;
 
   // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
-  // Защищает таблицу от мусора, если парсер Smart-Lab опять сломается.
   const MAX_DIV_RATIO = 0.5;
   const allDivs = (payload.dividends || []).filter(d => {
     if (!d || !d.date || !(Number(d.amount) > 0)) return false;
@@ -204,7 +274,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
 
   // Сплиты
   for (const s of allSplits) {
-    const adj = splitEvents.find(x => x.date >= s.date);
     rows.push({
       date: s.date,
       type: 'Сплит',
@@ -232,7 +301,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
     });
   }
 
-  // Сортировка: сначала свежие
   rows.sort((a, b) => b.sortKey.localeCompare(a.sortKey));
 
   document.getElementById('corpTable').innerHTML = `
@@ -358,6 +426,7 @@ async function render() {
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
+    document.getElementById('fundamentalSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -375,6 +444,7 @@ async function render() {
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
+    document.getElementById('fundamentalSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -487,6 +557,7 @@ async function render() {
 
   renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends);
   renderAnalysis(adjusted);
+  renderFundamentalSection(payload);
 
   currentState = {
     ticker,
