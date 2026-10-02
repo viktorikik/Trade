@@ -151,39 +151,59 @@ h1 {
 
 .stats b { color: var(--text); }
 
-/* ===== Секция дивидендов ===== */
+/* ===== Дивиденды ===== */
 .dividend-section {
   margin-top: 12px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-left: 3px solid var(--yellow);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 12px 14px;
 }
 
 .dividend-header {
   font-size: 13px;
   color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  line-height: 1.6;
 }
 
 .dividend-header b { color: var(--text); }
 
-.dividend-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.dividend-table-wrap {
+  overflow-x: auto;
 }
 
-.dividend-chip {
-  display: inline-block;
-  background: rgba(212, 167, 44, 0.15);
-  color: var(--yellow);
+.div-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.div-table th, .div-table td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.div-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.div-table td b { color: var(--text); }
+.div-table .muted { color: var(--muted); font-style: italic; }
+
+.div-note {
+  margin: 10px 0 0;
   font-size: 12px;
-  font-weight: 500;
-  padding: 3px 9px;
-  border-radius: 10px;
-  border: 1px solid rgba(212, 167, 44, 0.3);
+  color: var(--muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
 }
 
 /* ===== Метрики ===== */
@@ -339,9 +359,7 @@ h1 {
 .opt-table td.bad  { color: var(--red); font-weight: 600; }
 .opt-table td.neutral { color: var(--text); }
 
-.opt-table tr.row-current {
-  background: rgba(74, 158, 255, 0.08);
-}
+.opt-table tr.row-current { background: rgba(74, 158, 255, 0.08); }
 
 .opt-table .tag {
   display: inline-block;
@@ -422,11 +440,7 @@ h1 {
 
 .note-ticker:hover { text-decoration: underline; }
 
-.note-name {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: -4px;
-}
+.note-name { font-size: 12px; color: var(--muted); margin-top: -4px; }
 
 .note-delete {
   background: transparent;
@@ -439,17 +453,9 @@ h1 {
   line-height: 1;
 }
 
-.note-delete:hover {
-  color: var(--red);
-  background: rgba(239, 83, 80, 0.1);
-}
+.note-delete:hover { color: var(--red); background: rgba(239, 83, 80, 0.1); }
 
-.note-verdict {
-  margin-top: 0;
-  padding: 6px 12px;
-  font-size: 14px;
-}
-
+.note-verdict { margin-top: 0; padding: 6px 12px; font-size: 14px; }
 .note-verdict .verdict-main { font-size: 14px; }
 .note-verdict .verdict-score { font-size: 11px; }
 
@@ -471,11 +477,7 @@ h1 {
   font-size: 12px;
 }
 
-.note-error {
-  font-size: 13px;
-  color: var(--red);
-  padding: 8px 0;
-}
+.note-error { font-size: 13px; color: var(--red); padding: 8px 0; }
 
 .empty-state {
   text-align: center;
