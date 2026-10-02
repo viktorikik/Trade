@@ -37,7 +37,6 @@
       </label>
     </div>
 
-    <!-- ===== Параметры стратегии (динамически) ===== -->
     <div class="controls" id="strategyParams"></div>
 
     <!-- ===== Параметры бэктеста ===== -->
@@ -51,9 +50,13 @@
       <label title="Разница между ожидаемой и реальной ценой сделки">Проскальзывание, %:
         <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
-      <label title="Разбить историю на 70% обучение / 30% проверка. Защита от переобучения.">
+      <label title="Разбить историю на 70% обучение / 30% проверка">
         <input id="useSplit" type="checkbox" />
         Out-of-sample 70/30
+      </label>
+      <label title="Учитывать дивидендные гэпы: цены до отсечек корректируются, а на графике появляются метки D">
+        <input id="useDividends" type="checkbox" checked />
+        Учитывать дивиденды
       </label>
     </div>
 
@@ -68,24 +71,27 @@
       </button>
     </div>
 
-    <!-- ===== Строка статистики ===== -->
     <div id="stats" class="stats"></div>
 
-    <!-- ===== Вердикт системы ===== -->
+    <!-- ===== Дивиденды ===== -->
+    <div id="dividendSection" class="dividend-section" style="display:none;">
+      <div class="dividend-header">
+        <span id="dividendSummary"></span>
+      </div>
+      <div id="dividendList" class="dividend-list"></div>
+    </div>
+
     <div id="verdict" class="verdict"></div>
 
-    <!-- ===== Детали анализа ===== -->
     <div class="analysis-details">
       <div id="indicatorValues" class="indicator-values"></div>
       <ul id="reasons" class="reasons-list"></ul>
     </div>
 
-    <!-- ===== Метрики бэктеста ===== -->
     <div id="metricsWrap">
       <div id="metrics" class="metrics"></div>
     </div>
 
-    <!-- ===== Блок Out-of-sample ===== -->
     <div id="splitSection" style="display:none;">
       <h3 class="section-title">Out-of-sample: обучение vs проверка</h3>
       <div class="split-grid">
@@ -100,7 +106,6 @@
       </div>
     </div>
 
-    <!-- ===== Блок оптимизации ===== -->
     <div id="optimizerSection" style="display:none;">
       <h3 class="section-title">Топ-10 пар EMA по доходности</h3>
       <div id="optimizerResults" class="optimizer-results"></div>
