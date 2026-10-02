@@ -1,5 +1,5 @@
 // js/indicators.js
-// Технические индикаторы, корректировка на сплиты и дивиденды.
+// Технические индикаторы, корректировка на сплиты и дивиденды, фундаментальный анализ.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
@@ -160,8 +160,24 @@ function applyDividendAdjustment(data, dividends) {
   const adjusted = data.map(d => ({ ...d }));
   const gapDates = [];
 
+  // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
+  // Защищает график от мусорных данных (если парсер Smart-Lab опять сломается).
+  const MAX_DIVIDEND_RATIO = 0.5;
+
   const sortedDivs = [...dividends]
-    .filter(d => d.date && Number(d.amount) > 0)
+    .filter(d => {
+      if (!d.date || !(Number(d.amount) > 0)) return false;
+      const amount = Number(d.amount);
+      const bar = data.find(b => b.time === d.date);
+      if (bar && amount > bar.close * MAX_DIVIDEND_RATIO) {
+        console.warn(
+          `[indicators] Пропускаем подозрительный дивиденд ${amount} ₽ ` +
+          `на ${d.date} (цена ${bar.close} ₽) — вероятно, ошибка парсинга`
+        );
+        return false;
+      }
+      return true;
+    })
     .sort((a, b) => a.date.localeCompare(b.date));
 
   for (const div of sortedDivs) {
@@ -307,7 +323,7 @@ const STRATEGIES = {
 };
 
 // =====================================================
-// Комплексный анализ
+// Комплексный технический анализ
 // =====================================================
 
 function analyzeMarket(data) {
@@ -398,5 +414,210 @@ function analyzeMarket(data) {
       rsi: rsi14[i],
       macd: { macdValue: macdNow, signalValue: signalNow },
     },
+  };
+}
+
+// =====================================================
+// Фундаментальный анализ
+// =====================================================
+//
+// На вход — payload из data/{ticker}.json, в котором есть поле
+// "fundamentals": { asOf, metrics: { pe, pb, roe, roa, eps, divYield, ... } }.
+// Если поля нет — возвращаем null, и UI просто скроет блок.
+
+function _fmtRatio(v, digits = 2) {
+  if (v == null || !isFinite(v)) return '—';
+  return Number(v).toFixed(digits);
+}
+
+function _fmtPercent(v, digits = 1) {
+  if (v == null || !isFinite(v)) return '—';
+  return Number(v).toFixed(digits) + '%';
+}
+
+function _fmtBln(v) {
+  if (v == null || !isFinite(v)) return '—';
+  if (Math.abs(v) >= 1000) {
+    return (v / 1000).toFixed(2) + ' трлн ₽';
+  }
+  return Number(v).toFixed(0) + ' млрд ₽';
+}
+
+function analyzeFundamentals(payload) {
+  if (!payload || !payload.fundamentals || !payload.fundamentals.metrics) {
+    return null;
+  }
+
+  const f = payload.fundamentals;
+  const m = f.metrics;
+  const reasons = [];
+  const cards = [];
+  let score = 0;
+
+  // ---------- P/E ----------
+  if (m.pe != null && isFinite(m.pe)) {
+    const pe = m.pe;
+    let cls, verdict, hint;
+    if (pe <= 0) {
+      cls = 'bad'; verdict = 'прибыль отрицательная'; score -= 2;
+      hint = 'Компания в убытке — P/E не имеет смысла.';
+    } else if (pe < 5) {
+      cls = 'good'; verdict = 'очень дёшево'; score += 2;
+      hint = `Акция «окупится» прибылью за ~${pe.toFixed(1)} года. Это очень низкий P/E — рынок оценивает компанию с большим дисконтом.`;
+    } else if (pe < 10) {
+      cls = 'good'; verdict = 'дёшево'; score += 1;
+      hint = `Акция окупится за ~${pe.toFixed(1)} лет. Ниже среднего по рынку (10–15).`;
+    } else if (pe < 20) {
+      cls = 'neutral'; verdict = 'справедливо'; score += 0;
+      hint = `Акция окупится за ~${pe.toFixed(1)} лет. Это типичный диапазон для рынка.`;
+    } else if (pe < 30) {
+      cls = 'bad'; verdict = 'дорого'; score -= 1;
+      hint = `Акция окупится за ~${pe.toFixed(1)} лет. Инвесторы ожидают быстрого роста прибыли.`;
+    } else {
+      cls = 'bad'; verdict = 'очень дорого'; score -= 2;
+      hint = `P/E = ${pe.toFixed(1)} — очень высокий. Оправдан только при взрывном росте прибыли.`;
+    }
+    cards.push({
+      key: 'P/E', full: 'Цена / Прибыль',
+      value: _fmtRatio(pe), cls, verdict, hint,
+    });
+    reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} P/E = ${pe.toFixed(2)} — ${verdict}`);
+  }
+
+  // ---------- P/B ----------
+  if (m.pb != null && isFinite(m.pb)) {
+    const pb = m.pb;
+    let cls, verdict, hint;
+    if (pb <= 0) {
+      cls = 'neutral'; verdict = '—'; hint = 'Балансовая стоимость отрицательная.';
+    } else if (pb < 0.8) {
+      cls = 'good'; verdict = 'очень дёшево'; score += 2;
+      hint = 'Компания стоит дешевле, чем всё её имущество по балансу. Рынок видит риски, но это классический «value»-сигнал.';
+    } else if (pb < 1.5) {
+      cls = 'good'; verdict = 'дёшево'; score += 1;
+      hint = 'Цена близка к балансовой стоимости активов. Обычно так оценивают зрелые компании.';
+    } else if (pb < 3) {
+      cls = 'neutral'; verdict = 'справедливо'; score += 0;
+      hint = 'Стандартная оценка для компаний с хорошей рентабельностью.';
+    } else if (pb < 5) {
+      cls = 'bad'; verdict = 'дорого'; score -= 1;
+      hint = 'Инвесторы платят существенно больше балансовой стоимости — ждут высокой прибыли.';
+    } else {
+      cls = 'bad'; verdict = 'очень дорого'; score -= 2;
+      hint = 'P/B > 5 — рынок оценивает компанию в разы дороже её активов.';
+    }
+    cards.push({
+      key: 'P/B', full: 'Цена / Балансовая стоимость',
+      value: _fmtRatio(pb), cls, verdict, hint,
+    });
+    reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} P/B = ${pb.toFixed(2)} — ${verdict}`);
+  }
+
+  // ---------- ROE ----------
+  if (m.roe != null && isFinite(m.roe)) {
+    const roe = m.roe;
+    let cls, verdict, hint;
+    if (roe > 20) {
+      cls = 'good'; verdict = 'отлично'; score += 2;
+      hint = `На каждый рубль капитала акционеров компания зарабатывает ${roe.toFixed(1)} коп. в год. Очень эффективно.`;
+    } else if (roe > 15) {
+      cls = 'good'; verdict = 'хорошо'; score += 1;
+      hint = `Рентабельность капитала ${roe.toFixed(1)}% — выше типичной нормы 10–15%.`;
+    } else if (roe > 10) {
+      cls = 'neutral'; verdict = 'нормально'; score += 0;
+      hint = `ROE ${roe.toFixed(1)}% — на уровне среднего по рынку.`;
+    } else if (roe > 5) {
+      cls = 'bad'; verdict = 'слабо'; score -= 1;
+      hint = `ROE ${roe.toFixed(1)}% — компания зарабатывает мало относительно вложенного капитала.`;
+    } else {
+      cls = 'bad'; verdict = 'очень слабо'; score -= 2;
+      hint = `ROE ${roe.toFixed(1)}% — низкая эффективность использования капитала.`;
+    }
+    cards.push({
+      key: 'ROE', full: 'Рентабельность капитала',
+      value: _fmtPercent(roe), cls, verdict, hint,
+    });
+    reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} ROE = ${roe.toFixed(1)}% — ${verdict}`);
+  }
+
+  // ---------- Дивидендная доходность ----------
+  if (m.divYield != null && isFinite(m.divYield)) {
+    const dy = m.divYield;
+    let cls, verdict, hint;
+    if (dy > 8) {
+      cls = 'good'; verdict = 'отлично'; score += 2;
+      hint = `Дивиденды дают ${dy.toFixed(1)}% годовых — существенно выше банковского вклада.`;
+    } else if (dy > 5) {
+      cls = 'good'; verdict = 'хорошо'; score += 1;
+      hint = `Дивидендная доходность ${dy.toFixed(1)}% — выше среднего по рынку.`;
+    } else if (dy > 2) {
+      cls = 'neutral'; verdict = 'средне'; score += 0;
+      hint = `Дивиденды ${dy.toFixed(1)}% — примерно на уровне вклада.`;
+    } else if (dy > 1) {
+      cls = 'bad'; verdict = 'мало'; score -= 1;
+      hint = `Дивиденды ${dy.toFixed(1)}% — ниже банковского вклада.`;
+    } else {
+      cls = 'bad'; verdict = 'почти нет'; score -= 2;
+      hint = 'Компания почти не платит дивиденды.';
+    }
+    cards.push({
+      key: 'Div Yield', full: 'Дивидендная доходность',
+      value: _fmtPercent(dy), cls, verdict, hint,
+    });
+    reasons.push(`${cls === 'good' ? '✅' : cls === 'bad' ? '❌' : '🔸'} Див. доходность = ${dy.toFixed(1)}% — ${verdict}`);
+  }
+
+  // ---------- ROA (бонус, без балла) ----------
+  if (m.roa != null && isFinite(m.roa)) {
+    cards.push({
+      key: 'ROA', full: 'Рентабельность активов',
+      value: _fmtPercent(m.roa), cls: 'neutral', verdict: '',
+      hint: `Сколько прибыли компания получает на каждый рубль всех активов (${m.roa.toFixed(1)}%). Для банков норма ниже, чем для промышленности.`,
+    });
+  }
+
+  // ---------- EPS (бонус) ----------
+  if (m.eps != null && isFinite(m.eps)) {
+    cards.push({
+      key: 'EPS', full: 'Прибыль на акцию',
+      value: _fmtRatio(m.eps) + ' ₽', cls: 'neutral', verdict: '',
+      hint: 'Чистая прибыль компании, приходящаяся на одну акцию за год.',
+    });
+  }
+
+  // ---------- Чистая прибыль (бонус) ----------
+  if (m.netProfitBln != null && isFinite(m.netProfitBln)) {
+    cards.push({
+      key: 'Чистая прибыль', full: 'за последний год',
+      value: _fmtBln(m.netProfitBln), cls: 'neutral', verdict: '',
+      hint: 'Сколько компания заработала после всех расходов и налогов.',
+    });
+  }
+
+  // ---------- Капитализация (бонус) ----------
+  if (m.capitalizationBln != null && isFinite(m.capitalizationBln)) {
+    cards.push({
+      key: 'Капитализация', full: 'рыночная стоимость',
+      value: _fmtBln(m.capitalizationBln), cls: 'neutral', verdict: '',
+      hint: 'Сколько стоит вся компания на бирже (цена × число акций).',
+    });
+  }
+
+  // ---------- Итоговый вердикт ----------
+  let verdict, verdictClass;
+  if (score >= 5)       { verdict = 'ФУНДАМЕНТАЛЬНО ДЁШЕВО';        verdictClass = 'strong-buy'; }
+  else if (score >= 2)  { verdict = 'ФУНДАМЕНТАЛЬНО ПРИВЛЕКАТЕЛЬНО'; verdictClass = 'buy'; }
+  else if (score >= -1) { verdict = 'ФУНДАМЕНТАЛЬНО СПРАВЕДЛИВО';   verdictClass = 'neutral'; }
+  else if (score >= -4) { verdict = 'ФУНДАМЕНТАЛЬНО ДОРОГО';        verdictClass = 'sell'; }
+  else                  { verdict = 'ФУНДАМЕНТАЛЬНО ОЧЕНЬ ДОРОГО';  verdictClass = 'sell'; }
+
+  return {
+    verdict,
+    verdictClass,
+    score,
+    cards,
+    reasons,
+    asOf: f.asOf || '',
+    history: Array.isArray(f.history) ? f.history : [],
   };
 }
