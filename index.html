@@ -52,30 +52,35 @@
         <input id="useSplit" type="checkbox" />
         Out-of-sample 70/30
       </label>
-      <label title="Корректировать график на дивидендные гэпы и начислять дивиденды в бэктест (с учётом НДФЛ 13%)">
-        <input id="useDividends" type="checkbox" checked />
+    </div>
+
+    <div class="controls">
+      <label title="Приводить исторические цены к текущему масштабу после дробления акций. Текущая цена всегда реальная.">
+        <input id="useCorpSplits" type="checkbox" checked />
+        Корректировать сплиты
+      </label>
+      <label title="Корректировать график на дивидендные гэпы и начислять дивиденды в бэктест (НДФЛ 13%).">
+        <input id="useCorpDividends" type="checkbox" checked />
         Учитывать дивиденды
       </label>
     </div>
 
     <div class="controls">
       <button id="reload">Пересчитать</button>
-      <button id="optimize" class="secondary" title="Перебрать все пары EMA и показать топ-10">🔬 Оптимизировать EMA</button>
-      <button id="exportCsv" class="secondary" title="Скачать все сделки в CSV">📄 Сделки CSV</button>
-      <button id="exportSummary" class="secondary" title="Скачать сводку по всем тикерам">📊 Сводка CSV</button>
-      <button id="addToNotes" class="secondary" disabled title="Сохранить текущий тикер в заметки">
-        📝 В заметки
-      </button>
+      <button id="optimize" class="secondary">🔬 Оптимизировать EMA</button>
+      <button id="exportCsv" class="secondary">📄 Сделки CSV</button>
+      <button id="exportSummary" class="secondary">📊 Сводка CSV</button>
+      <button id="addToNotes" class="secondary" disabled>📝 В заметки</button>
     </div>
 
     <div id="stats" class="stats"></div>
 
-    <!-- ===== Дивиденды ===== -->
-    <div id="dividendSection" class="dividend-section" style="display:none;">
-      <div class="dividend-header">
-        <span id="dividendSummary"></span>
+    <!-- ===== Корпоративные действия ===== -->
+    <div id="corpSection" class="corp-section" style="display:none;">
+      <div class="corp-header">
+        <span id="corpSummary"></span>
       </div>
-      <div id="dividendTable" class="dividend-table-wrap"></div>
+      <div id="corpTable" class="corp-table-wrap"></div>
     </div>
 
     <div id="verdict" class="verdict"></div>
