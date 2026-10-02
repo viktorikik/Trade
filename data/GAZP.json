@@ -7639,16 +7639,16 @@
   "dividends": [],
   "splits": [],
   "fundamentals": {
-    "asOf": "2025",
+    "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 2.77,
-      "roe": 5.9,
-      "roa": 3.4,
-      "eps": 45.4,
+      "pe": 1.57,
+      "roe": 7.7,
+      "roa": 4.4,
+      "eps": 61.1,
       "divYield": 0.0,
-      "netProfitBln": 1074.0,
-      "capitalizationBln": 2973.0
+      "netProfitBln": 1446.0,
+      "capitalizationBln": 2269.0
     },
     "history": [
       {
@@ -7700,6 +7700,16 @@
         "divYield": 0.0,
         "netProfitBln": 1074.0,
         "capitalizationBln": 2973.0
+      },
+      {
+        "year": "LTM",
+        "pe": 1.57,
+        "roe": 7.7,
+        "roa": 4.4,
+        "eps": 61.1,
+        "divYield": 0.0,
+        "netProfitBln": 1446.0,
+        "capitalizationBln": 2269.0
       }
     ]
   }

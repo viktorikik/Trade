@@ -7668,16 +7668,16 @@
   ],
   "splits": [],
   "fundamentals": {
-    "asOf": "2025",
+    "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 44.0,
-      "roe": 2.8,
-      "roa": 1.7,
-      "eps": 133.5,
-      "divYield": 11.5,
-      "netProfitBln": 92.5,
-      "capitalizationBln": 4074.0
+      "pe": 8.55,
+      "roe": 12.0,
+      "roa": 7.9,
+      "eps": 629.1,
+      "divYield": 12.6,
+      "netProfitBln": 435.9,
+      "capitalizationBln": 3726.0
     },
     "history": [
       {
@@ -7727,6 +7727,16 @@
         "divYield": 11.5,
         "netProfitBln": 92.5,
         "capitalizationBln": 4074.0
+      },
+      {
+        "year": "LTM",
+        "pe": 8.55,
+        "roe": 12.0,
+        "roa": 7.9,
+        "eps": 629.1,
+        "divYield": 12.6,
+        "netProfitBln": 435.9,
+        "capitalizationBln": 3726.0
       }
     ]
   }
