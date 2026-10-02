@@ -48,6 +48,10 @@
       <label title="Разница между ожидаемой и реальной ценой сделки">Проскальзывание, %:
         <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
       </label>
+      <label title="Какой процент капитала ты готов потерять на одной сделке (при срабатывании стопа)">
+        Риск на сделку, %:
+        <input id="riskPct" type="number" value="1" min="0.1" max="10" step="0.1" />
+      </label>
       <label title="Разбить историю на 70% обучение / 30% проверка">
         <input id="useSplit" type="checkbox" />
         Out-of-sample 70/30
@@ -97,7 +101,7 @@
         <span id="fundamentalAsOf" class="fundamental-asof"></span>
       </div>
 
-      <div id="fundamentalVerdict" class="fundamental-verdict"></div>
+      <div id="fundamentalVerdict" class="fundamental-verdict-box"></div>
 
       <div id="fundamentalMetrics" class="fundamental-metrics"></div>
 
@@ -111,6 +115,26 @@
         в отличие от технического анализа, который смотрит только на график цены.
         Данные со Smart-Lab, обновляются раз в сутки.
         Это <b>не инвестиционная рекомендация</b> — только учебный материал.
+      </p>
+    </div>
+
+    <!-- ===== Управление риском ===== -->
+    <div id="riskSection" class="risk-section" style="display:none;">
+      <div class="risk-header">
+        <h3 class="section-title">🛡️ Управление риском</h3>
+        <span id="riskSubtitle" class="risk-subtitle"></span>
+      </div>
+
+      <div id="riskMetrics" class="risk-metrics"></div>
+
+      <p class="risk-note">
+        ℹ️ <b>ATR (Average True Range)</b> — средний дневной размах цены.
+        Показывает, насколько сильно акция «дёргается». Стоп ставится ниже
+        текущей цены на <b>2 × ATR</b> — это классический приём: он даёт цене
+        «дышать», но ограничивает потерю, если тренд развернулся.
+        Размер позиции подобран так, чтобы потеря при срабатывании стопа
+        не превысила <b>заданный % от капитала</b>. Это не рекомендация
+        к покупке — только расчёт риска.
       </p>
     </div>
 
