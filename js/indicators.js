@@ -1,5 +1,5 @@
 // js/indicators.js
-// Технические индикаторы, корректировка на сплиты и дивиденды, фундаментальный анализ.
+// Технические индикаторы, корректировка на сплиты и дивиденды, фундаментальный анализ, риск.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
@@ -106,6 +106,35 @@ function bollingerBands(closes, period = 20, mult = 2) {
 }
 
 // =====================================================
+// ATR — Average True Range (средний истинный размах)
+// =====================================================
+function atr(data, period = 14) {
+  const out = new Array(data.length).fill(null);
+  if (data.length < period + 1) return out;
+
+  // True Range для каждого бара (начиная с i=1)
+  const tr = new Array(data.length).fill(null);
+  for (let i = 1; i < data.length; i++) {
+    const h = data[i].high;
+    const l = data[i].low;
+    const pc = data[i - 1].close;
+    tr[i] = Math.max(h - l, Math.abs(h - pc), Math.abs(l - pc));
+  }
+
+  // Первый ATR = простое среднее TR за первые period баров
+  let sum = 0;
+  for (let i = 1; i <= period; i++) sum += tr[i];
+  out[period] = sum / period;
+
+  // Дальше — сглаживание Уайлдера (тот же метод, что в RSI)
+  for (let i = period + 1; i < data.length; i++) {
+    out[i] = (out[i - 1] * (period - 1) + tr[i]) / period;
+  }
+
+  return out;
+}
+
+// =====================================================
 // Корректировка на сплиты (backward adjustment)
 // =====================================================
 function applySplitAdjustment(data, splits) {
@@ -161,7 +190,6 @@ function applyDividendAdjustment(data, dividends) {
   const gapDates = [];
 
   // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
-  // Защищает график от мусорных данных (если парсер Smart-Lab опять сломается).
   const MAX_DIVIDEND_RATIO = 0.5;
 
   const sortedDivs = [...dividends]
@@ -420,10 +448,6 @@ function analyzeMarket(data) {
 // =====================================================
 // Фундаментальный анализ
 // =====================================================
-//
-// На вход — payload из data/{ticker}.json, в котором есть поле
-// "fundamentals": { asOf, metrics: { pe, pb, roe, roa, eps, divYield, ... } }.
-// Если поля нет — возвращаем null, и UI просто скроет блок.
 
 function _fmtRatio(v, digits = 2) {
   if (v == null || !isFinite(v)) return '—';
@@ -619,5 +643,76 @@ function analyzeFundamentals(payload) {
     reasons,
     asOf: f.asOf || '',
     history: Array.isArray(f.history) ? f.history : [],
+  };
+}
+
+// =====================================================
+// Управление риском (Этап A)
+// =====================================================
+//
+// Считаем ATR(14), рекомендуемый стоп (цена − atrMultiplier × ATR)
+// и размер позиции, при котором потеря при стопе не превысит
+// заданный процент капитала.
+//
+// Бэктест НЕ трогаем — эта функция только для отображения.
+
+function analyzeRisk(data, options = {}) {
+  const capital       = options.capital ?? 100000;
+  const riskPct       = options.riskPct ?? 1;          // % от капитала на сделку
+  const lotSize       = options.lotSize ?? 1;
+  const atrPeriod     = options.atrPeriod ?? 14;
+  const atrMultiplier = options.atrMultiplier ?? 2;    // стоп на N × ATR ниже цены
+  // Реальная текущая цена (до корректировок). Если не передана — берём close последнего бара.
+  const rawPrice      = options.rawPrice ?? null;
+
+  if (!data || data.length < atrPeriod + 1) return null;
+
+  const atrArr = atr(data, atrPeriod);
+  const lastAtr = atrArr[data.length - 1];
+  if (lastAtr == null || !(lastAtr > 0)) return null;
+
+  const price = (rawPrice != null && rawPrice > 0) ? rawPrice : data[data.length - 1].close;
+  const stopPrice = price - atrMultiplier * lastAtr;
+  const riskPerShare = price - stopPrice;  // = atrMultiplier * lastAtr
+
+  // Ограничение №1: риск на сделку
+  const maxRiskRub = capital * (riskPct / 100);
+  const maxSharesByRisk = Math.floor(maxRiskRub / riskPerShare);
+  const maxLotsByRisk = Math.floor(maxSharesByRisk / lotSize);
+
+  // Ограничение №2: не потратить больше, чем есть
+  const maxLotsByCash = Math.floor(capital / (lotSize * price));
+
+  const recommendedLots = Math.max(0, Math.min(maxLotsByRisk, maxLotsByCash));
+  const recommendedShares = recommendedLots * lotSize;
+  const positionValue = recommendedShares * price;
+  const positionPct = (positionValue / capital) * 100;
+  const actualRiskRub = recommendedShares * riskPerShare;
+  const actualRiskPct = (actualRiskRub / capital) * 100;
+
+  return {
+    atr: lastAtr,
+    atrPct: (lastAtr / price) * 100,
+    atrPeriod,
+    atrMultiplier,
+    price,
+    stopPrice,
+    stopPct: (stopPrice / price - 1) * 100,
+    riskPerShare,
+    maxRiskRub,
+    maxLotsByRisk,
+    maxLotsByCash,
+    recommendedLots,
+    recommendedShares,
+    positionValue,
+    positionPct,
+    actualRiskRub,
+    actualRiskPct,
+    capital,
+    riskPct,
+    lotSize,
+    // Пометки, если позиция не рекомендуется
+    noCash: maxLotsByCash === 0,
+    riskCapped: maxLotsByRisk < maxLotsByCash,
   };
 }
