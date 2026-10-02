@@ -1,6 +1,6 @@
 // js/app.js
 
-// ===== График свечей =====
+// ===== Графики =====
 const chartEl = document.getElementById('chart');
 const chart = LightweightCharts.createChart(chartEl, {
   layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
@@ -21,7 +21,6 @@ const candleSeries = chart.addCandlestickSeries({
 const emaFastSeries = chart.addLineSeries({ color: '#26a69a', lineWidth: 2 });
 const emaSlowSeries = chart.addLineSeries({ color: '#ef5350', lineWidth: 2 });
 
-// ===== График equity =====
 const equityEl = document.getElementById('equityChart');
 const equityChart = LightweightCharts.createChart(equityEl, {
   layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
@@ -50,10 +49,9 @@ resizeCharts();
 // ===== Кэш данных =====
 const dataCache = new Map();
 
-// Поддерживаем оба формата: массив (старый) и объект с полями (новый)
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
-    return { ticker, name: ticker, lotSize: 1, candles: raw };
+    return { ticker, name: ticker, lotSize: 1, candles: raw, dividends: [] };
   }
   if (raw && Array.isArray(raw.candles)) {
     return {
@@ -61,6 +59,7 @@ function normalizeTickerPayload(raw, ticker) {
       name: raw.name || ticker,
       lotSize: Number.isFinite(raw.lotSize) && raw.lotSize > 0 ? raw.lotSize : 1,
       candles: raw.candles,
+      dividends: Array.isArray(raw.dividends) ? raw.dividends : [],
     };
   }
   throw new Error('Неизвестный формат файла данных');
@@ -86,7 +85,7 @@ function showToast(msg) {
   el._timer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// ===== Счётчик заметок =====
+// ===== Заметки =====
 function updateNotesBadge() {
   const count = loadWatchlist().length;
   document.getElementById('notesCount').textContent = count;
@@ -151,7 +150,33 @@ function renderAnalysis(data) {
   return analysis;
 }
 
-// ===== Динамические параметры стратегии =====
+// ===== Секция дивидендов =====
+function renderDividendSection(payload, gapDates, usedAdjusted) {
+  const section = document.getElementById('dividendSection');
+  const divs = payload.dividends || [];
+
+  if (divs.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  const total = divs.reduce((s, d) => s + d.amount, 0);
+
+  document.getElementById('dividendSummary').innerHTML =
+    `💰 Дивидендов за период: <b>${divs.length}</b> · ` +
+    `Суммарно: <b>${total.toFixed(2)} ₽</b> на акцию · ` +
+    `Корректировка: <b>${usedAdjusted ? 'включена' : 'выключена'}</b>`;
+
+  document.getElementById('dividendList').innerHTML = divs
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map(d => `<span class="dividend-chip" title="Размер дивиденда: ${d.amount} ₽">${d.date} · ${d.amount} ₽</span>`)
+    .join('');
+
+  section.style.display = 'block';
+}
+
+// ===== Параметры стратегии =====
 function renderStrategyParams() {
   const sid = document.getElementById('strategy').value;
   const wrap = document.getElementById('strategyParams');
@@ -219,7 +244,7 @@ function readStrategyParams() {
 
 // ===== Состояние =====
 let currentState = null;
-let currentLastResult = null; // для экспорта CSV
+let currentLastResult = null;
 
 function updateAddButton() {
   document.getElementById('addToNotes').disabled = !currentState;
@@ -233,15 +258,16 @@ async function render() {
   const commission  = parseFloat(document.getElementById('commission').value);
   const slippage    = parseFloat(document.getElementById('slippage').value);
   const useSplit    = document.getElementById('useSplit').checked;
+  const useDividends = document.getElementById('useDividends').checked;
 
   const params = readStrategyParams();
 
-  // Валидация EMA
   if (strategyId === 'ema' && params.fast >= params.slow) {
     document.getElementById('stats').innerHTML =
       '<b style="color:#ef5350">Быстрая EMA должна быть меньше медленной.</b>';
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
+    document.getElementById('dividendSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -258,43 +284,73 @@ async function render() {
       `<b style="color:#ef5350">Ошибка загрузки: ${err.message}</b>`;
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
+    document.getElementById('dividendSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
     return;
   }
 
-  const data = payload.candles;
-  const closes = data.map(d => d.close);
+  // === Применяем корректировку на дивиденды ===
+  const useAdj = useDividends && payload.dividends.length > 0;
+  let analysisData = payload.candles;
+  let gapDates = [];
+
+  if (useAdj) {
+    const res = applyDividendAdjustment(payload.candles, payload.dividends);
+    analysisData = res.adjusted;
+    gapDates = res.gapDates;
+  }
+
+  // Данные для отображения свечей — тоже скорректированные, если useAdj.
+  // Иначе график и индикаторы будут «разъезжаться».
+  const displayData = useAdj ? analysisData : payload.candles;
+
+  const closes = analysisData.map(d => d.close);
   const strategy = STRATEGIES[strategyId];
-  const signals = strategy.generate(data, params);
+  const signals = strategy.generate(analysisData, params);
 
-  // Свечи
-  candleSeries.setData(data);
+  candleSeries.setData(displayData);
 
-  // EMA-линии на графике рисуем только для EMA-стратегии
   if (strategyId === 'ema') {
     const fastArr = ema(closes, params.fast);
     const slowArr = ema(closes, params.slow);
     emaFastSeries.setData(
-      data.map((d, i) => fastArr[i] == null ? null : { time: d.time, value: +fastArr[i].toFixed(2) }).filter(Boolean)
+      displayData.map((d, i) => fastArr[i] == null ? null : { time: d.time, value: +fastArr[i].toFixed(2) }).filter(Boolean)
     );
     emaSlowSeries.setData(
-      data.map((d, i) => slowArr[i] == null ? null : { time: d.time, value: +slowArr[i].toFixed(2) }).filter(Boolean)
+      displayData.map((d, i) => slowArr[i] == null ? null : { time: d.time, value: +slowArr[i].toFixed(2) }).filter(Boolean)
     );
   } else {
     emaFastSeries.setData([]);
     emaSlowSeries.setData([]);
   }
 
-  // Метки
-  candleSeries.setMarkers(signals.map(s => ({
-    time: data[s.index].time,
+  // === Маркеры: сигналы + дни дивидендных гэпов ===
+  const markers = signals.map(s => ({
+    time: analysisData[s.index].time,
     position: s.type === 'buy' ? 'belowBar' : 'aboveBar',
     color: s.type === 'buy' ? '#26a69a' : '#ef5350',
     shape: s.type === 'buy' ? 'arrowUp' : 'arrowDown',
     text: s.type === 'buy' ? 'BUY' : 'SELL',
-  })));
+  }));
+
+  // Метки D на дни гэпов (только если показываем скорректированный график)
+  if (useAdj) {
+    for (const g of gapDates) {
+      markers.push({
+        time: g.date,
+        position: 'aboveBar',
+        color: '#d4a72c',
+        shape: 'circle',
+        text: 'D',
+      });
+    }
+    // Lightweight Charts требует отсортированные по времени маркеры
+    markers.sort((a, b) => a.time.localeCompare(b.time));
+  }
+
+  candleSeries.setMarkers(markers);
 
   const backtestOptions = {
     initialCapital: isNaN(capital) ? 100000 : capital,
@@ -303,16 +359,16 @@ async function render() {
     lotSize:        payload.lotSize,
   };
 
-  // Бэктест
-  const result = runBacktest(data, signals, backtestOptions);
+  // Бэктест считаем на analysisData (adjusted), а данные свечей — displayData
+  // Фактически для корректного расчета используем adjusted и для бэктеста
+  const result = runBacktest(analysisData, signals, backtestOptions);
   currentLastResult = { ticker, strategyId, params, result, payload };
 
   equitySeries.setData(result.equity);
   renderMetricsInto('metrics', result);
 
-  // Out-of-sample
   if (useSplit) {
-    const split = runSplitBacktest(data, signals, backtestOptions, 0.7);
+    const split = runSplitBacktest(analysisData, signals, backtestOptions, 0.7);
     renderMetricsInto('trainMetrics', split.train);
     renderMetricsInto('testMetrics', split.test);
     document.getElementById('splitSection').style.display = 'block';
@@ -320,24 +376,32 @@ async function render() {
     document.getElementById('splitSection').style.display = 'none';
   }
 
-  const lastBar = data[data.length - 1];
+  const lastBar = analysisData[analysisData.length - 1];
+  const rawLastBar = payload.candles[payload.candles.length - 1];
   const buys  = signals.filter(s => s.type === 'buy').length;
   const sells = signals.filter(s => s.type === 'sell').length;
 
   document.getElementById('stats').innerHTML =
     `Тикер: <b>${ticker}</b> (${payload.name}) · Лот: <b>${payload.lotSize}</b> · ` +
     `Стратегия: <b>${strategy.label}</b> · ` +
-    `Баров: <b>${data.length}</b> · Последний: <b>${lastBar.time}</b> ` +
-    `@ <b>${lastBar.close.toFixed(2)}</b> · ` +
-    `Сигналов: <b>${signals.length}</b> ` +
+    `Баров: <b>${analysisData.length}</b> · Последний: <b>${lastBar.time}</b> ` +
+    `@ <b>${lastBar.close.toFixed(2)}</b>` +
+    (useAdj && Math.abs(lastBar.close - rawLastBar.close) > 0.01
+      ? ` <span style="color:#8b949e">(реальная: ${rawLastBar.close.toFixed(2)})</span>`
+      : '') +
+    ` · Сигналов: <b>${signals.length}</b> ` +
     `(<span style="color:#26a69a">BUY ${buys}</span> / ` +
     `<span style="color:#ef5350">SELL ${sells}</span>)`;
 
-  renderAnalysis(data);
+  // Секция дивидендов
+  renderDividendSection(payload, gapDates, useAdj);
+
+  // Анализ считаем на adjusted (это правильнее для теханализа)
+  renderAnalysis(analysisData);
 
   currentState = {
     ticker,
-    price: lastBar.close,
+    price: rawLastBar.close, // в заметки сохраняем реальную цену
     lotSize: payload.lotSize,
     strategyId,
     params,
@@ -348,10 +412,9 @@ async function render() {
   equityChart.timeScale().fitContent();
 }
 
-// ===== Кнопка «В заметки» =====
+// ===== Кнопки =====
 document.getElementById('addToNotes').addEventListener('click', () => {
   if (!currentState) return;
-
   const entry = {
     ticker: currentState.ticker,
     addedAt: new Date().toISOString(),
@@ -360,10 +423,8 @@ document.getElementById('addToNotes').addEventListener('click', () => {
     strategyId: currentState.strategyId,
     params: currentState.params,
   };
-
   const { action } = addOrUpdateWatchlist(entry);
   updateNotesBadge();
-
   showToast(
     action === 'added'
       ? `${entry.ticker} добавлен в заметки`
@@ -371,12 +432,12 @@ document.getElementById('addToNotes').addEventListener('click', () => {
   );
 });
 
-// ===== Оптимизация =====
 document.getElementById('optimize').addEventListener('click', async () => {
   const ticker = document.getElementById('ticker').value;
   const capital = parseFloat(document.getElementById('capital').value);
   const commission = parseFloat(document.getElementById('commission').value);
   const slippage = parseFloat(document.getElementById('slippage').value);
+  const useDividends = document.getElementById('useDividends').checked;
 
   let payload;
   try {
@@ -386,14 +447,17 @@ document.getElementById('optimize').addEventListener('click', async () => {
     return;
   }
 
+  let optData = payload.candles;
+  if (useDividends && payload.dividends.length > 0) {
+    optData = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
+  }
+
   const btn = document.getElementById('optimize');
   btn.disabled = true;
   btn.textContent = '⏳ Перебираем…';
-
-  // Даём браузеру отрисовать кнопку перед тяжёлым циклом
   await new Promise(r => setTimeout(r, 20));
 
-  const results = optimizeEmaPairs(payload.candles, {
+  const results = optimizeEmaPairs(optData, {
     initialCapital: isNaN(capital) ? 100000 : capital,
     commissionPct:  isNaN(commission) ? 0.05 : commission,
     slippagePct:    isNaN(slippage) ? 0.05 : slippage,
@@ -445,14 +509,13 @@ document.getElementById('optimize').addEventListener('click', async () => {
     </table>
     <p class="opt-warning">
       ⚠️ Лучшая комбинация на истории не гарантирует лучший результат в будущем.
-      Включи Out-of-sample 70/30, чтобы проверить, работает ли она на новых данных.
+      Включи Out-of-sample 70/30, чтобы проверить её на новых данных.
     </p>
   `;
   document.getElementById('optimizerSection').style.display = 'block';
   document.getElementById('optimizerSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-// ===== Экспорт сделок в CSV =====
 function downloadBlob(filename, text) {
   const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -487,7 +550,6 @@ document.getElementById('exportCsv').addEventListener('click', () => {
   showToast(`Скачано: ${result.trades.length} сделок`);
 });
 
-// ===== Экспорт сводки по всем тикерам =====
 document.getElementById('exportSummary').addEventListener('click', async () => {
   const btn = document.getElementById('exportSummary');
   btn.disabled = true;
@@ -499,14 +561,19 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
   const capital = parseFloat(document.getElementById('capital').value);
   const commission = parseFloat(document.getElementById('commission').value);
   const slippage = parseFloat(document.getElementById('slippage').value);
+  const useDividends = document.getElementById('useDividends').checked;
 
   const rows = [['ticker', 'strategy', 'params', 'return_pct', 'bh_return_pct', 'alpha_pct', 'max_dd_pct', 'trades', 'win_rate_pct', 'fees_rub'].join(',')];
 
   for (const t of tickers) {
     try {
       const payload = await loadRealData(t);
-      const signals = STRATEGIES[strategyId].generate(payload.candles, params);
-      const r = runBacktest(payload.candles, signals, {
+      let d = payload.candles;
+      if (useDividends && payload.dividends.length > 0) {
+        d = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
+      }
+      const signals = STRATEGIES[strategyId].generate(d, params);
+      const r = runBacktest(d, signals, {
         initialCapital: isNaN(capital) ? 100000 : capital,
         commissionPct:  isNaN(commission) ? 0.05 : commission,
         slippagePct:    isNaN(slippage) ? 0.05 : slippage,
@@ -535,7 +602,6 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
   showToast('Сводка скачана');
 });
 
-// ===== Инициализация =====
 document.getElementById('reload').addEventListener('click', render);
 document.getElementById('ticker').addEventListener('change', render);
 document.getElementById('strategy').addEventListener('change', () => {
@@ -544,6 +610,7 @@ document.getElementById('strategy').addEventListener('change', () => {
   render();
 });
 document.getElementById('useSplit').addEventListener('change', render);
+document.getElementById('useDividends').addEventListener('change', render);
 
 (function initFromUrl() {
   const p = new URLSearchParams(window.location.search);
