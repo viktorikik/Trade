@@ -1,11 +1,11 @@
 // js/notes.js
-// Страница заметок с поддержкой нового формата JSON и стратегии.
+// Страница заметок с учётом дивидендной корректировки.
 
 const dataCache = new Map();
 
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
-    return { ticker, name: ticker, lotSize: 1, candles: raw };
+    return { ticker, name: ticker, lotSize: 1, candles: raw, dividends: [] };
   }
   if (raw && Array.isArray(raw.candles)) {
     return {
@@ -13,6 +13,7 @@ function normalizeTickerPayload(raw, ticker) {
       name: raw.name || ticker,
       lotSize: Number.isFinite(raw.lotSize) && raw.lotSize > 0 ? raw.lotSize : 1,
       candles: raw.candles,
+      dividends: Array.isArray(raw.dividends) ? raw.dividends : [],
     };
   }
   throw new Error('Неизвестный формат файла данных');
@@ -53,10 +54,19 @@ async function renderNoteCard(entry) {
 
   try {
     const payload = await loadTickerData(entry.ticker);
-    const data = payload.candles;
-    const last = data[data.length - 1];
-    const analysis = analyzeMarket(data);
-    const changePct = (last.close / entry.priceAtAdd - 1) * 100;
+
+    // Корректируем на дивиденды, чтобы вердикт совпадал с главной страницей
+    let analysisData = payload.candles;
+    if (payload.dividends.length > 0) {
+      analysisData = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
+    }
+
+    const last = analysisData[analysisData.length - 1];
+    const rawLast = payload.candles[payload.candles.length - 1];
+    const analysis = analyzeMarket(analysisData);
+
+    // Изменение считаем по реальным ценам, чтобы сравнение было честным
+    const changePct = (rawLast.close / entry.priceAtAdd - 1) * 100;
     const changeCls = changePct >= 0 ? 'good' : 'bad';
 
     card.innerHTML = `
@@ -73,7 +83,7 @@ async function renderNoteCard(entry) {
       </div>
       <div class="note-row">
         <span>Цена сейчас:</span>
-        <b>${last.close.toFixed(2)} ₽</b>
+        <b>${rawLast.close.toFixed(2)} ₽</b>
       </div>
       <div class="note-row">
         <span>При добавлении:</span>
