@@ -1,5 +1,5 @@
 """
-Скачивает дневные свечи и дивиденды с MOEX ISS.
+Скачивает дневные свечи с MOEX ISS и дивиденды со Smart-Lab.
 Сохраняет в data/{ticker}.json.
 """
 
@@ -11,6 +11,10 @@ from pathlib import Path
 
 import pandas as pd
 import requests
+
+# Импорт нашего парсера дивидендов
+sys.path.insert(0, str(Path(__file__).parent))
+from fetch_dividends_smartlab import fetch_all as fetch_dividends_smartlab
 
 # ===== Конфигурация =====
 TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
@@ -34,7 +38,6 @@ def is_trading_day(d: date) -> bool:
 
 
 def fetch_security_info(session: requests.Session, ticker: str) -> dict:
-    """Возвращает {lotSize, name} для тикера."""
     url = f"{ISS_SECURITIES}/{BOARD}/securities/{ticker}.json"
     params = {
         "iss.meta": "off",
@@ -60,63 +63,10 @@ def fetch_security_info(session: requests.Session, ticker: str) -> dict:
     except (TypeError, ValueError):
         lot_size = 1
 
-    return {
-        "lotSize": lot_size,
-        "name": d.get("SHORTNAME") or ticker,
-    }
-
-
-def fetch_dividends(session: requests.Session, ticker: str) -> list[dict]:
-    """
-    Возвращает список дивидендов [{date: YYYY-MM-DD, amount: float}].
-    Источник — MOEX ISS. Данные могут быть неполными.
-    """
-    url = f"{ISS_BASE}/securities/{ticker}/dividends.json"
-    params = {"iss.meta": "off"}
-    try:
-        resp = session.get(url, params=params, timeout=30)
-        resp.raise_for_status()
-    except Exception as e:
-        print(f"  [{ticker}] не удалось получить дивиденды: {e}", file=sys.stderr)
-        return []
-
-    block = resp.json().get("dividends", {})
-    cols = block.get("columns", [])
-    rows = block.get("data", [])
-    if not rows:
-        return []
-
-    try:
-        idx_date = cols.index("registryclosedate")
-        idx_value = cols.index("value")
-    except ValueError:
-        print(f"  [{ticker}] неожиданный формат дивидендов: {cols}", file=sys.stderr)
-        return []
-
-    result = []
-    for row in rows:
-        date_val = row[idx_date]
-        amount = row[idx_value]
-        if date_val is None or amount is None:
-            continue
-        try:
-            amount = float(amount)
-        except (TypeError, ValueError):
-            continue
-        if amount <= 0:
-            continue
-        date_str = str(date_val)[:10]
-        # Оставляем только те, что попадают в диапазон данных
-        if date_str < START_DATE:
-            continue
-        result.append({"date": date_str, "amount": round(amount, 4)})
-
-    result.sort(key=lambda x: x["date"])
-    return result
+    return {"lotSize": lot_size, "name": d.get("SHORTNAME") or ticker}
 
 
 def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
-    """Постранично скачивает всю историю по тикеру."""
     url = f"{ISS_HISTORY}/{BOARD}/securities/{ticker}.json"
     all_rows: list[list] = []
     columns: list[str] | None = None
@@ -195,12 +145,16 @@ def main() -> int:
 
     OUTPUT_DIR.mkdir(exist_ok=True)
 
+    # === Сначала тянем все дивиденды со Smart-Lab (один раз) ===
+    print("=== Загрузка дивидендов со Smart-Lab ===", flush=True)
+    dividends_map = fetch_dividends_smartlab(TICKERS, START_DATE)
+
     written = 0
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
 
         for ticker in TICKERS:
-            print(f"[{ticker}] тянем метаданные...", flush=True)
+            print(f"\n[{ticker}] тянем метаданные...", flush=True)
             info = fetch_security_info(session, ticker)
 
             print(f"[{ticker}] тянем свечи...", flush=True)
@@ -208,8 +162,7 @@ def main() -> int:
             if candles is None:
                 continue
 
-            print(f"[{ticker}] тянем дивиденды...", flush=True)
-            dividends = fetch_dividends(session, ticker)
+            dividends = dividends_map.get(ticker, [])
 
             payload = {
                 "ticker": ticker,
