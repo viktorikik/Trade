@@ -29,7 +29,6 @@ function ema(values, period) {
   return out;
 }
 
-// Пересечения двух линий (для меток BUY/SELL на графике)
 function findCrossovers(fast, slow) {
   const signals = [];
   for (let i = 1; i < fast.length; i++) {
@@ -77,7 +76,6 @@ function macd(closes, fast = 12, slow = 26, signal = 9) {
     emaFast[i] != null && emaSlow[i] != null ? emaFast[i] - emaSlow[i] : null
   );
 
-  // Сигнальная линия — EMA от непустых значений MACD
   const validMacd = macdLine.filter(v => v != null);
   const signalRaw = ema(validMacd, signal);
 
@@ -107,7 +105,101 @@ function bollingerBands(closes, period = 20, mult = 2) {
   return { middle, upper, lower };
 }
 
-// Комплексный анализ рынка. Возвращает вердикт, баллы и список причин.
+// =====================================================
+// Сигналы для разных стратегий
+// =====================================================
+
+// 1. EMA-кроссовер
+function emaCrossoverSignals(data, fastPeriod, slowPeriod) {
+  const closes = data.map(d => d.close);
+  const fast = ema(closes, fastPeriod);
+  const slow = ema(closes, slowPeriod);
+  return findCrossovers(fast, slow);
+}
+
+// 2. RSI mean-reversion
+function rsiMeanReversionSignals(data, period = 14, oversold = 30, overbought = 70) {
+  const closes = data.map(d => d.close);
+  const r = rsi(closes, period);
+  const signals = [];
+  let inPosition = false;
+  for (let i = 1; i < r.length; i++) {
+    if (r[i] == null || r[i - 1] == null) continue;
+    if (!inPosition && r[i - 1] >= oversold && r[i] < oversold) {
+      signals.push({ index: i, type: 'buy' });
+      inPosition = true;
+    } else if (inPosition && r[i - 1] <= overbought && r[i] > overbought) {
+      signals.push({ index: i, type: 'sell' });
+      inPosition = false;
+    }
+  }
+  return signals;
+}
+
+// 3. Bollinger breakout
+function bollingerBreakoutSignals(data, period = 20, mult = 2) {
+  const closes = data.map(d => d.close);
+  const bb = bollingerBands(closes, period, mult);
+  const signals = [];
+  let inPosition = false;
+  for (let i = 1; i < closes.length; i++) {
+    if (bb.lower[i] == null || bb.middle[i] == null) continue;
+    if (!inPosition && closes[i] < bb.lower[i]) {
+      signals.push({ index: i, type: 'buy' });
+      inPosition = true;
+    } else if (inPosition && closes[i] > bb.middle[i]) {
+      signals.push({ index: i, type: 'sell' });
+      inPosition = false;
+    }
+  }
+  return signals;
+}
+
+// 4. Buy & Hold — одна покупка в начале
+function buyHoldSignals(data) {
+  if (data.length < 2) return [];
+  return [{ index: 0, type: 'buy' }];
+}
+
+// =====================================================
+// Реестр стратегий
+// =====================================================
+
+const STRATEGIES = {
+  ema: {
+    id: 'ema',
+    label: 'EMA-кроссовер',
+    generate: (data, p) => emaCrossoverSignals(data, p.fast || 9, p.slow || 21),
+    params: ['fast', 'slow'],
+    defaults: { fast: 9, slow: 21 },
+  },
+  rsi: {
+    id: 'rsi',
+    label: 'RSI mean-reversion',
+    generate: (data, p) => rsiMeanReversionSignals(data, p.period || 14, p.oversold || 30, p.overbought || 70),
+    params: ['period', 'oversold', 'overbought'],
+    defaults: { period: 14, oversold: 30, overbought: 70 },
+  },
+  bollinger: {
+    id: 'bollinger',
+    label: 'Bollinger breakout',
+    generate: (data, p) => bollingerBreakoutSignals(data, p.period || 20, p.mult || 2),
+    params: ['period', 'mult'],
+    defaults: { period: 20, mult: 2 },
+  },
+  buyhold: {
+    id: 'buyhold',
+    label: 'Buy & Hold',
+    generate: (data) => buyHoldSignals(data),
+    params: [],
+    defaults: {},
+  },
+};
+
+// =====================================================
+// Комплексный анализ рынка (для вердикта)
+// =====================================================
+
 function analyzeMarket(data) {
   const closes = data.map(d => d.close);
   const volumes = data.map(d => d.volume);
@@ -125,7 +217,6 @@ function analyzeMarket(data) {
   const reasons = [];
   let score = 0;
 
-  // 1. Тренд (EMA)
   if (ema9[i] > ema21[i] && ema21[i] > ema50[i]) {
     score += 2;
     reasons.push('✅ Сильный восходящий тренд: EMA 9 > EMA 21 > EMA 50');
@@ -140,7 +231,6 @@ function analyzeMarket(data) {
     reasons.push('🔽 Краткосрочное падение: EMA 9 ниже EMA 21');
   }
 
-  // 2. Моментум (RSI)
   if (rsi14[i] != null) {
     if (rsi14[i] < 30) {
       score += 2;
@@ -156,7 +246,6 @@ function analyzeMarket(data) {
     }
   }
 
-  // 3. Сила тренда (MACD)
   const macdNow = macdData.macdLine[i];
   const signalNow = macdData.signalLine[i];
   if (macdNow != null && signalNow != null) {
@@ -169,7 +258,6 @@ function analyzeMarket(data) {
     }
   }
 
-  // 4. Волатильность (Bollinger Bands)
   if (bb.lower[i] != null && lastClose <= bb.lower[i]) {
     score += 1;
     reasons.push('✅ Цена у нижней полосы Боллинджера — зона перепроданности');
@@ -178,7 +266,6 @@ function analyzeMarket(data) {
     reasons.push('❌ Цена у верхней полосы Боллинджера — зона перекупленности');
   }
 
-  // 5. Объём
   if (volumeSma[i] != null && volumes[i] > volumeSma[i]) {
     score += 1;
     reasons.push('✅ Объём выше среднего — движение подтверждено');
@@ -186,7 +273,6 @@ function analyzeMarket(data) {
     reasons.push('⚠️ Объём ниже среднего — движению не хватает силы');
   }
 
-  // Вердикт
   let verdict, verdictClass;
   if (score >= 5)       { verdict = 'СИЛЬНО КУПИТЬ'; verdictClass = 'strong-buy'; }
   else if (score >= 3)  { verdict = 'КУПИТЬ';        verdictClass = 'buy'; }
@@ -200,10 +286,7 @@ function analyzeMarket(data) {
     reasons,
     indicators: {
       rsi: rsi14[i],
-      macd: {
-        macdValue: macdNow,
-        signalValue: signalNow,
-      },
+      macd: { macdValue: macdNow, signalValue: signalNow },
     },
   };
 }
