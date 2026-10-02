@@ -1,6 +1,8 @@
 """
 Загружает макро-контекст: IMOEX, USD/RUB фиксинг, ключевую ставку ЦБ РФ.
 Сохраняет в data/macro.json.
+
+Все запросы к MOEX ISS — с retry и уменьшенным timeout (15 сек).
 """
 
 import io
@@ -31,17 +33,36 @@ HEADERS = {
     "Accept-Language": "ru-RU,ru;q=0.9",
 }
 
-# Санити-порог для ключевой ставки: исторически она никогда
-# не превышала 20% (даже в кризисы). Всё, что выше 100, — точно баг парсинга.
 MAX_REASONABLE_RATE = 100.0
+
+REQUEST_TIMEOUT = 15
+RETRY_ATTEMPTS = 2
+RETRY_DELAY = 3
+
+
+def _get_with_retry(session, url, params, label):
+    """GET с retry. Возвращает Response или None."""
+    last_err = None
+    for attempt in range(1, RETRY_ATTEMPTS + 1):
+        try:
+            resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            return resp
+        except Exception as e:
+            last_err = e
+            if attempt < RETRY_ATTEMPTS:
+                print(
+                    f"    [{label}] попытка {attempt} не удалась ({type(e).__name__}), "
+                    f"повтор через {RETRY_DELAY}с",
+                    file=sys.stderr,
+                )
+                time.sleep(RETRY_DELAY)
+    print(f"    [{label}] все {RETRY_ATTEMPTS} попытки провалились: {last_err}", file=sys.stderr)
+    return None
 
 
 def _fetch_iss_history_paginated(session, url, label):
-    """
-    Тянет всю историю с ISS с пагинацией.
-    ISS отдаёт по 100 строк за раз, нужно докручивать start.
-    Возвращает [{time, close}, ...] или None.
-    """
+    """Тянет всю историю с ISS с пагинацией + retry."""
     all_rows = []
     columns = None
     start = 0
@@ -53,12 +74,16 @@ def _fetch_iss_history_paginated(session, url, label):
             "history.columns": "TRADEDATE,CLOSE",
             "start": start,
         }
-        try:
-            resp = session.get(url, params=params, timeout=30)
-            resp.raise_for_status()
-        except Exception as e:
-            print(f"  [{label}] ошибка запроса: {e}", file=sys.stderr)
-            return None
+        resp = _get_with_retry(session, url, params, f"{label} start={start}")
+        if resp is None:
+            if start == 0:
+                return None
+            print(
+                f"    [{label}] оборвались на start={start}, "
+                f"уже собрано {len(all_rows)} строк",
+                file=sys.stderr,
+            )
+            break
 
         block = resp.json().get("history", {})
         page_cols = block.get("columns", [])
@@ -100,11 +125,7 @@ def fetch_usdrub(session):
 
 
 def _parse_rate_value(raw):
-    """
-    Парсит значение ставки из ячейки.
-    Работает с форматами: '14,00', '14.00', '14', '14,00%'.
-    Защита от бага с разделителем тысяч: '1400' -> 14.0.
-    """
+    """Парсит ставку: '14,00' -> 14.0, '1400' -> 14.0, '14%' -> 14.0."""
     if raw is None or (isinstance(raw, float) and pd.isna(raw)):
         return None
 
@@ -112,17 +133,13 @@ def _parse_rate_value(raw):
     if not s or s.lower() in ("nan", "none", "—", "-"):
         return None
 
-    # Убираем всё, кроме цифр, точки, запятой и минуса
     s = s.replace("%", "").replace("\xa0", "").replace(" ", "")
     s = re.sub(r"[^\d.,\-]", "", s)
-
     if not s or s in ("-", ".", ",", ".,"):
         return None
 
-    # Русская запятая → точка
     s = s.replace(",", ".")
 
-    # Если точек больше одной — оставляем только первую (на всякий случай)
     if s.count(".") > 1:
         parts = s.split(".")
         s = parts[0] + "." + "".join(parts[1:])
@@ -132,12 +149,10 @@ def _parse_rate_value(raw):
     except ValueError:
         return None
 
-    # Защита от бага pandas с разделителем тысяч:
-    # если получилось 1400 вместо 14.0 — делим на 100
+    # Защита от разделителя тысяч: 1400 -> 14.0
     if val >= 100:
         val = val / 100
 
-    # Финальный санити-фильтр
     if not (0 < val < MAX_REASONABLE_RATE):
         return None
 
@@ -151,16 +166,31 @@ def fetch_key_rate():
         "UniDbQuery.From": "01.01.2023",
         "UniDbQuery.To": date.today().strftime("%d.%m.%Y"),
     }
-    try:
-        resp = requests.get(CBR_KEYRATE_URL, params=params, headers=HEADERS, timeout=30)
-        resp.raise_for_status()
-    except Exception as e:
-        print(f"  [KeyRate] ошибка запроса: {e}", file=sys.stderr)
+    last_err = None
+    resp = None
+    for attempt in range(1, RETRY_ATTEMPTS + 1):
+        try:
+            r = requests.get(
+                CBR_KEYRATE_URL, params=params, headers=HEADERS, timeout=REQUEST_TIMEOUT
+            )
+            r.raise_for_status()
+            resp = r
+            break
+        except Exception as e:
+            last_err = e
+            if attempt < RETRY_ATTEMPTS:
+                print(
+                    f"    [KeyRate] попытка {attempt} не удалась ({type(e).__name__}), "
+                    f"повтор через {RETRY_DELAY}с",
+                    file=sys.stderr,
+                )
+                time.sleep(RETRY_DELAY)
+
+    if resp is None:
+        print(f"  [KeyRate] все попытки провалились: {last_err}", file=sys.stderr)
         return None
 
     try:
-        # dtype=str — критично! Иначе pandas интерпретирует «14,00»
-        # как число 1400 (запятая = разделитель тысяч в русской локали).
         tables = pd.read_html(io.StringIO(resp.text), header=0, dtype=str)
     except Exception as e:
         print(f"  [KeyRate] pandas не нашёл таблиц: {e}", file=sys.stderr)
@@ -170,7 +200,6 @@ def fetch_key_rate():
 
     for i, df in enumerate(tables):
         cols_lower = [str(c).strip().lower() for c in df.columns]
-
         if "дата" not in cols_lower or "ставка" not in cols_lower:
             continue
 
@@ -222,7 +251,6 @@ def fetch_key_rate():
 
 
 def compute_changes(history):
-    """Изменение в % за день, месяц (30д), год (365д)."""
     if not history or len(history) < 2:
         return {"day": None, "month": None, "year": None}
 
@@ -275,6 +303,14 @@ def main():
     print("\n=== Загрузка ключевой ставки ЦБ ===", flush=True)
     keyrate = fetch_key_rate()
 
+    # Читаем старый macro.json, чтобы не потерять данные, если что-то упало
+    old_payload = {}
+    if OUTPUT_PATH.exists():
+        try:
+            old_payload = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            old_payload = {}
+
     payload = {
         "updatedAt": date.today().isoformat(),
         "imoex": None,
@@ -289,6 +325,11 @@ def main():
             "changePct": compute_changes(imoex),
             "history": imoex,
         }
+    elif old_payload.get("imoex"):
+        # Не перезаписываем хорошие старые данные плохими новыми
+        print("  [IMOEX] новых данных нет, оставляем старые", file=sys.stderr)
+        payload["imoex"] = old_payload["imoex"]
+
     if usdrub:
         payload["usdrub"] = {
             "current": usdrub[-1]["close"],
@@ -296,12 +337,19 @@ def main():
             "changePct": compute_changes(usdrub),
             "history": usdrub,
         }
+    elif old_payload.get("usdrub"):
+        print("  [USD/RUB] новых данных нет, оставляем старые", file=sys.stderr)
+        payload["usdrub"] = old_payload["usdrub"]
+
     if keyrate:
         payload["keyRate"] = {
             "current": keyrate[-1]["rate"],
             "date": keyrate[-1]["date"],
             "history": keyrate,
         }
+    elif old_payload.get("keyRate"):
+        print("  [KeyRate] новых данных нет, оставляем старые", file=sys.stderr)
+        payload["keyRate"] = old_payload["keyRate"]
 
     OUTPUT_PATH.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2),
