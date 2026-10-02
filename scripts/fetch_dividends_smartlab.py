@@ -3,9 +3,14 @@
 Возвращает словарь {ticker: [{date, amount}, ...]}.
 
 Источник: https://smart-lab.ru/q/{TICKER}/dividend/
-Основано на подходе из блога artie (smart-lab.ru/blog/631130.php).
+
+Логика: страница содержит несколько таблиц. Ищем ту, где есть
+колонка с датой (в формате DD.MM.YYYY) и колонка с числовым
+значением дивиденда. CSS-фильтр не используем, потому что
+вёрстка Smart-Lab меняется и классы нестабильны.
 """
 
+import re
 import sys
 import time
 
@@ -14,24 +19,84 @@ import requests
 
 SMARTLAB_URL = "https://smart-lab.ru/q/{ticker}/dividend/"
 
-# CSS-класс таблицы с выплаченными дивидендами на Smart-Lab
-TABLE_ATTRS = {"class": "simple-little-table financials dividends sort-table"}
-
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
     ),
     "Accept-Language": "ru-RU,ru;q=0.9",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
+
+DATE_RE = re.compile(r"^\d{2}\.\d{2}\.\d{4}$")
+
+
+def parse_amount(raw) -> float | None:
+    """Извлекает число из строки типа '25,00 ₽' или '1 234.5'."""
+    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+        return None
+    s = str(raw)
+    s = s.replace("₽", "").replace("\xa0", "").replace(" ", "")
+    s = s.replace(",", ".")
+    # Оставляем только цифры и точку
+    s = re.sub(r"[^\d.]", "", s)
+    if not s:
+        return None
+    try:
+        val = float(s)
+    except ValueError:
+        return None
+    return val if val > 0 else None
+
+
+def find_dividend_table(tables: list[pd.DataFrame]) -> pd.DataFrame | None:
+    """
+    Ищет таблицу, где есть колонка с датами DD.MM.YYYY и колонка
+    с числовыми значениями (дивиденд).
+    """
+    for df in tables:
+        if df.shape[1] < 3 or df.shape[0] < 1:
+            continue
+
+        # Ищем столбец с датами
+        date_col = None
+        for col_idx in range(df.shape[1]):
+            sample = df.iloc[:, col_idx].dropna().astype(str).head(5)
+            if len(sample) == 0:
+                continue
+            matches = sample.str.match(DATE_RE).sum()
+            if matches >= max(1, len(sample) // 2):
+                date_col = col_idx
+                break
+
+        if date_col is None:
+            continue
+
+        # Ищем столбец с числами (дивиденд)
+        amount_col = None
+        for col_idx in range(df.shape[1]):
+            if col_idx == date_col:
+                continue
+            sample = df.iloc[:, col_idx].dropna().head(5)
+            if len(sample) == 0:
+                continue
+            # Пробуем распарсить как числа
+            parsed = [parse_amount(v) for v in sample]
+            parsed_ok = [v for v in parsed if v is not None and v > 0]
+            if len(parsed_ok) >= max(1, len(sample) // 2):
+                amount_col = col_idx
+                break
+
+        if amount_col is None:
+            continue
+
+        return df, date_col, amount_col  # type: ignore
+
+    return None
 
 
 def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
-    """
-    Возвращает список дивидендов по тикеру:
-    [{"date": "YYYY-MM-DD", "amount": float}, ...]
-    Только те, что >= start_date.
-    """
+    """Возвращает список дивидендов по тикеру."""
     url = SMARTLAB_URL.format(ticker=ticker.upper())
 
     try:
@@ -41,85 +106,65 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
         print(f"  [{ticker}] ошибка запроса к Smart-Lab: {e}", file=sys.stderr)
         return []
 
+    print(f"  [{ticker}] HTTP {resp.status_code}, длина HTML: {len(resp.text)} символов", flush=True)
+
     try:
-        tables = pd.read_html(
-            resp.text,
-            header=0,
-            decimal=",",
-            thousands=None,
-            attrs=TABLE_ATTRS,
-        )
-    except ValueError:
-        print(f"  [{ticker}] не нашлось таблицы дивидендов на странице", file=sys.stderr)
+        tables = pd.read_html(resp.text, header=0)
+    except ValueError as e:
+        print(f"  [{ticker}] pandas не нашёл ни одной таблицы: {e}", file=sys.stderr)
+        return []
+    except Exception as e:
+        print(f"  [{ticker}] ошибка парсинга HTML: {e}", file=sys.stderr)
         return []
 
-    if not tables:
-        print(f"  [{ticker}] таблица пустая", file=sys.stderr)
+    print(f"  [{ticker}] найдено таблиц: {len(tables)}", flush=True)
+    for i, t in enumerate(tables):
+        print(f"    таблица #{i}: {t.shape[0]} строк, {t.shape[1]} столбцов", flush=True)
+
+    found = find_dividend_table(tables)
+    if found is None:
+        print(f"  [{ticker}] не удалось найти таблицу с дивидендами", file=sys.stderr)
+        # Сохраняем HTML для отладки
+        debug_path = f"/tmp/{ticker}_smartlab.html"
+        try:
+            with open(debug_path, "w", encoding="utf-8") as f:
+                f.write(resp.text)
+            print(f"  [{ticker}] HTML сохранён в {debug_path}", file=sys.stderr)
+        except Exception:
+            pass
         return []
 
-    # Последняя таблица — исторические (выплаченные) дивиденды.
-    # Первая часто содержит будущие/прогнозные.
-    df = tables[-1]
-
-    # Нужные столбцы: тикер, дата T-1 (гэп), размер дивиденда.
-    # Ищем их по позициям: 0 — тикер, 1 — дата T-1, 4 или 5 — размер.
-    if df.shape[1] < 5:
-        print(f"  [{ticker}] неожиданное число столбцов: {df.shape[1]}", file=sys.stderr)
-        return []
-
-    # Определяем столбец с суммой дивиденда: обычно это 4-й или 5-й.
-    # В таблице Smart-Lab: Тикер | дата T-1 | дата отсечки | Период | дивиденд | ...
-    # Берём столбец с индексом 4 (дивиденд).
-    div_col = None
-    for col_idx in (4, 5):
-        if col_idx < df.shape[1]:
-            # Проверяем, похожи ли значения на числа
-            sample = df.iloc[:, col_idx].dropna().head(3).astype(str)
-            if sample.str.replace(",", ".").str.replace("₽", "").str.strip().str.replace(r"[^\d.]", "", regex=True).ne("").all():
-                div_col = col_idx
-                break
-
-    if div_col is None:
-        print(f"  [{ticker}] не удалось найти столбец с дивидендом", file=sys.stderr)
-        return []
+    df, date_col, amount_col = found
+    print(f"  [{ticker}] таблица дивидендов: дата=столбец {date_col}, сумма=столбец {amount_col}", flush=True)
 
     result = []
     for _, row in df.iterrows():
-        date_raw = row.iloc[1]
-        amount_raw = row.iloc[div_col]
+        date_raw = row.iloc[date_col]
+        amount_raw = row.iloc[amount_col]
 
-        if pd.isna(date_raw) or pd.isna(amount_raw):
+        if pd.isna(date_raw):
             continue
 
-        # Дата в формате DD.MM.YYYY
+        date_str_raw = str(date_raw).strip()
+        if not DATE_RE.match(date_str_raw):
+            continue
+
         try:
-            date_obj = pd.to_datetime(date_raw, format="%d.%m.%Y")
+            date_obj = pd.to_datetime(date_str_raw, format="%d.%m.%Y")
         except Exception:
             continue
 
-        date_str = date_obj.strftime("%Y-%m-%d")
-        if date_str < start_date:
+        date_iso = date_obj.strftime("%Y-%m-%d")
+        if date_iso < start_date:
             continue
 
-        # Очищаем сумму от ₽ и пробелов
-        amount_str = (
-            str(amount_raw)
-            .replace("₽", "")
-            .replace(" ", "")
-            .replace(",", ".")
-            .strip()
-        )
-        try:
-            amount = float(amount_str)
-        except ValueError:
+        amount = parse_amount(amount_raw)
+        if amount is None:
             continue
 
-        if amount <= 0:
-            continue
+        result.append({"date": date_iso, "amount": round(amount, 4)})
 
-        result.append({"date": date_str, "amount": round(amount, 4)})
-
-    # Убираем дубликаты (бывает, что в таблице есть и обычка, и префы)
+    # Убираем дубликаты
     seen = set()
     unique = []
     for d in result:
@@ -133,19 +178,17 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
 
 
 def fetch_all(tickers: list[str], start_date: str) -> dict:
-    """Возвращает {ticker: [dividends]} для всех тикеров."""
     result = {}
     for ticker in tickers:
         print(f"[{ticker}] тянем дивиденды со Smart-Lab...", flush=True)
         divs = fetch_dividends_for_ticker(ticker, start_date)
         result[ticker] = divs
-        print(f"  [{ticker}] найдено {len(divs)} дивидендов", flush=True)
-        time.sleep(0.5)  # вежливая пауза между запросами
+        print(f"  [{ticker}] итого найдено {len(divs)} дивидендов", flush=True)
+        time.sleep(0.7)
     return result
 
 
 if __name__ == "__main__":
-    # Для отладки: python fetch_dividends_smartlab.py SBER GAZP LKOH
     tickers = sys.argv[1:] if len(sys.argv) > 1 else ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
     data = fetch_all(tickers, "2023-01-01")
     for t, divs in data.items():
