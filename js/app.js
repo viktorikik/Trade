@@ -162,13 +162,11 @@ function renderFundamentalSection(payload) {
     return;
   }
 
-  // Шапка: asOf
   const asOfEl = document.getElementById('fundamentalAsOf');
   if (asOfEl) {
     asOfEl.textContent = analysis.asOf ? `Данные на: ${analysis.asOf}` : '';
   }
 
-  // Вердикт
   const vEl = document.getElementById('fundamentalVerdict');
   vEl.className = `verdict fundamental-verdict-box ${analysis.verdictClass}`;
   vEl.innerHTML = `
@@ -176,7 +174,6 @@ function renderFundamentalSection(payload) {
     <div class="verdict-score">Сумма баллов: ${analysis.score}</div>
   `;
 
-  // Карточки метрик
   const cardsHtml = analysis.cards.map(c => `
     <div class="fundamental-card">
       <div class="fundamental-card-head">
@@ -190,7 +187,6 @@ function renderFundamentalSection(payload) {
   `).join('');
   document.getElementById('fundamentalMetrics').innerHTML = cardsHtml;
 
-  // История по годам (таблица)
   const histWrap = document.querySelector('.fundamental-history-wrap');
   if (analysis.history && analysis.history.length > 0) {
     const keys = ['pe', 'pb', 'roe', 'roa', 'eps', 'divYield'];
@@ -218,12 +214,99 @@ function renderFundamentalSection(payload) {
   section.style.display = 'block';
 }
 
+// ===== Управление риском =====
+function renderRiskSection(adjustedData, options) {
+  const section = document.getElementById('riskSection');
+  if (!section) return;
+
+  const risk = analyzeRisk(adjustedData, options);
+  if (!risk) {
+    section.style.display = 'none';
+    return;
+  }
+
+  const fmtRub = v => v.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ₽';
+  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+
+  // Подзаголовок: цена, лот, риск
+  const subEl = document.getElementById('riskSubtitle');
+  if (subEl) {
+    subEl.textContent =
+      `Текущая цена: ${risk.price.toFixed(2)} ₽ · Лот: ${risk.lotSize} · ` +
+      `Риск на сделку: ${risk.riskPct.toFixed(2)}% (${fmtRub(risk.maxRiskRub)})`;
+  }
+
+  // Стилизация класса рекомендованной позиции
+  const lotsCls = risk.recommendedLots > 0 ? 'good' : 'bad';
+
+  const cards = [
+    {
+      key: 'ATR(14)',
+      full: `средний дневной размах`,
+      value: `${risk.atr.toFixed(2)} ₽`,
+      subvalue: `${risk.atrPct.toFixed(2)}% от цены`,
+      cls: 'neutral',
+    },
+    {
+      key: `Стоп-цена`,
+      full: `цена − ${risk.atrMultiplier} × ATR`,
+      value: `${risk.stopPrice.toFixed(2)} ₽`,
+      subvalue: `${fmtPct(risk.stopPct)} от текущей`,
+      cls: risk.stopPct < -20 ? 'bad' : risk.stopPct < -10 ? 'neutral' : 'good',
+    },
+    {
+      key: 'Риск на акцию',
+      full: 'сколько потеряешь на одной акции',
+      value: `${risk.riskPerShare.toFixed(2)} ₽`,
+      subvalue: `при срабатывании стопа`,
+      cls: 'neutral',
+    },
+    {
+      key: 'Рекомендованный размер',
+      full: `чтобы риск ≤ ${risk.riskPct.toFixed(1)}% капитала`,
+      value: `${risk.recommendedLots} лот${risk.recommendedLots === 1 ? '' : risk.recommendedLots >= 2 && risk.recommendedLots <= 4 ? 'а' : 'ов'}`,
+      subvalue: `${risk.recommendedShares} акц. · ${fmtRub(risk.positionValue)} (${risk.positionPct.toFixed(1)}% капитала)`,
+      cls: lotsCls,
+    },
+    {
+      key: 'Фактический риск',
+      full: 'если стоп сработает',
+      value: fmtRub(risk.actualRiskRub),
+      subvalue: `${risk.actualRiskPct.toFixed(2)}% от капитала`,
+      cls: risk.actualRiskPct > risk.riskPct + 0.5 ? 'bad' : 'good',
+    },
+  ];
+
+  const html = cards.map(c => `
+    <div class="risk-card">
+      <div class="risk-card-head">
+        <div class="risk-card-key">${c.key}</div>
+      </div>
+      <div class="risk-card-value ${c.cls}">${c.value}</div>
+      <div class="risk-card-sub">${c.subvalue}</div>
+      <div class="risk-card-full">${c.full}</div>
+    </div>
+  `).join('');
+
+  // Плюс предупреждение, если позиция не влезает или наоборот ограничена риском
+  let warnHtml = '';
+  if (risk.noCash) {
+    warnHtml = `<div class="risk-warn">⚠️ Капитала не хватает даже на 1 лот (${fmtRub(risk.price * risk.lotSize)}).</div>`;
+  } else if (risk.riskCapped) {
+    warnHtml = `<div class="risk-hint">💡 Размер позиции ограничен риском: денег хватило бы на ${risk.maxLotsByCash} лот, но риск-лимит позволяет только ${risk.maxLotsByRisk}.</div>`;
+  } else {
+    warnHtml = `<div class="risk-hint">💡 Размер позиции ограничен капиталом: риск-лимит позволял бы до ${risk.maxLotsByRisk} лот, но на ${risk.maxLotsByCash} хватает денег.</div>`;
+  }
+
+  document.getElementById('riskMetrics').innerHTML = html + warnHtml;
+  section.style.display = 'block';
+}
+
 // ===== Секция корпоративных действий =====
 function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends) {
   const section = document.getElementById('corpSection');
   if (!section) return;
 
-  // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
   const MAX_DIV_RATIO = 0.5;
   const allDivs = (payload.dividends || []).filter(d => {
     if (!d || !d.date || !(Number(d.amount) > 0)) return false;
@@ -264,7 +347,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
   document.getElementById('corpSummary').innerHTML =
     `💼 Корпоративные действия · ` + parts.join(' · ');
 
-  // Карта: дата -> событие начисления дивидендов в бэктесте
   const eventsByDate = new Map();
   for (const e of result.dividendEvents) {
     eventsByDate.set(e.date, e);
@@ -272,7 +354,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
 
   const rows = [];
 
-  // Сплиты
   for (const s of allSplits) {
     rows.push({
       date: s.date,
@@ -285,7 +366,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
     });
   }
 
-  // Дивиденды (свежие сверху)
   const sortedDivs = [...allDivs].sort((a, b) => b.date.localeCompare(a.date));
   for (const d of sortedDivs) {
     const ev = eventsByDate.get(d.date);
@@ -414,6 +494,7 @@ async function render() {
   const capital     = parseFloat(document.getElementById('capital').value);
   const commission  = parseFloat(document.getElementById('commission').value);
   const slippage    = parseFloat(document.getElementById('slippage').value);
+  const riskPct     = parseFloat(document.getElementById('riskPct').value);
   const useSplit    = document.getElementById('useSplit').checked;
   const useSplits   = document.getElementById('useCorpSplits').checked;
   const useDividends = document.getElementById('useCorpDividends').checked;
@@ -427,6 +508,7 @@ async function render() {
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
     document.getElementById('fundamentalSection').style.display = 'none';
+    document.getElementById('riskSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -445,6 +527,7 @@ async function render() {
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
     document.getElementById('fundamentalSection').style.display = 'none';
+    document.getElementById('riskSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -453,7 +536,6 @@ async function render() {
 
   const realData = payload.candles;
 
-  // Применяем корпоративные действия
   const { adjusted, splitEvents, gapDates } = applyCorporateActions(realData, payload, {
     useSplits,
     useDividends,
@@ -479,7 +561,6 @@ async function render() {
     emaSlowSeries.setData([]);
   }
 
-  // ===== Маркеры =====
   const markers = signals.map(s => ({
     time: adjusted[s.index].time,
     position: s.type === 'buy' ? 'belowBar' : 'aboveBar',
@@ -558,6 +639,14 @@ async function render() {
   renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends);
   renderAnalysis(adjusted);
   renderFundamentalSection(payload);
+  renderRiskSection(adjusted, {
+    capital: isNaN(capital) ? 100000 : capital,
+    riskPct: isNaN(riskPct) ? 1 : riskPct,
+    lotSize: payload.lotSize,
+    atrPeriod: 14,
+    atrMultiplier: 2,
+    rawPrice: rawLastBar.close,
+  });
 
   currentState = {
     ticker,
@@ -775,6 +864,7 @@ document.getElementById('strategy').addEventListener('change', () => {
 document.getElementById('useSplit').addEventListener('change', render);
 document.getElementById('useCorpSplits').addEventListener('change', render);
 document.getElementById('useCorpDividends').addEventListener('change', render);
+document.getElementById('riskPct').addEventListener('change', render);
 
 (function initFromUrl() {
   const p = new URLSearchParams(window.location.search);
