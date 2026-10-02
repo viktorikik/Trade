@@ -1,16 +1,32 @@
 // js/notes.js
-// Логика страницы заметок: подтягивает свежие данные и показывает актуальный вердикт.
+// Страница заметок с поддержкой нового формата JSON и стратегии.
 
 const dataCache = new Map();
+
+function normalizeTickerPayload(raw, ticker) {
+  if (Array.isArray(raw)) {
+    return { ticker, name: ticker, lotSize: 1, candles: raw };
+  }
+  if (raw && Array.isArray(raw.candles)) {
+    return {
+      ticker: raw.ticker || ticker,
+      name: raw.name || ticker,
+      lotSize: Number.isFinite(raw.lotSize) && raw.lotSize > 0 ? raw.lotSize : 1,
+      candles: raw.candles,
+    };
+  }
+  throw new Error('Неизвестный формат файла данных');
+}
 
 async function loadTickerData(ticker) {
   if (dataCache.has(ticker)) return dataCache.get(ticker);
   const resp = await fetch(`./data/${ticker}.json`);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  const data = await resp.json();
-  if (!Array.isArray(data) || data.length === 0) throw new Error('пустой файл');
-  dataCache.set(ticker, data);
-  return data;
+  const raw = await resp.json();
+  const payload = normalizeTickerPayload(raw, ticker);
+  if (payload.candles.length === 0) throw new Error('пустой файл');
+  dataCache.set(ticker, payload);
+  return payload;
 }
 
 function showToast(msg) {
@@ -36,7 +52,8 @@ async function renderNoteCard(entry) {
   card.className = 'note-card';
 
   try {
-    const data = await loadTickerData(entry.ticker);
+    const payload = await loadTickerData(entry.ticker);
+    const data = payload.candles;
     const last = data[data.length - 1];
     const analysis = analyzeMarket(data);
     const changePct = (last.close / entry.priceAtAdd - 1) * 100;
@@ -49,6 +66,7 @@ async function renderNoteCard(entry) {
         </a>
         <button class="note-delete" title="Удалить">✕</button>
       </div>
+      <div class="note-name">${payload.name} · лот ${payload.lotSize}</div>
       <div class="verdict ${analysis.verdictClass} note-verdict">
         <span class="verdict-main">${analysis.verdict}</span>
         <span class="verdict-score">${analysis.score} б.</span>
@@ -103,8 +121,7 @@ async function renderNoteCard(entry) {
 }
 
 function updateStats(count) {
-  document.getElementById('notesStats').innerHTML =
-    `Всего бумаг: <b>${count}</b>`;
+  document.getElementById('notesStats').innerHTML = `Всего бумаг: <b>${count}</b>`;
 }
 
 function toggleEmptyState(show) {
@@ -116,7 +133,6 @@ async function renderAll() {
   const list = loadWatchlist();
   const grid = document.getElementById('notesGrid');
   grid.innerHTML = '';
-
   updateStats(list.length);
 
   if (list.length === 0) {
@@ -125,7 +141,6 @@ async function renderAll() {
   }
   toggleEmptyState(false);
 
-  // Сортируем: сначала недавно добавленные
   const sorted = [...list].sort((a, b) =>
     new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()
   );
@@ -136,7 +151,6 @@ async function renderAll() {
   }
 }
 
-// ===== Инициализация =====
 document.getElementById('refresh').addEventListener('click', () => {
   dataCache.clear();
   renderAll();
