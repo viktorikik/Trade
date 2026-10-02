@@ -69,7 +69,6 @@ h1 {
   text-align: center;
 }
 
-/* ===== Контролы ===== */
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -144,7 +143,6 @@ h1 {
   font-style: italic;
 }
 
-/* ===== Строка статистики ===== */
 .stats {
   margin-top: 10px;
   font-size: 13px;
@@ -152,6 +150,41 @@ h1 {
 }
 
 .stats b { color: var(--text); }
+
+/* ===== Секция дивидендов ===== */
+.dividend-section {
+  margin-top: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.dividend-header {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.dividend-header b { color: var(--text); }
+
+.dividend-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dividend-chip {
+  display: inline-block;
+  background: rgba(212, 167, 44, 0.15);
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 167, 44, 0.3);
+}
 
 /* ===== Метрики ===== */
 .metrics {
@@ -239,7 +272,7 @@ h1 {
 
 .reasons-list li { margin-bottom: 2px; }
 
-/* ===== Секции (out-of-sample, оптимизация) ===== */
+/* ===== Секции ===== */
 .section-title {
   font-size: 15px;
   font-weight: 600;
@@ -351,7 +384,7 @@ h1 {
   min-height: 180px;
 }
 
-/* ===== Страница заметок ===== */
+/* ===== Заметки ===== */
 .notes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -481,7 +514,6 @@ h1 {
   opacity: 1;
 }
 
-/* ===== Адаптив ===== */
 @media (max-width: 700px) {
   .notes-grid { grid-template-columns: 1fr; }
   .header-top { flex-direction: column; align-items: flex-start; }
