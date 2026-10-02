@@ -17,7 +17,6 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
 
-    # Нужно, чтобы workflow мог пушить коммиты
     permissions:
       contents: write
 
@@ -34,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install apimoex pandas requests
+          pip install -r requirements.txt
 
       - name: Fetch MOEX data
         run: python scripts/fetch_moex.py
