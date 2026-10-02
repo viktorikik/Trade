@@ -12,7 +12,6 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-# Импорт нашего парсера дивидендов
 sys.path.insert(0, str(Path(__file__).parent))
 from fetch_dividends_smartlab import fetch_all as fetch_dividends_smartlab
 
@@ -31,6 +30,16 @@ MARKET_HOLIDAYS = {
 ISS_BASE = "https://iss.moex.com/iss"
 ISS_HISTORY = f"{ISS_BASE}/history/engines/stock/markets/shares/boards"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
+
+# ===== Сплиты (дробления акций) =====
+# ratio = во сколько раз выросло число акций.
+# Цены ДО даты сплита делятся на ratio (backward adjustment).
+SPLITS = {
+    "GMKN": [
+        {"date": "2024-04-04", "ratio": 100},
+    ],
+    # SBER, GAZP, LKOH, ROSN, NVTK — сплитов за период не было
+}
 
 
 def is_trading_day(d: date) -> bool:
@@ -145,7 +154,6 @@ def main() -> int:
 
     OUTPUT_DIR.mkdir(exist_ok=True)
 
-    # === Сначала тянем все дивиденды со Smart-Lab (один раз) ===
     print("=== Загрузка дивидендов со Smart-Lab ===", flush=True)
     dividends_map = fetch_dividends_smartlab(TICKERS, START_DATE)
 
@@ -163,6 +171,7 @@ def main() -> int:
                 continue
 
             dividends = dividends_map.get(ticker, [])
+            splits = SPLITS.get(ticker, [])
 
             payload = {
                 "ticker": ticker,
@@ -170,6 +179,7 @@ def main() -> int:
                 "lotSize": info["lotSize"],
                 "candles": candles,
                 "dividends": dividends,
+                "splits": splits,
             }
 
             out_path = OUTPUT_DIR / f"{ticker}.json"
@@ -179,7 +189,8 @@ def main() -> int:
             )
             print(
                 f"  [{ticker}] {info['name']} · лот {info['lotSize']} · "
-                f"{len(candles)} баров · {len(dividends)} дивидендов → {out_path}",
+                f"{len(candles)} баров · {len(dividends)} дивидендов · "
+                f"{len(splits)} сплитов → {out_path}",
                 flush=True,
             )
             written += 1
