@@ -1,6 +1,7 @@
 """
-Скачивает дневные свечи с MOEX ISS, дивиденды и фундаментал со Smart-Lab.
-Сохраняет в data/{ticker}.json.
+Скачивает дневные свечи с MOEX ISS, дивиденды и фундаментал со Smart-Lab,
+макро-контекст (IMOEX, USD/RUB, ключевая ставка).
+Сохраняет в data/{ticker}.json и data/macro.json.
 """
 
 import json
@@ -15,6 +16,7 @@ import requests
 sys.path.insert(0, str(Path(__file__).parent))
 from fetch_dividends_smartlab import fetch_all as fetch_dividends_smartlab
 from fetch_fundamentals_smartlab import fetch_all as fetch_fundamentals_smartlab
+from fetch_macro import main as fetch_macro_main
 
 # ===== Конфигурация =====
 TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
@@ -33,13 +35,10 @@ ISS_HISTORY = f"{ISS_BASE}/history/engines/stock/markets/shares/boards"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 
 # ===== Сплиты (дробления акций) =====
-# ratio = во сколько раз выросло число акций.
-# Цены ДО даты сплита делятся на ratio (backward adjustment).
 SPLITS = {
     "GMKN": [
         {"date": "2024-04-04", "ratio": 100},
     ],
-    # SBER, GAZP, LKOH, ROSN, NVTK — сплитов за период не было
 }
 
 
@@ -160,6 +159,12 @@ def main() -> int:
 
     print("\n=== Загрузка фундаментала со Smart-Lab ===", flush=True)
     fundamentals_map = fetch_fundamentals_smartlab(TICKERS)
+
+    print("\n=== Загрузка макро-контекста ===", flush=True)
+    try:
+        fetch_macro_main()
+    except Exception as e:
+        print(f"  [macro] непредвиденная ошибка: {e}", file=sys.stderr)
 
     written = 0
     with requests.Session() as session:
