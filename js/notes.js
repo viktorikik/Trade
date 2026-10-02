@@ -1,11 +1,11 @@
 // js/notes.js
-// Страница заметок с учётом дивидендной корректировки.
+// Страница заметок с учётом сплитов и дивидендов.
 
 const dataCache = new Map();
 
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
-    return { ticker, name: ticker, lotSize: 1, candles: raw, dividends: [] };
+    return { ticker, name: ticker, lotSize: 1, candles: raw, dividends: [], splits: [] };
   }
   if (raw && Array.isArray(raw.candles)) {
     return {
@@ -14,6 +14,7 @@ function normalizeTickerPayload(raw, ticker) {
       lotSize: Number.isFinite(raw.lotSize) && raw.lotSize > 0 ? raw.lotSize : 1,
       candles: raw.candles,
       dividends: Array.isArray(raw.dividends) ? raw.dividends : [],
+      splits: Array.isArray(raw.splits) ? raw.splits : [],
     };
   }
   throw new Error('Неизвестный формат файла данных');
@@ -55,17 +56,14 @@ async function renderNoteCard(entry) {
   try {
     const payload = await loadTickerData(entry.ticker);
 
-    // Корректируем на дивиденды, чтобы вердикт совпадал с главной страницей
-    let analysisData = payload.candles;
-    if (payload.dividends.length > 0) {
-      analysisData = applyDividendAdjustment(payload.candles, payload.dividends).adjusted;
-    }
+    const { adjusted } = applyCorporateActions(payload.candles, payload, {
+      useSplits: true,
+      useDividends: true,
+    });
 
-    const last = analysisData[analysisData.length - 1];
+    const analysis = analyzeMarket(adjusted);
     const rawLast = payload.candles[payload.candles.length - 1];
-    const analysis = analyzeMarket(analysisData);
 
-    // Изменение считаем по реальным ценам, чтобы сравнение было честным
     const changePct = (rawLast.close / entry.priceAtAdd - 1) * 100;
     const changeCls = changePct >= 0 ? 'good' : 'bad';
 
