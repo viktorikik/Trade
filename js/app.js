@@ -150,7 +150,24 @@ function renderAnalysis(data) {
 // ===== Секция корпоративных действий =====
 function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends) {
   const section = document.getElementById('corpSection');
-  const allDivs = payload.dividends || [];
+  if (!section) return;
+
+  // Санити-фильтр: дивиденд не может быть больше 50% цены акции.
+  // Защищает таблицу от мусора, если парсер Smart-Lab опять сломается.
+  const MAX_DIV_RATIO = 0.5;
+  const allDivs = (payload.dividends || []).filter(d => {
+    if (!d || !d.date || !(Number(d.amount) > 0)) return false;
+    const amount = Number(d.amount);
+    const bar = payload.candles.find(b => b.time === d.date);
+    if (bar && amount > bar.close * MAX_DIV_RATIO) {
+      console.warn(
+        `[app] Пропускаем подозрительный дивиденд ${amount} ₽ на ${d.date} ` +
+        `(цена ${bar.close} ₽) — вероятно, ошибка парсинга`
+      );
+      return false;
+    }
+    return true;
+  });
   const allSplits = payload.splits || [];
 
   if (allDivs.length === 0 && allSplits.length === 0) {
@@ -158,7 +175,7 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
     return;
   }
 
-  const totalDivPerShare = allDivs.reduce((s, d) => s + d.amount, 0);
+  const totalDivPerShare = allDivs.reduce((s, d) => s + Number(d.amount), 0);
   const totalNet = result.totalDividends - result.totalDividendTax;
 
   const parts = [];
@@ -177,10 +194,10 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
   document.getElementById('corpSummary').innerHTML =
     `💼 Корпоративные действия · ` + parts.join(' · ');
 
-  // Объединяем события: сплиты и дивиденды
+  // Карта: дата -> событие начисления дивидендов в бэктесте
   const eventsByDate = new Map();
   for (const e of result.dividendEvents) {
-    eventsByDate.set(e.date, { ...(eventsByDate.get(e.date) || {}), dividend: e });
+    eventsByDate.set(e.date, e);
   }
 
   const rows = [];
@@ -199,17 +216,17 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
     });
   }
 
-  // Дивиденды
+  // Дивиденды (свежие сверху)
   const sortedDivs = [...allDivs].sort((a, b) => b.date.localeCompare(a.date));
   for (const d of sortedDivs) {
     const ev = eventsByDate.get(d.date);
     const received = ev
-      ? `${ev.shares} акц. × ${ev.amountPerShare.toFixed(2)} ₽ = <b>${ev.net.toFixed(2)} ₽</b>`
+      ? `${ev.shares} акц. × ${Number(ev.amountPerShare).toFixed(2)} ₽ = <b>${Number(ev.net).toFixed(2)} ₽</b>`
       : '<span class="muted">позиции не было</span>';
     rows.push({
       date: d.date,
       type: 'Дивиденд',
-      detail: `${d.amount.toFixed(2)} ₽ на акцию`,
+      detail: `${Number(d.amount).toFixed(2)} ₽ на акцию`,
       effect: received,
       sortKey: d.date,
     });
