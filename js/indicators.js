@@ -1,5 +1,5 @@
 // js/indicators.js
-// Технические индикаторы, функции анализа и корректировка на дивиденды.
+// Технические индикаторы, корректировка на сплиты и дивиденды.
 
 function sma(values, period) {
   const out = new Array(values.length).fill(null);
@@ -106,17 +106,55 @@ function bollingerBands(closes, period = 20, mult = 2) {
 }
 
 // =====================================================
-// Дивидендная корректировка (backward adjustment)
+// Корректировка на сплиты (backward adjustment)
 // =====================================================
-//
-// Логика: для каждого дивиденда находим день отсечки (registryclosedate),
-// затем корректируем все бары ДО него на коэффициент
-//   factor = (close_до_отсечки − дивиденд) / close_до_отсечки
-// Это сшивает историю так, чтобы дивидендный гэп не выглядел как падение.
+function applySplitAdjustment(data, splits) {
+  if (!splits || splits.length === 0) {
+    return { adjusted: data.map(d => ({ ...d })), splitEvents: [] };
+  }
 
+  const sorted = [...splits]
+    .filter(s => s.date && Number(s.ratio) > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const adjusted = data.map(d => ({ ...d }));
+  const splitEvents = [];
+
+  for (const split of sorted) {
+    let exIdx = -1;
+    for (let i = 0; i < adjusted.length; i++) {
+      if (adjusted[i].time >= split.date) {
+        exIdx = i;
+        break;
+      }
+    }
+    if (exIdx <= 0) continue;
+
+    const factor = 1 / split.ratio;
+
+    for (let i = 0; i < exIdx; i++) {
+      adjusted[i].open  *= factor;
+      adjusted[i].high  *= factor;
+      adjusted[i].low   *= factor;
+      adjusted[i].close *= factor;
+    }
+
+    splitEvents.push({
+      date: adjusted[exIdx].time,
+      ratio: split.ratio,
+      factor: +factor.toFixed(6),
+    });
+  }
+
+  return { adjusted, splitEvents };
+}
+
+// =====================================================
+// Корректировка на дивиденды (backward adjustment)
+// =====================================================
 function applyDividendAdjustment(data, dividends) {
   if (!dividends || dividends.length === 0) {
-    return { adjusted: data, gapDates: [] };
+    return { adjusted: data.map(d => ({ ...d })), gapDates: [] };
   }
 
   const adjusted = data.map(d => ({ ...d }));
@@ -127,7 +165,6 @@ function applyDividendAdjustment(data, dividends) {
     .sort((a, b) => a.date.localeCompare(b.date));
 
   for (const div of sortedDivs) {
-    // Индекс первого бара на/после даты отсечки
     let exIdx = -1;
     for (let i = 0; i < adjusted.length; i++) {
       if (adjusted[i].time >= div.date) {
@@ -135,7 +172,6 @@ function applyDividendAdjustment(data, dividends) {
         break;
       }
     }
-    // Если дата отсечки раньше начала данных или совпадает с первым баром — пропускаем
     if (exIdx <= 0) continue;
 
     const refPrice = adjusted[exIdx - 1].close;
@@ -162,7 +198,33 @@ function applyDividendAdjustment(data, dividends) {
 }
 
 // =====================================================
-// Сигналы для разных стратегий
+// Универсальный helper: применяет сплиты, затем дивиденды
+// =====================================================
+function applyCorporateActions(data, payload, options = {}) {
+  const useSplits    = options.useSplits    !== false;
+  const useDividends = options.useDividends !== false;
+
+  let result = data.map(d => ({ ...d }));
+  const splitEvents = [];
+  const gapDates = [];
+
+  if (useSplits && payload.splits && payload.splits.length > 0) {
+    const r = applySplitAdjustment(result, payload.splits);
+    result = r.adjusted;
+    splitEvents.push(...r.splitEvents);
+  }
+
+  if (useDividends && payload.dividends && payload.dividends.length > 0) {
+    const r = applyDividendAdjustment(result, payload.dividends);
+    result = r.adjusted;
+    gapDates.push(...r.gapDates);
+  }
+
+  return { adjusted: result, splitEvents, gapDates };
+}
+
+// =====================================================
+// Сигналы стратегий
 // =====================================================
 
 function emaCrossoverSignals(data, fastPeriod, slowPeriod) {
@@ -213,10 +275,6 @@ function buyHoldSignals(data) {
   return [{ index: 0, type: 'buy' }];
 }
 
-// =====================================================
-// Реестр стратегий
-// =====================================================
-
 const STRATEGIES = {
   ema: {
     id: 'ema',
@@ -249,7 +307,7 @@ const STRATEGIES = {
 };
 
 // =====================================================
-// Комплексный анализ рынка
+// Комплексный анализ
 // =====================================================
 
 function analyzeMarket(data) {
