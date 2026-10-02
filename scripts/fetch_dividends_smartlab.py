@@ -25,7 +25,7 @@ HEADERS = {
 DATE_RE = re.compile(r"^\d{2}\.\d{2}\.\d{4}$")
 
 
-def parse_amount(raw) -> float | None:
+def parse_amount(raw):
     if raw is None or (isinstance(raw, float) and pd.isna(raw)):
         return None
     s = str(raw)
@@ -41,8 +41,7 @@ def parse_amount(raw) -> float | None:
     return val if val > 0 else None
 
 
-def looks_like_year(value: float) -> bool:
-    """True, если значение похоже на год (1900–2100), а не на дивиденд."""
+def looks_like_year(value):
     if value is None:
         return False
     if value != int(value):
@@ -50,11 +49,40 @@ def looks_like_year(value: float) -> bool:
     return 1900 <= value <= 2100
 
 
-def score_amount_column(df: pd.DataFrame, col_idx: int) -> float:
+def header_score(header: str) -> float:
     """
-    Оценивает столбец как кандидат на 'размер дивиденда'.
-    Чем выше оценка, тем вероятнее это нужный столбец.
+    Оценка заголовка колонки как кандидата на 'сумма дивиденда в рублях'.
     """
+    h = str(header).lower()
+    score = 0.0
+
+    # Явные признаки "правильной" колонки
+    if "дивиденд" in h:
+        score += 10
+    if "выплат" in h:
+        score += 6
+    if "на акцию" in h or "на 1 акцию" in h:
+        score += 6
+    if "₽" in h or "руб" in h or "rub" in h:
+        score += 5
+
+    # Явные признаки "неправильной" колонки
+    if "%" in h or "процент" in h:
+        score -= 15
+    if "доходность" in h:
+        score -= 15
+    if "период" in h:
+        score -= 12
+    if "год" in h or "year" in h:
+        score -= 12
+    if "t-1" in h or "t+1" in h:
+        score -= 6
+
+    return score
+
+
+def value_score(df: pd.DataFrame, col_idx: int) -> float:
+    """Оценка значений колонки (запасной вариант)."""
     sample = df.iloc[:, col_idx].dropna().head(10)
     if len(sample) == 0:
         return -1.0
@@ -64,34 +92,33 @@ def score_amount_column(df: pd.DataFrame, col_idx: int) -> float:
     if not valid:
         return -1.0
 
-    score = 0.0
     total = len(valid)
-
-    # Штраф за "годы" — они не могут быть дивидендом
     year_penalty = sum(1 for v in valid if looks_like_year(v))
     if year_penalty == total:
-        return -1.0  # это точно столбец с годами
+        return -1.0
+
+    score = 0.0
     score -= year_penalty * 2.0
 
-    # Бонус за наличие копеек (дивиденды часто с копейками)
+    # Если все значения в диапазоне 1..20 — это, скорее всего, проценты
+    all_small = all(v <= 20 for v in valid)
+    if all_small:
+        score -= 5.0
+
+    # Бонус за копейки — у рублёвых дивидендов часто есть десятичные
     has_decimals = sum(1 for v in valid if v != int(v))
-    score += has_decimals * 0.5
+    score += has_decimals * 0.3
 
-    # Бонус за правдоподобный диапазон дивиденда: 0.01 – 5000 ₽
-    reasonable = sum(1 for v in valid if 0.01 <= v <= 5000 and not looks_like_year(v))
-    score += reasonable * 1.0
-
-    # Штраф за подозрительно большие значения (ID, объёмы и т.п.)
-    huge = sum(1 for v in valid if v > 100000)
-    score -= huge * 2.0
+    # Бонус за "крупные" значения — для таких бумаг как LKOH это 100+ ₽
+    large = sum(1 for v in valid if 50 <= v <= 100000)
+    score += large * 0.5
 
     return score
 
 
-def find_dividend_table(tables: list[pd.DataFrame]):
-    """Находит таблицу с датами DD.MM.YYYY и колонкой-дивидендом."""
+def find_dividend_table(tables):
     best = None
-    best_score = -1.0
+    best_total = -1.0
 
     for df in tables:
         if df.shape[1] < 3 or df.shape[0] < 1:
@@ -111,22 +138,38 @@ def find_dividend_table(tables: list[pd.DataFrame]):
         if date_col is None:
             continue
 
-        # Среди остальных колонок ищем лучшую по оценке
+        # Ищем колонку с суммой дивиденда
+        best_amount_col = None
+        best_amount_score = -1e9
+
         for col_idx in range(df.shape[1]):
             if col_idx == date_col:
                 continue
-            s = score_amount_column(df, col_idx)
-            if s > best_score:
-                best_score = s
-                best = (df, date_col, col_idx)
 
-    if best is None or best_score < 0:
-        return None
+            h_score = header_score(df.columns[col_idx])
+            v_score = value_score(df, col_idx)
+
+            # Если заголовок явно говорит "не то" — пропускаем
+            if h_score <= -10:
+                continue
+
+            total = h_score * 2.0 + v_score
+
+            if total > best_amount_score:
+                best_amount_score = total
+                best_amount_col = col_idx
+
+        if best_amount_col is None or best_amount_score < 0:
+            continue
+
+        if best_amount_score > best_total:
+            best_total = best_amount_score
+            best = (df, date_col, best_amount_col)
 
     return best
 
 
-def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
+def fetch_dividends_for_ticker(ticker, start_date):
     url = SMARTLAB_URL.format(ticker=ticker.upper())
 
     try:
@@ -162,6 +205,13 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
         f"сумма='{amount_header}' (столбец {amount_col})",
         flush=True,
     )
+
+    # Печатаем первые строки для контроля
+    print(f"  [{ticker}] первые строки таблицы:", flush=True)
+    for i, row in df.head(3).iterrows():
+        d = row.iloc[date_col]
+        a = row.iloc[amount_col]
+        print(f"    дата={d!r}  сумма={a!r}", flush=True)
 
     result = []
     for _, row in df.iterrows():
@@ -202,7 +252,7 @@ def fetch_dividends_for_ticker(ticker: str, start_date: str) -> list[dict]:
     return unique
 
 
-def fetch_all(tickers: list[str], start_date: str) -> dict:
+def fetch_all(tickers, start_date):
     result = {}
     for ticker in tickers:
         print(f"[{ticker}] тянем дивиденды со Smart-Lab...", flush=True)
