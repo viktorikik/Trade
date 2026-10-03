@@ -1,0 +1,5707 @@
+{
+  "updatedAt": "2026-10-03",
+  "board": "TQBR",
+  "count": 950,
+  "tickers": [
+    {
+      "ticker": "ABIO",
+      "name": "iАРТГЕН ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ABIO",
+      "name": "iАРТГЕН ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ABRD",
+      "name": "АбрауДюрсо",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ABRD",
+      "name": "АбрауДюрсо",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "AFKS",
+      "name": "Система ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "AFKS",
+      "name": "Система ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "AFLT",
+      "name": "Аэрофлот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "AFLT",
+      "name": "Аэрофлот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "AKAI",
+      "name": "AKAI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKAI",
+      "name": "AKAI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKBC",
+      "name": "AKBC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKBC",
+      "name": "AKBC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKCN",
+      "name": "AKCN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKCN",
+      "name": "AKCN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKFB",
+      "name": "AKFB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKFB",
+      "name": "AKFB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKFN",
+      "name": "AKFN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKFN",
+      "name": "AKFN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKGD",
+      "name": "AKGD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKGD",
+      "name": "AKGD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKGP",
+      "name": "AKGP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKGP",
+      "name": "AKGP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKHT",
+      "name": "AKHT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKHT",
+      "name": "AKHT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKIE",
+      "name": "ETF AKIE",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKIE",
+      "name": "ETF AKIE",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMB",
+      "name": "ETF AKMB",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMB",
+      "name": "ETF AKMB",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMC",
+      "name": "AKMC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMC",
+      "name": "AKMC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKME",
+      "name": "ETF AKME",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKME",
+      "name": "ETF AKME",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMM",
+      "name": "AKMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMM",
+      "name": "AKMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMP",
+      "name": "AKMP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKMP",
+      "name": "AKMP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKPP",
+      "name": "AKPP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKPP",
+      "name": "AKPP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKQU",
+      "name": "AKQU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKQU",
+      "name": "AKQU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKRN",
+      "name": "Акрон",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKRN",
+      "name": "Акрон",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKUP",
+      "name": "AKUP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AKUP",
+      "name": "AKUP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ALRS",
+      "name": "АЛРОСА ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ALRS",
+      "name": "АЛРОСА ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "AMEZ",
+      "name": "АшинскийМЗ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "AMEZ",
+      "name": "АшинскийМЗ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "AMFL",
+      "name": "AMFL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMFL",
+      "name": "AMFL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMGB",
+      "name": "AMGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMGB",
+      "name": "AMGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMGL",
+      "name": "AMGL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMGL",
+      "name": "AMGL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMIX",
+      "name": "AMIX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMIX",
+      "name": "AMIX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMNR",
+      "name": "AMNR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMNR",
+      "name": "AMNR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMNY",
+      "name": "AMNY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMNY",
+      "name": "AMNY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMRE",
+      "name": "AMRE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMRE",
+      "name": "AMRE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMRH",
+      "name": "AMRH ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMRH",
+      "name": "AMRH ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMVD",
+      "name": "AMVD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMVD",
+      "name": "AMVD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMVY",
+      "name": "AMVY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AMVY",
+      "name": "AMVY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "APRI",
+      "name": "АПРИ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "APRI",
+      "name": "АПРИ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "APTK",
+      "name": "Аптеки36и6",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "APTK",
+      "name": "Аптеки36и6",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "AQUA",
+      "name": "ИНАРКТИКА",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AQUA",
+      "name": "ИНАРКТИКА",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ARSA",
+      "name": "Арсагера",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "ARSA",
+      "name": "Арсагера",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "ASSB",
+      "name": "АстрЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ASSB",
+      "name": "АстрЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ASTR",
+      "name": "iАстра ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ASTR",
+      "name": "iАстра ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AVAN",
+      "name": "Авангрд-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "AVAN",
+      "name": "Авангрд-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BANE",
+      "name": "Башнефт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BANE",
+      "name": "Башнефт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BANEP",
+      "name": "Башнефт ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BANEP",
+      "name": "Башнефт ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BAZA",
+      "name": "iБАЗИС",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "BAZA",
+      "name": "iБАЗИС",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "BCSB",
+      "name": "BCSB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSB",
+      "name": "BCSB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSD",
+      "name": "BCSD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSD",
+      "name": "BCSD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSE",
+      "name": "BCSE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSE",
+      "name": "BCSE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSG",
+      "name": "BCSG ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSG",
+      "name": "BCSG ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSR",
+      "name": "BCSR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSR",
+      "name": "BCSR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSW",
+      "name": "BCSW ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BCSW",
+      "name": "BCSW ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BELU",
+      "name": "НоваБев ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BELU",
+      "name": "НоваБев ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BISVP",
+      "name": "БашИнСв ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BISVP",
+      "name": "БашИнСв ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BLNG",
+      "name": "Белон ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BLNG",
+      "name": "Белон ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BNDA",
+      "name": "BNDA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BNDA",
+      "name": "BNDA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BNDB",
+      "name": "BNDB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BNDB",
+      "name": "BNDB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BNDC",
+      "name": "BNDC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BNDC",
+      "name": "BNDC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BOND",
+      "name": "BOND ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BOND",
+      "name": "BOND ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BRZL",
+      "name": "БурЗолото",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BRZL",
+      "name": "БурЗолото",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BSPB",
+      "name": "БСП ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "BSPB",
+      "name": "БСП ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "BSPBP",
+      "name": "БСП ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BSPBP",
+      "name": "БСП ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "BTBR",
+      "name": "iВ2В-РТС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "BTBR",
+      "name": "iВ2В-РТС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CARM",
+      "name": "СТГ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CARM",
+      "name": "СТГ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CASH",
+      "name": "CASH ETF",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "CASH",
+      "name": "CASH ETF",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "CBOM",
+      "name": "МКБ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CBOM",
+      "name": "МКБ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CHGZ",
+      "name": "РН-ЗапСиб",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "CHGZ",
+      "name": "РН-ЗапСиб",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "CHKZ",
+      "name": "ЧКПЗ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CHKZ",
+      "name": "ЧКПЗ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CHMF",
+      "name": "СевСт-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CHMF",
+      "name": "СевСт-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CHMK",
+      "name": "ЧМК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CHMK",
+      "name": "ЧМК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CNRU",
+      "name": "iЦиан",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CNRU",
+      "name": "iЦиан",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CNTL",
+      "name": "Телеграф",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CNTL",
+      "name": "Телеграф",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CNTLP",
+      "name": "Телеграф-п",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CNTLP",
+      "name": "Телеграф-п",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "CNYM",
+      "name": "CNYM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CNYM",
+      "name": "CNYM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CORP",
+      "name": "CORP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "CORP",
+      "name": "CORP ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DATA",
+      "name": "iАренадата",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DATA",
+      "name": "iАренадата",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DELI",
+      "name": "iКаршеринг",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DELI",
+      "name": "iКаршеринг",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DIAS",
+      "name": "iДиасофт",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DIAS",
+      "name": "iДиасофт",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DIOD",
+      "name": "ЗаводДИОД",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "DIOD",
+      "name": "ЗаводДИОД",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "DIVD",
+      "name": "ETF DIVD",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DIVD",
+      "name": "ETF DIVD",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DOMRF",
+      "name": "ДОМ.РФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DOMRF",
+      "name": "ДОМ.РФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DVEC",
+      "name": "ДЭК ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "DVEC",
+      "name": "ДЭК ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "DZRD",
+      "name": "ДонскЗР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DZRD",
+      "name": "ДонскЗР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DZRDP",
+      "name": "ДонскЗР п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "DZRDP",
+      "name": "ДонскЗР п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EELT",
+      "name": "ЕвроЭлтех",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "EELT",
+      "name": "ЕвроЭлтех",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ELFV",
+      "name": "ЭЛ5Энер ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ELFV",
+      "name": "ЭЛ5Энер ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ELMT",
+      "name": "iЭлемент",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ELMT",
+      "name": "iЭлемент",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ENPG",
+      "name": "ЭН+ГРУП ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ENPG",
+      "name": "ЭН+ГРУП ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EQMX",
+      "name": "EQMX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EQMX",
+      "name": "EQMX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ESGE",
+      "name": "ESGE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ESGE",
+      "name": "ESGE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ESGR",
+      "name": "ESGR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ESGR",
+      "name": "ESGR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ETLN",
+      "name": "ЭталонГруп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ETLN",
+      "name": "ЭталонГруп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EUTR",
+      "name": "ЕвроТранс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EUTR",
+      "name": "ЕвроТранс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "EVRZ",
+      "name": "ЕВРАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "EVRZ",
+      "name": "ЕВРАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "FEES",
+      "name": "Россети",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "FEES",
+      "name": "Россети",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "FESH",
+      "name": "ДВМП ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FESH",
+      "name": "ДВМП ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FINC",
+      "name": "FINC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FINC",
+      "name": "FINC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FIXR",
+      "name": "Фикс Прайс",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "FIXR",
+      "name": "Фикс Прайс",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "FLOT",
+      "name": "Совкомфлот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "FLOT",
+      "name": "Совкомфлот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "FLOW",
+      "name": "FLOW ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FLOW",
+      "name": "FLOW ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMBR",
+      "name": "FMBR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMBR",
+      "name": "FMBR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMMM",
+      "name": "FMMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMMM",
+      "name": "FMMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMSA",
+      "name": "FMSA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "FMSA",
+      "name": "FMSA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GAZA",
+      "name": "ГАЗ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZA",
+      "name": "ГАЗ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZAP",
+      "name": "ГАЗ ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZAP",
+      "name": "ГАЗ ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZC",
+      "name": "ГАЗКОН-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZC",
+      "name": "ГАЗКОН-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZP",
+      "name": "ГАЗПРОМ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZP",
+      "name": "ГАЗПРОМ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZS",
+      "name": "ГАЗ-сервис",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZS",
+      "name": "ГАЗ-сервис",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZT",
+      "name": "ГАЗ-Тек ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GAZT",
+      "name": "ГАЗ-Тек ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GCHE",
+      "name": "ЧеркизГ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GCHE",
+      "name": "ЧеркизГ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GECO",
+      "name": "iГЕНЕТИКО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GECO",
+      "name": "iГЕНЕТИКО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GEMA",
+      "name": "iММЦБ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GEMA",
+      "name": "iММЦБ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GEMC",
+      "name": "МКПАО ЮМГ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GEMC",
+      "name": "МКПАО ЮМГ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GLRX",
+      "name": "ГЛОРАКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GLRX",
+      "name": "ГЛОРАКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GMKN",
+      "name": "ГМКНорНик",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GMKN",
+      "name": "ГМКНорНик",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GOLD",
+      "name": "GOLD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GOLD",
+      "name": "GOLD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GOOD",
+      "name": "GOOD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GOOD",
+      "name": "GOOD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GROD",
+      "name": "ETF GROD",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GROD",
+      "name": "ETF GROD",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "GTRK",
+      "name": "ГТМ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "GTRK",
+      "name": "ГТМ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "HEAD",
+      "name": "Хэдхантер",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "HEAD",
+      "name": "Хэдхантер",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "HIMCP",
+      "name": "Химпром ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "HIMCP",
+      "name": "Химпром ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "HNFG",
+      "name": "ХЭНДЕРСОН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "HNFG",
+      "name": "ХЭНДЕРСОН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "HYDR",
+      "name": "РусГидро",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "HYDR",
+      "name": "РусГидро",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "IGST",
+      "name": "Ижсталь2ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "IGST",
+      "name": "Ижсталь2ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "IGSTP",
+      "name": "Ижсталь ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "IGSTP",
+      "name": "Ижсталь ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INCB",
+      "name": "Инкаб",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INCB",
+      "name": "Инкаб",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INFL",
+      "name": "INFL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INFL",
+      "name": "INFL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INGO",
+      "name": "INGO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "INGO",
+      "name": "INGO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "IRAO",
+      "name": "ИнтерРАОао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "IRAO",
+      "name": "ИнтерРАОао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "IRKT",
+      "name": "Яковлев-3",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "IRKT",
+      "name": "Яковлев-3",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "IVAT",
+      "name": "iИВА",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "IVAT",
+      "name": "iИВА",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "JNOS",
+      "name": "Славн-ЯНОС",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "JNOS",
+      "name": "Славн-ЯНОС",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "JNOSP",
+      "name": "Слав-ЯНОСп",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "JNOSP",
+      "name": "Слав-ЯНОСп",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KAZT",
+      "name": "Куйбазот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KAZT",
+      "name": "Куйбазот",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KAZTP",
+      "name": "Куйбазот-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KAZTP",
+      "name": "Куйбазот-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KBSB",
+      "name": "ТНСэКубань",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KBSB",
+      "name": "ТНСэКубань",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KCHE",
+      "name": "КамчатЭ ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KCHE",
+      "name": "КамчатЭ ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KCHEP",
+      "name": "КамчатЭ ап",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KCHEP",
+      "name": "КамчатЭ ап",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KFBA",
+      "name": "ИНГРАД ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KFBA",
+      "name": "ИНГРАД ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KGKC",
+      "name": "КурганГКао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KGKC",
+      "name": "КурганГКао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KGKCP",
+      "name": "КурганГКап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KGKCP",
+      "name": "КурганГКап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KLSB",
+      "name": "КалужскСК",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KLSB",
+      "name": "КалужскСК",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KLVZ",
+      "name": "Кристалл",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KLVZ",
+      "name": "Кристалл",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KMAZ",
+      "name": "КАМАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KMAZ",
+      "name": "КАМАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KMEZ",
+      "name": "КМЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KMEZ",
+      "name": "КМЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KOGK",
+      "name": "КоршГОК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KOGK",
+      "name": "КоршГОК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KRKN",
+      "name": "СаратНПЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KRKN",
+      "name": "СаратНПЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KRKNP",
+      "name": "СаратНПЗ-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KRKNP",
+      "name": "СаратНПЗ-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "KRKOP",
+      "name": "ТКЗКК ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KRKOP",
+      "name": "ТКЗКК ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KROT",
+      "name": "КрасОкт-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KROT",
+      "name": "КрасОкт-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KROTP",
+      "name": "КрасОкт-1п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KROTP",
+      "name": "КрасОкт-1п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KRSB",
+      "name": "Красэсб ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KRSB",
+      "name": "Красэсб ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KRSBP",
+      "name": "Красэсб ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KRSBP",
+      "name": "Красэсб ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "KUZB",
+      "name": "КузнецкийБ",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KUZB",
+      "name": "КузнецкийБ",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "KZOS",
+      "name": "ОргСинт ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KZOS",
+      "name": "ОргСинт ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KZOSP",
+      "name": "ОргСинт ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "KZOSP",
+      "name": "ОргСинт ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "LEAS",
+      "name": "Европлан",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LEAS",
+      "name": "Европлан",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LENT",
+      "name": "Лента ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LENT",
+      "name": "Лента ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LIFE",
+      "name": "Фармсинтез",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "LIFE",
+      "name": "Фармсинтез",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "LKOH",
+      "name": "ЛУКОЙЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LKOH",
+      "name": "ЛУКОЙЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LMBZ",
+      "name": "Ламбумиз",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LMBZ",
+      "name": "Ламбумиз",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LNZL",
+      "name": "Лензолото",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LNZL",
+      "name": "Лензолото",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LNZLP",
+      "name": "Лензол. ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LNZLP",
+      "name": "Лензол. ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LPSB",
+      "name": "ЛЭСК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LPSB",
+      "name": "ЛЭСК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LQDT",
+      "name": "LQDT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LQDT",
+      "name": "LQDT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LSNG",
+      "name": "РСетиЛЭ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "LSNG",
+      "name": "РСетиЛЭ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "LSNGP",
+      "name": "РСетиЛЭ-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "LSNGP",
+      "name": "РСетиЛЭ-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "LSRG",
+      "name": "ЛСР ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LSRG",
+      "name": "ЛСР ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "LVHK",
+      "name": "Левенгук",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "LVHK",
+      "name": "Левенгук",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MAGE",
+      "name": "МагадЭн ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MAGE",
+      "name": "МагадЭн ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MAGEP",
+      "name": "МагадЭн ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MAGEP",
+      "name": "МагадЭн ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MAGN",
+      "name": "ММК",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MAGN",
+      "name": "ММК",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MBNK",
+      "name": "МТС Банк",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MBNK",
+      "name": "МТС Банк",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MDMG",
+      "name": "MDMG-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MDMG",
+      "name": "MDMG-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MFGS",
+      "name": "Мегион-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MFGS",
+      "name": "Мегион-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MFGSP",
+      "name": "Мегион-ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MFGSP",
+      "name": "Мегион-ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MGKL",
+      "name": "МГКЛ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MGKL",
+      "name": "МГКЛ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MGNT",
+      "name": "Магнит ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGNT",
+      "name": "Магнит ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGNZ",
+      "name": "СМЗ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGNZ",
+      "name": "СМЗ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGTS",
+      "name": "МГТС-5ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGTS",
+      "name": "МГТС-5ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGTSP",
+      "name": "МГТС-4ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MGTSP",
+      "name": "МГТС-4ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MISB",
+      "name": "ТНСэнМарЭл",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MISB",
+      "name": "ТНСэнМарЭл",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MISBP",
+      "name": "ТНСэМаЭл-п",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MISBP",
+      "name": "ТНСэМаЭл-п",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "MKBD",
+      "name": "MKBD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MKBD",
+      "name": "MKBD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MOEX",
+      "name": "МосБиржа",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MOEX",
+      "name": "МосБиржа",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MONY",
+      "name": "MONY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MONY",
+      "name": "MONY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MRKC",
+      "name": "РоссЦентр",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MRKC",
+      "name": "РоссЦентр",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MRKK",
+      "name": "Россети СК",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MRKK",
+      "name": "Россети СК",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MRKP",
+      "name": "РСетиЦП ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKP",
+      "name": "РСетиЦП ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKS",
+      "name": "РсетСиб ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MRKS",
+      "name": "РсетСиб ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MRKU",
+      "name": "Россети Ур",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKU",
+      "name": "Россети Ур",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKV",
+      "name": "РсетВол ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKV",
+      "name": "РсетВол ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKY",
+      "name": "РоссЮг ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKY",
+      "name": "РоссЮг ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKZ",
+      "name": "РСетиСЗ ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRKZ",
+      "name": "РСетиСЗ ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRSB",
+      "name": "МордЭнСб",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MRSB",
+      "name": "МордЭнСб",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "MSNG",
+      "name": "+МосЭнерго",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MSNG",
+      "name": "+МосЭнерго",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MSRS",
+      "name": "РСетиМР ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MSRS",
+      "name": "РСетиМР ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "MSTT",
+      "name": "Мостотрест",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MSTT",
+      "name": "Мостотрест",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MTLR",
+      "name": "Мечел ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MTLR",
+      "name": "Мечел ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MTLRP",
+      "name": "Мечел ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MTLRP",
+      "name": "Мечел ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MTSS",
+      "name": "МТС-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MTSS",
+      "name": "МТС-ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "MVID",
+      "name": "М.видео",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "MVID",
+      "name": "М.видео",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NAUK",
+      "name": "iНПОНаука",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NAUK",
+      "name": "iНПОНаука",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NFAZ",
+      "name": "НЕФАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NFAZ",
+      "name": "НЕФАЗ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NFKL",
+      "name": "NFKL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NFKL",
+      "name": "NFKL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NKHP",
+      "name": "НКХП ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKHP",
+      "name": "НКХП ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKNC",
+      "name": "НКНХ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKNC",
+      "name": "НКНХ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKNCP",
+      "name": "НКНХ ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKNCP",
+      "name": "НКНХ ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NKSH",
+      "name": "Нижкамшина",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "NKSH",
+      "name": "Нижкамшина",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "NLMK",
+      "name": "НЛМК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NLMK",
+      "name": "НЛМК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NMTP",
+      "name": "НМТП ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "NMTP",
+      "name": "НМТП ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "NNSB",
+      "name": "ТНСэнНН ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NNSB",
+      "name": "ТНСэнНН ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NNSBP",
+      "name": "ТНСэнНН ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NNSBP",
+      "name": "ТНСэнНН ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NSVZ",
+      "name": "iНаукаСвяз",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NSVZ",
+      "name": "iНаукаСвяз",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "NVTK",
+      "name": "Новатэк ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "NVTK",
+      "name": "Новатэк ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OBLG",
+      "name": "OBLG ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OBLG",
+      "name": "OBLG ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OFZS",
+      "name": "OFZS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OFZS",
+      "name": "OFZS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OGKB",
+      "name": "ОГК-2 ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "OGKB",
+      "name": "ОГК-2 ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "OKEY",
+      "name": "OKEY-гдр",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "OKEY",
+      "name": "OKEY-гдр",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "OLIQ",
+      "name": "OLIQ ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OLIQ",
+      "name": "OLIQ ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OMZZP",
+      "name": "ОМЗ-ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OMZZP",
+      "name": "ОМЗ-ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OZON",
+      "name": "Озон",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OZON",
+      "name": "Озон",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "OZPH",
+      "name": "iОзонФарм",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "OZPH",
+      "name": "iОзонФарм",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "PAZA",
+      "name": "ПавлАвт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PAZA",
+      "name": "ПавлАвт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PHOR",
+      "name": "ФосАгро ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PHOR",
+      "name": "ФосАгро ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PIKK",
+      "name": "ПИК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PIKK",
+      "name": "ПИК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PLZL",
+      "name": "Полюс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PLZL",
+      "name": "Полюс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PMSB",
+      "name": "ПермьЭнСб",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "PMSB",
+      "name": "ПермьЭнСб",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "PMSBP",
+      "name": "ПермьЭнС-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "PMSBP",
+      "name": "ПермьЭнС-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "POSI",
+      "name": "iПозитив",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "POSI",
+      "name": "iПозитив",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRFN",
+      "name": "ТЕПЛАНТ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "PRFN",
+      "name": "ТЕПЛАНТ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "PRIE",
+      "name": "PRIE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRIE",
+      "name": "PRIE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRMB",
+      "name": "Приморье",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRMB",
+      "name": "Приморье",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRMD",
+      "name": "iПРОМОМЕД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PRMD",
+      "name": "iПРОМОМЕД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSGM",
+      "name": "PSGM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSGM",
+      "name": "PSGM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSMM",
+      "name": "PSMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSMM",
+      "name": "PSMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSRB",
+      "name": "PSRB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSRB",
+      "name": "PSRB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSRE",
+      "name": "PSRE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "PSRE",
+      "name": "PSRE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RAGR",
+      "name": "Русагро",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RAGR",
+      "name": "Русагро",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RASP",
+      "name": "Распадская",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RASP",
+      "name": "Распадская",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RBCM",
+      "name": "ГК РБК ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "RBCM",
+      "name": "ГК РБК ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "RDRB",
+      "name": "РДБанк ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RDRB",
+      "name": "РДБанк ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RENI",
+      "name": "Ренессанс",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RENI",
+      "name": "Ренессанс",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RGSS",
+      "name": "РГС СК ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RGSS",
+      "name": "РГС СК ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RKKE",
+      "name": "ЭнергияРКК",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RKKE",
+      "name": "ЭнергияРКК",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RNFT",
+      "name": "РуссНфт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RNFT",
+      "name": "РуссНфт ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ROLO",
+      "name": "Русолово",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ROLO",
+      "name": "Русолово",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ROSN",
+      "name": "Роснефть",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ROSN",
+      "name": "Роснефть",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ROST",
+      "name": "РОСИНТЕРао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ROST",
+      "name": "РОСИНТЕРао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RSHU",
+      "name": "RSHU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RSHU",
+      "name": "RSHU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RTGZ",
+      "name": "ГР Ростов",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RTGZ",
+      "name": "ГР Ростов",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RTKM",
+      "name": "Ростел -ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RTKM",
+      "name": "Ростел -ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RTKMP",
+      "name": "Ростел -ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RTKMP",
+      "name": "Ростел -ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RTSB",
+      "name": "ТНСэнРст",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RTSB",
+      "name": "ТНСэнРст",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RTSBP",
+      "name": "ТНСэнРст-п",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RTSBP",
+      "name": "ТНСэнРст-п",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "RU000A0JPZL7",
+      "name": "АкБрс-Инв",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "RU000A0JPZL7",
+      "name": "АкБрс-Инв",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "RU000A0JPZP8",
+      "name": "АкБрс-Прсп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JPZP8",
+      "name": "АкБрс-Прсп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JRHC0",
+      "name": "ПИФ АТРИУМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JRHC0",
+      "name": "ПИФ АТРИУМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JUR61",
+      "name": "ПИФ КОНСЕР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JUR61",
+      "name": "ПИФ КОНСЕР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JUYB1",
+      "name": "ЗПИФЛофтин",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JUYB1",
+      "name": "ЗПИФЛофтин",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JWCE7",
+      "name": "Перловский",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JWCE7",
+      "name": "Перловский",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JXP78",
+      "name": "ЗПИФДОМ.РФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0JXP78",
+      "name": "ЗПИФДОМ.РФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZYC64",
+      "name": "СоврАрБиз2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZYC64",
+      "name": "СоврАрБиз2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZ5R2",
+      "name": "СоврАрБиз3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZ5R2",
+      "name": "СоврАрБиз3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZCD8",
+      "name": "ИПИФМирИнв",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZCD8",
+      "name": "ИПИФМирИнв",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZVH9",
+      "name": "ГПБУАЕОбИП",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A0ZZVH9",
+      "name": "ГПБУАЕОбИП",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1000Y0",
+      "name": "iпре-АйПиО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1000Y0",
+      "name": "iпре-АйПиО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A100WZ5",
+      "name": "АКЦЕНТ 4",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A100WZ5",
+      "name": "АКЦЕНТ 4",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A101NK4",
+      "name": "ЗПИФ ФПР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A101NK4",
+      "name": "ЗПИФ ФПР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A101UK9",
+      "name": "ОРЕОЛСтрой",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A101UK9",
+      "name": "ОРЕОЛСтрой",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1022Z1",
+      "name": "ПАРУС-ОЗН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1022Z1",
+      "name": "ПАРУС-ОЗН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1027E5",
+      "name": "ЗПИФ ВДО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1027E5",
+      "name": "ЗПИФ ВДО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102AH5",
+      "name": "ЗПИФСовр 6",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102AH5",
+      "name": "ЗПИФСовр 6",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102N77",
+      "name": "ЗПИФРД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102N77",
+      "name": "ЗПИФРД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PE0",
+      "name": "Фондсуб1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PE0",
+      "name": "Фондсуб1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PF7",
+      "name": "Фондсуб2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PF7",
+      "name": "Фондсуб2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PN1",
+      "name": "ПИФАльфаФФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PN1",
+      "name": "ПИФАльфаФФ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PQ4",
+      "name": "ФондСубРуб",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A102PQ4",
+      "name": "ФондСубРуб",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1034U7",
+      "name": "СФНАрБиз7",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1034U7",
+      "name": "СФНАрБиз7",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A103B62",
+      "name": "РенДохПРО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A103B62",
+      "name": "РенДохПРО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A103HD7",
+      "name": "ЗПИФРД2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A103HD7",
+      "name": "ЗПИФРД2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104172",
+      "name": "ПАРУС-СБЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104172",
+      "name": "ПАРУС-СБЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104KU3",
+      "name": "ПАРУС-НОРД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104KU3",
+      "name": "ПАРУС-НОРД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104YX8",
+      "name": "ЗПИФКомНед",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A104YX8",
+      "name": "ЗПИФКомНед",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105153",
+      "name": "ХеджФондР5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105153",
+      "name": "ХеджФондР5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105328",
+      "name": "ПАРУС-ЛОГ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105328",
+      "name": "ПАРУС-ЛОГ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105GY0",
+      "name": "ЗПИФПервСп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105GY0",
+      "name": "ЗПИФПервСп",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105R70",
+      "name": "Аннапурна",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A105R70",
+      "name": "Аннапурна",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1068X9",
+      "name": "ПАРУС-ДВН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1068X9",
+      "name": "ПАРУС-ДВН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106CX9",
+      "name": "ЗПИФА-ЮМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106CX9",
+      "name": "ЗПИФА-ЮМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106G80",
+      "name": "ТКЗамещОбл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106G80",
+      "name": "ТКЗамещОбл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106LB6",
+      "name": "ВсеСзПортф",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106LB6",
+      "name": "ВсеСзПортф",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106LC4",
+      "name": "МаксВозм",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106LC4",
+      "name": "МаксВозм",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106MG3",
+      "name": "ХеджФондД5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106MG3",
+      "name": "ХеджФондД5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106N57",
+      "name": "Атон-Об2.0",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106N57",
+      "name": "Атон-Об2.0",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106SA3",
+      "name": "Телескоп А",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106SA3",
+      "name": "Телескоп А",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A106XE5",
+      "name": "Саммит",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "RU000A106XE5",
+      "name": "Саммит",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "RU000A1075T2",
+      "name": "ЗПИФ Рубин",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1075T2",
+      "name": "ЗПИФ Рубин",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107860",
+      "name": "ХеджФондЮ5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107860",
+      "name": "ХеджФондЮ5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1079J5",
+      "name": "ХеджФондД1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1079J5",
+      "name": "ХеджФондД1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107J37",
+      "name": "ПИФ СЖН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107J37",
+      "name": "ПИФ СЖН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107RE5",
+      "name": "ПИФ Коллек",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A107RE5",
+      "name": "ПИФ Коллек",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108751",
+      "name": "ПИФПромПар",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108751",
+      "name": "ПИФПромПар",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108KP4",
+      "name": "ХеджФондА+",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108KP4",
+      "name": "ХеджФондА+",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108UH0",
+      "name": "ПАРУС-КРАС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108UH0",
+      "name": "ПАРУС-КРАС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108VR7",
+      "name": "ПАРУС-МАКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108VR7",
+      "name": "ПАРУС-МАКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108ZB2",
+      "name": "2хОФЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A108ZB2",
+      "name": "2хОФЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1092L4",
+      "name": "ПИФАКТИВ20",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1092L4",
+      "name": "ПИФАКТИВ20",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1095D4",
+      "name": "Атон - ОФЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1095D4",
+      "name": "Атон - ОФЗ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1099U0",
+      "name": "ЗПИФСовр 9",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A1099U0",
+      "name": "ЗПИФСовр 9",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109G79",
+      "name": "ПИФГРИНФЛО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109G79",
+      "name": "ПИФГРИНФЛО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109GQ8",
+      "name": "ПИФСкладК2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109GQ8",
+      "name": "ПИФСкладК2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109NL5",
+      "name": "ТЕТИС ИН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109NL5",
+      "name": "ТЕТИС ИН",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109R27",
+      "name": "2х Акции",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A109R27",
+      "name": "2х Акции",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10A489",
+      "name": "ПИФПарки2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10A489",
+      "name": "ПИФПарки2",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10AN72",
+      "name": "Синара",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10AN72",
+      "name": "Синара",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10AQT4",
+      "name": "Достояние",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RU000A10AQT4",
+      "name": "Достояние",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RU000A10ATA8",
+      "name": "ПИФАКТИВФЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10ATA8",
+      "name": "ПИФАКТИВФЛ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BBS6",
+      "name": "ПАРУС-НиНо",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BBS6",
+      "name": "ПАРУС-НиНо",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BM31",
+      "name": "ВИМ Вал пл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BM31",
+      "name": "ВИМ Вал пл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BQQ8",
+      "name": "ЛАХТА ПАРК",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BQQ8",
+      "name": "ЛАХТА ПАРК",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BT26",
+      "name": "ЗПИФА-Т",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BT26",
+      "name": "ЗПИФА-Т",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BT42",
+      "name": "ФЖН-1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10BT42",
+      "name": "ФЖН-1",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CFM8",
+      "name": "ПАРУС-ЗОЛЯ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CFM8",
+      "name": "ПАРУС-ЗОЛЯ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CKQ9",
+      "name": "АлфаКомНед",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CKQ9",
+      "name": "АлфаКомНед",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CLY1",
+      "name": "ПИФАКТИВ21",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10CLY1",
+      "name": "ПИФАКТИВ21",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10D7W9",
+      "name": "СинараВОбл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10D7W9",
+      "name": "СинараВОбл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10D814",
+      "name": "ТермКап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10D814",
+      "name": "ТермКап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10E3R7",
+      "name": "ПИФАКТИВ22",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10E3R7",
+      "name": "ПИФАКТИВ22",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10ECF5",
+      "name": "Атон-ПфСтр",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10ECF5",
+      "name": "Атон-ПфСтр",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10ECJ7",
+      "name": "Атон Выбор",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10ECJ7",
+      "name": "Атон Выбор",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10EVE8",
+      "name": "ПАРУС-МВ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10EVE8",
+      "name": "ПАРУС-МВ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10F439",
+      "name": "ПИФПарки3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RU000A10F439",
+      "name": "ПИФПарки3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RUAL",
+      "name": "РУСАЛ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RUAL",
+      "name": "РУСАЛ ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RUFO",
+      "name": "RUFO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RUFO",
+      "name": "RUFO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "RUSI",
+      "name": "ИКРУСС-ИНВ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RUSI",
+      "name": "ИКРУСС-ИНВ",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "RZSB",
+      "name": "РязЭнСб",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "RZSB",
+      "name": "РязЭнСб",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SAFE",
+      "name": "SAFE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SAFE",
+      "name": "SAFE ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SAGO",
+      "name": "СамарЭн-ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "SAGO",
+      "name": "СамарЭн-ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "SAGOP",
+      "name": "СамарЭн-ап",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "SAGOP",
+      "name": "СамарЭн-ап",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "SARE",
+      "name": "СаратЭн-ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "SARE",
+      "name": "СаратЭн-ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "SAREP",
+      "name": "СаратЭн-ап",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "SAREP",
+      "name": "СаратЭн-ап",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "SBBC",
+      "name": "SBBC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBBC",
+      "name": "SBBC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBBY",
+      "name": "SBBY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBBY",
+      "name": "SBBY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBCB",
+      "name": "SBCB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBCB",
+      "name": "SBCB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBCN",
+      "name": "SBCN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBCN",
+      "name": "SBCN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBDS",
+      "name": "SBDS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBDS",
+      "name": "SBDS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBER",
+      "name": "Сбербанк",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBER",
+      "name": "Сбербанк",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBERP",
+      "name": "Сбербанк-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBERP",
+      "name": "Сбербанк-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBFR",
+      "name": "SBFR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBFR",
+      "name": "SBFR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBGB",
+      "name": "SBGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBGB",
+      "name": "SBGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBGD",
+      "name": "SBGD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBGD",
+      "name": "SBGD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBHI",
+      "name": "SBHI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBHI",
+      "name": "SBHI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBLB",
+      "name": "SBLB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBLB",
+      "name": "SBLB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBMM",
+      "name": "SBMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBMM",
+      "name": "SBMM ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBMX",
+      "name": "SBMX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBMX",
+      "name": "SBMX ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBPS",
+      "name": "SBPS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBPS",
+      "name": "SBPS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRB",
+      "name": "SBRB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRB",
+      "name": "SBRB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRI",
+      "name": "SBRI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRI",
+      "name": "SBRI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRS",
+      "name": "SBRS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBRS",
+      "name": "SBRS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBSC",
+      "name": "SBSC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SBSC",
+      "name": "SBSC ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SCFT",
+      "name": "SCFT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SCFT",
+      "name": "SCFT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SCLI",
+      "name": "SCLI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SCLI",
+      "name": "SCLI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SELG",
+      "name": "Селигдар",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SELG",
+      "name": "Селигдар",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SFIN",
+      "name": "ЭсЭфАй ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SFIN",
+      "name": "ЭсЭфАй ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SGZH",
+      "name": "Сегежа",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SGZH",
+      "name": "Сегежа",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SIBN",
+      "name": "Газпрнефть",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SIBN",
+      "name": "Газпрнефть",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SILA",
+      "name": "SILA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SILA",
+      "name": "SILA ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SIPO",
+      "name": "SIPO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SIPO",
+      "name": "SIPO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SLEN",
+      "name": "Сахэнер ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SLEN",
+      "name": "Сахэнер ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SMCF",
+      "name": "SMCF ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SMCF",
+      "name": "SMCF ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SMLT",
+      "name": "Самолет ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SMLT",
+      "name": "Самолет ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SNGS",
+      "name": "Сургнфгз",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SNGS",
+      "name": "Сургнфгз",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SNGSP",
+      "name": "Сургнфгз-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SNGSP",
+      "name": "Сургнфгз-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SOFL",
+      "name": "iСофтлайн",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SOFL",
+      "name": "iСофтлайн",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SPBE",
+      "name": "СПБ Биржа",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SPBE",
+      "name": "СПБ Биржа",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SPRN",
+      "name": "SPRN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SPRN",
+      "name": "SPRN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "STME",
+      "name": "STME ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "STME",
+      "name": "STME ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "STSB",
+      "name": "ЕГП",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "STSB",
+      "name": "ЕГП",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "STSBP",
+      "name": "ЕГП ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "STSBP",
+      "name": "ЕГП ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "SUGB",
+      "name": "SUGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SUGB",
+      "name": "SUGB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVAV",
+      "name": "СОЛЛЕРС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVAV",
+      "name": "СОЛЛЕРС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVCB",
+      "name": "Совкомбанк",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SVCB",
+      "name": "Совкомбанк",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "SVET",
+      "name": "Светофор",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVET",
+      "name": "Светофор",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVETP",
+      "name": "Светофор п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SVETP",
+      "name": "Светофор п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "T",
+      "name": "Т-Техно ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "T",
+      "name": "Т-Техно ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TASB",
+      "name": "ТамбЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "TASB",
+      "name": "ТамбЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "TASBP",
+      "name": "ТамбЭнСб-п",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "TASBP",
+      "name": "ТамбЭнСб-п",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "TATN",
+      "name": "Татнфт 3ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TATN",
+      "name": "Татнфт 3ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TATNP",
+      "name": "Татнфт 3ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TATNP",
+      "name": "Татнфт 3ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TBEU",
+      "name": "TBEU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TBEU",
+      "name": "TBEU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TBRU",
+      "name": "TBRU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TBRU",
+      "name": "TBRU ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TDIV",
+      "name": "TDIV ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TDIV",
+      "name": "TDIV ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TEUR",
+      "name": "TEUR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TEUR",
+      "name": "TEUR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TGKA",
+      "name": "ТГК-1",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGKA",
+      "name": "ТГК-1",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGKB",
+      "name": "ТГК-2",
+      "sector": "Прочее",
+      "lotSize": 1000000
+    },
+    {
+      "ticker": "TGKB",
+      "name": "ТГК-2",
+      "sector": "Прочее",
+      "lotSize": 1000000
+    },
+    {
+      "ticker": "TGKBP",
+      "name": "ТГК-2 ап",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGKBP",
+      "name": "ТГК-2 ап",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGKN",
+      "name": "ТГК-14",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGKN",
+      "name": "ТГК-14",
+      "sector": "Прочее",
+      "lotSize": 100000
+    },
+    {
+      "ticker": "TGLD",
+      "name": "TGLD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TGLD",
+      "name": "TGLD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TITR",
+      "name": "TITR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TITR",
+      "name": "TITR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TLCB",
+      "name": "TLCB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TLCB",
+      "name": "TLCB ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TMON",
+      "name": "TMON ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TMON",
+      "name": "TMON ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TMOS",
+      "name": "TMOS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TMOS",
+      "name": "TMOS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TNSE",
+      "name": "ТНСэнрг ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TNSE",
+      "name": "ТНСэнрг ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TOFZ",
+      "name": "TOFZ ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TOFZ",
+      "name": "TOFZ ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TOPS",
+      "name": "TOPS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TOPS",
+      "name": "TOPS ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TORS",
+      "name": "РСТомск ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "TORS",
+      "name": "РСТомск ао",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "TORSP",
+      "name": "РСТомск ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "TORSP",
+      "name": "РСТомск ап",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "TPAY",
+      "name": "TPAY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TPAY",
+      "name": "TPAY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRMK",
+      "name": "ТМК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "TRMK",
+      "name": "ТМК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "TRND",
+      "name": "TRND ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRND",
+      "name": "TRND ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRNFP",
+      "name": "Транснф ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRNFP",
+      "name": "Транснф ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRUR",
+      "name": "TRUR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TRUR",
+      "name": "TRUR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TSAV",
+      "name": "TSAV ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TSAV",
+      "name": "TSAV ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TTLK",
+      "name": "Таттел. ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "TTLK",
+      "name": "Таттел. ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "TUSD",
+      "name": "TUSD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TUSD",
+      "name": "TUSD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TUZA",
+      "name": "ТЗА ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "TUZA",
+      "name": "ТЗА ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UGLD",
+      "name": "ЮГК",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "UGLD",
+      "name": "ЮГК",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "UKUZ",
+      "name": "ЮжКузб. ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UKUZ",
+      "name": "ЮжКузб. ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UNAC",
+      "name": "iАвиастКао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "UNAC",
+      "name": "iАвиастКао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "UNKL",
+      "name": "ЮУНК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UNKL",
+      "name": "ЮУНК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UPRO",
+      "name": "Юнипро ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "UPRO",
+      "name": "Юнипро ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "URKZ",
+      "name": "УрКузница",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "URKZ",
+      "name": "УрКузница",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "USBN",
+      "name": "УралСиб ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "USBN",
+      "name": "УралСиб ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "UTAR",
+      "name": "ЮТэйр ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "UTAR",
+      "name": "ЮТэйр ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "UWGN",
+      "name": "ОВК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "UWGN",
+      "name": "ОВК ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VDOR",
+      "name": "VDOR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VDOR",
+      "name": "VDOR ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VEON-RX",
+      "name": "VEON",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VEON-RX",
+      "name": "VEON",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VGSB",
+      "name": "ВолгЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "VGSB",
+      "name": "ВолгЭнСб",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "VGSBP",
+      "name": "ВолгЭнСб-п",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "VGSBP",
+      "name": "ВолгЭнСб-п",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "VJGZ",
+      "name": "Варьеган",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VJGZ",
+      "name": "Варьеган",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VJGZP",
+      "name": "Варьеган-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VJGZP",
+      "name": "Варьеган-п",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VKCO",
+      "name": "МКПАО \"ВК\"",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VKCO",
+      "name": "МКПАО \"ВК\"",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VLHZ",
+      "name": "ВХЗ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VLHZ",
+      "name": "ВХЗ-ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VRSB",
+      "name": "ТНСэнВорон",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VRSB",
+      "name": "ТНСэнВорон",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VRSBP",
+      "name": "ТНСэнВор-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VRSBP",
+      "name": "ТНСэнВор-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "VSEH",
+      "name": "ВИ.ру",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSEH",
+      "name": "ВИ.ру",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSMO",
+      "name": "ВСМПО-АВСМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSMO",
+      "name": "ВСМПО-АВСМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSYD",
+      "name": "ВыбСудЗ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSYD",
+      "name": "ВыбСудЗ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSYDP",
+      "name": "ВыбСудЗ ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VSYDP",
+      "name": "ВыбСудЗ ап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VTBR",
+      "name": "ВТБ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "VTBR",
+      "name": "ВТБ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WILD",
+      "name": "WILD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WILD",
+      "name": "WILD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WTCM",
+      "name": "ЦМТ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "WTCM",
+      "name": "ЦМТ ао",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "WTCMP",
+      "name": "ЦМТ ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "WTCMP",
+      "name": "ЦМТ ап",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "WUSH",
+      "name": "iВУШХолднг",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WUSH",
+      "name": "iВУШХолднг",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "X5",
+      "name": "КЦ ИКС 5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "X5",
+      "name": "КЦ ИКС 5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XACCSK",
+      "name": "Акцент 5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XACCSK",
+      "name": "Акцент 5",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XAVIUM",
+      "name": "Авиум",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XAVIUM",
+      "name": "Авиум",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XCREDI",
+      "name": "ПИФКредрес",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XCREDI",
+      "name": "ПИФКредрес",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XEQTRU",
+      "name": "РуАк120/80",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XEQTRU",
+      "name": "РуАк120/80",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAGR",
+      "name": "ФАлгоритм",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAGR",
+      "name": "ФАлгоритм",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAGY",
+      "name": "ФАлгоритмЮ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAGY",
+      "name": "ФАлгоритмЮ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAIN",
+      "name": "ФАбсолютД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMAIN",
+      "name": "ФАбсолютД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMOMB",
+      "name": "ФОмегаБлнс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XFMOMB",
+      "name": "ФОмегаБлнс",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XHEDGE",
+      "name": "Тактикреш",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XHEDGE",
+      "name": "Тактикреш",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XHOUSE",
+      "name": "ЗПИФ ИНВНД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XHOUSE",
+      "name": "ЗПИФ ИНВНД",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XIPKSV",
+      "name": "ИПИФСтабВл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XIPKSV",
+      "name": "ИПИФСтабВл",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XKLUCH",
+      "name": "КлючАктив",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "XKLUCH",
+      "name": "КлючАктив",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "XNIRUM",
+      "name": "Нирум Кап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XNIRUM",
+      "name": "Нирум Кап",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XQUANT",
+      "name": "ПИФ КВАНТ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "XQUANT",
+      "name": "ПИФ КВАНТ",
+      "sector": "Прочее",
+      "lotSize": 100
+    },
+    {
+      "ticker": "XSBORA",
+      "name": "Бора-Бора",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XSBORA",
+      "name": "Бора-Бора",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XSECUR",
+      "name": "XSECUR",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XSECUR",
+      "name": "XSECUR",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XSKLAD",
+      "name": "ЗПИФСовр10",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "XSKLAD",
+      "name": "ЗПИФСовр10",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "XTRIUMF",
+      "name": "ПАРУС-ТРМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XTRIUMF",
+      "name": "ПАРУС-ТРМ",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XWIMRD",
+      "name": "ВИМ РД 3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XWIMRD",
+      "name": "ВИМ РД 3",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XXRONE",
+      "name": "ОблигацииР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XXRONE",
+      "name": "ОблигацииР",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XXXXXX",
+      "name": "Рентал ПРО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XXXXXX",
+      "name": "Рентал ПРО",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "YAKG",
+      "name": "ЯТЭК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YAKG",
+      "name": "ЯТЭК ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YDEX",
+      "name": "ЯНДЕКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "YDEX",
+      "name": "ЯНДЕКС",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "YKEN",
+      "name": "Якутскэнрг",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "YKEN",
+      "name": "Якутскэнрг",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "YKENP",
+      "name": "Якутскэн-п",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "YKENP",
+      "name": "Якутскэн-п",
+      "sector": "Прочее",
+      "lotSize": 10000
+    },
+    {
+      "ticker": "YRSB",
+      "name": "ТНСэнЯр",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YRSB",
+      "name": "ТНСэнЯр",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YRSBP",
+      "name": "ТНСэнЯр-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YRSBP",
+      "name": "ТНСэнЯр-п",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "YUAN",
+      "name": "YUAN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "YUAN",
+      "name": "YUAN ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ZAYM",
+      "name": "Займер ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ZAYM",
+      "name": "Займер ао",
+      "sector": "Прочее",
+      "lotSize": 10
+    },
+    {
+      "ticker": "ZILL",
+      "name": "ЗИЛ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ZILL",
+      "name": "ЗИЛ ао",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "ZVEZ",
+      "name": "ЗВЕЗДА ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    },
+    {
+      "ticker": "ZVEZ",
+      "name": "ЗВЕЗДА ао",
+      "sector": "Прочее",
+      "lotSize": 1000
+    }
+  ]
+}
