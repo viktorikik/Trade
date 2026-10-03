@@ -1,14 +1,15 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 9.0 · две темы · умеренный модерн
+   Версия 9.1 · две темы · фикс переключения
    ============================================================ */
 
 /* ============================================================
    1. ТЕМЫ И ПЕРЕМЕННЫЕ
    ============================================================ */
 
-:root {
-  /* --- ТЁМНАЯ ТЕМА (по умолчанию, как Планнеро) --- */
+/* --- ТЁМНАЯ ТЕМА (по умолчанию) --- */
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
 
   --bg: #0a0d12;
@@ -41,7 +42,6 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-  /* Отступы */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 12px;
@@ -49,20 +49,18 @@
   --space-xl: 24px;
   --space-2xl: 32px;
 
-  /* Радиусы */
   --radius-card: 16px;
   --radius-button: 12px;
   --radius-input: 10px;
   --radius-badge: 8px;
 
-  /* Размеры */
   --header-h: 56px;
   --tabbar-h: 64px;
   --content-max: 960px;
 }
 
+/* --- СВЕТЛАЯ ТЕМА --- */
 :root[data-theme="light"] {
-  /* --- СВЕТЛАЯ ТЕМА --- */
   color-scheme: light;
 
   --bg: #f5f7fa;
@@ -96,9 +94,10 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
-/* Автоопределение темы системы — только если пользователь ещё не выбрал вручную.
-   Как только пользователь нажмёт переключатель, JS выставит data-theme,
-   и этот блок перестанет срабатывать. */
+/* --- АВТООПРЕДЕЛЕНИЕ СИСТЕМЫ ---
+   Срабатывает ТОЛЬКО если пользователь ещё не выбрал тему вручную.
+   Явный :root[data-theme="dark"] выше имеет большую специфичность
+   и перебивает этот медиа-запрос. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     color-scheme: light;
@@ -187,8 +186,6 @@ header {
   padding: 0 var(--space-lg);
 }
 
-/* Старый .header-top — оставлен для обратной совместимости.
-   В новой версии шапка минимальная, как в Сбере и Планнеро. */
 .header-top {
   display: flex;
   justify-content: space-between;
@@ -205,7 +202,6 @@ h1 {
   letter-spacing: -0.01em;
 }
 
-/* Новая шапка (будет использоваться в v9.0+) */
 .app-header {
   display: flex;
   align-items: center;
@@ -255,7 +251,6 @@ h1 {
 }
 .header-icon-btn:active { transform: scale(0.95); }
 
-/* Старая ссылка «Заметки» — оставлена для обратной совместимости */
 .notes-link {
   display: inline-flex;
   align-items: center;
@@ -284,7 +279,7 @@ h1 {
 }
 
 /* ============================================================
-   4. КОНТРОЛЫ (старые, в шапке — пока не вынесем в модалку)
+   4. КОНТРОЛЫ
    ============================================================ */
 
 .controls {
@@ -325,7 +320,6 @@ h1 {
 .controls input { width: 90px; }
 .controls input[type="checkbox"] { width: auto; accent-color: var(--accent); }
 
-/* Кнопки */
 .controls button,
 .btn {
   background: var(--accent);
@@ -368,7 +362,6 @@ h1 {
 }
 .controls button.danger:hover { background: var(--danger-soft); }
 
-/* Строка статистики */
 .stats {
   margin-top: var(--space-sm);
   font-size: 12.5px;
@@ -397,7 +390,6 @@ h1 {
    5. КАРТОЧКИ И СЕКЦИИ
    ============================================================ */
 
-/* Базовая карточка */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -423,7 +415,6 @@ h1 {
   line-height: 1;
 }
 
-/* Заголовки секций (старая совместимость) */
 .section-title {
   font-size: 15px;
   font-weight: 600;
@@ -490,7 +481,7 @@ h1 {
 }
 
 /* ============================================================
-   7. МЕТРИКИ (бэктест)
+   7. МЕТРИКИ
    ============================================================ */
 
 .metrics {
@@ -825,7 +816,7 @@ h1 {
 }
 
 /* ============================================================
-   14. ТОСТ (всплывающие уведомления)
+   14. ТОСТ
    ============================================================ */
 
 .toast {
@@ -1371,8 +1362,7 @@ h1 {
 .correlation-note b { color: var(--text); }
 
 /* ============================================================
-   19. ТАБ-БАР (нижняя навигация)
-   Появится после обновления HTML
+   19. ТАБ-БАР
    ============================================================ */
 
 .tab-bar {
@@ -1421,11 +1411,9 @@ h1 {
 
 .tab-label { font-size: 11px; letter-spacing: 0.2px; }
 
-/* Контейнер контента таба */
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* Отступ снизу, чтобы таб-бар не перекрывал контент */
 body.has-tabbar main,
 body.has-tabbar .tab-content-wrap {
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
@@ -1433,7 +1421,6 @@ body.has-tabbar .tab-content-wrap {
 
 /* ============================================================
    20. МОДАЛКА НАСТРОЕК
-   Появится после обновления HTML
    ============================================================ */
 
 .modal-backdrop {
@@ -1521,7 +1508,6 @@ body.has-tabbar .tab-content-wrap {
   .split-grid { grid-template-columns: 1fr; }
 }
 
-/* Уважение к пользователю, который просил уменьшить анимации */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1533,7 +1519,6 @@ body.has-tabbar .tab-content-wrap {
   }
 }
 
-/* Тонкие скроллбары в тёмной теме (Webkit) */
 :root { scrollbar-color: var(--border-strong) transparent; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
