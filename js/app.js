@@ -832,6 +832,14 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
 // 10. ПАРАМЕТРЫ СТРАТЕГИИ
 // ============================================================
 
+// Человеческие описания стратегий — для обзора «для новичка»
+const STRATEGY_DESCRIPTIONS = {
+  ema: 'Покупает, когда быстрая EMA пересекает медленную снизу вверх. Продаёт — когда сверху вниз.',
+  rsi: 'Покупает, когда RSI падает ниже уровня перепроданности. Продаёт — когда поднимается выше уровня перекупленности.',
+  bollinger: 'Покупает, когда цена пробивает нижнюю полосу Боллинджера. Продаёт — когда возвращается к средней.',
+  buyhold: 'Просто покупает в начале и держит до конца. Это «точка отсчёта» для других стратегий.',
+};
+
 function renderStrategyParams() {
   const sid = document.getElementById('strategy').value;
   const wrap = document.getElementById('strategyParams');
@@ -1073,15 +1081,27 @@ async function render() {
 
   const showRawPrice = Math.abs(lastBar.close - rawLastBar.close) > 0.01;
 
-  document.getElementById('stats').innerHTML =
-    `Тикер: <b>${ticker}</b> (${payload.name}) · Лот: <b>${payload.lotSize}</b> · ` +
-    `Стратегия: <b>${strategy.label}</b> · ` +
-    `Баров: <b>${adjusted.length}</b> · Последний: <b>${lastBar.time}</b> ` +
-    `@ <b>${rawLastBar.close.toFixed(2)} ₽</b> ` +
-    (showRawPrice ? `<span class="badge-adjusted" title="На графике цена приведена к текущему масштабу">скорр.</span>` : '') +
-    ` · Сигналов: <b>${signals.length}</b> ` +
-    `(<span style="color:${getChartColors().accent}">BUY ${buys}</span> / ` +
-    `<span style="color:${getChartColors().danger}">SELL ${sells}</span>)`;
+  // ---------- Обзор «для новичка» ----------
+  const priceStr = rawLastBar.close.toFixed(2);
+  const minPurchase = rawLastBar.close * payload.lotSize;
+  const minPurchaseStr = minPurchase.toLocaleString('ru-RU', { maximumFractionDigits: 0 });
+  const periodStart = adjusted[0].time;
+  const periodEnd = adjusted[adjusted.length - 1].time;
+  const strategyDesc = STRATEGY_DESCRIPTIONS[strategyId] || '';
+  const lotWord = payload.lotSize === 1 ? 'акция'
+              : (payload.lotSize >= 2 && payload.lotSize <= 4 ? 'акции' : 'акций');
+
+  document.getElementById('stats').innerHTML = `
+    <div class="overview-header">
+      <div class="ov-line ov-title">📊 <b>${ticker}</b> · ${payload.name}</div>
+      <div class="ov-line">Последняя цена: <b>${priceStr} ₽</b>${showRawPrice ? ' <span class="badge-adjusted" title="На графике цена приведена к текущему масштабу">скорр.</span>' : ''}</div>
+      <div class="ov-line">📦 Лот: <b>${payload.lotSize} ${lotWord}</b> · минимальная покупка — <b>${minPurchaseStr} ₽</b></div>
+      <div class="ov-line">🎯 Стратегия: <b>${strategy.label}</b></div>
+      ${strategyDesc ? `<div class="ov-hint">ℹ️ ${strategyDesc}</div>` : ''}
+      <div class="ov-line">📅 Данных: <b>${adjusted.length}</b> торговых дней (с ${periodStart} по ${periodEnd})</div>
+      <div class="ov-line">🔔 Сигналов за всё время: <b>${signals.length}</b> (<span class="ov-buy">${buys} BUY</span> / <span class="ov-sell">${sells} SELL</span>)</div>
+    </div>
+  `;
 
   __debug.start('corpRender');
   renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends);
