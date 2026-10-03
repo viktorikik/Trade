@@ -1,6 +1,6 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 9.7 · две темы · фикс safe-area · сворачиваемые секции
+   Версия 9.8 · + легенда графика · обзор «для новичка»
    ============================================================ */
 
 /* ============================================================
@@ -1553,6 +1553,86 @@ body.has-tabbar .tab-content-wrap {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+
+/* ============================================================
+   23. ОБЗОР «ДЛЯ НОВИЧКА» (таб «Обзор»)
+   ============================================================ */
+
+/* Карточка со «стопкой» понятных строк вместо одной длинной */
+.overview-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-lg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-md);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.ov-line {
+  color: var(--text-muted);
+}
+.ov-line b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Первая строка — тикер и название, чуть крупнее */
+.ov-title {
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.ov-title b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* Пояснение курсивом, с отступом — «под строками» */
+.ov-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding-left: 22px;
+  margin: 2px 0 4px;
+}
+
+/* Цветные пометки BUY / SELL */
+.ov-buy  { color: var(--accent); font-weight: 600; }
+.ov-sell { color: var(--danger); font-weight: 600; }
+
+/* ---------- Легенда под свечным графиком ---------- */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  justify-content: center;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-mark {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.legend-buy  { color: var(--accent); }
+.legend-sell { color: var(--danger); }
+.legend-div  { color: var(--warn); }
+.legend-split { color: var(--blue); }
 
 /* ============================================================
    22. СВОРАЧИВАЕМЫЕ СЕКЦИИ (таб «Анализ»)
