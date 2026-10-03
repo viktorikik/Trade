@@ -1,78 +1,261 @@
 // js/app.js
 
-// ===== Графики =====
+// ============================================================
+// 1. ГРАФИКИ
+// ============================================================
+// Свечной график и equity-график создаются ПО-РАЗНОМУ:
+//   — Свечной создаётся сразу: он в табе «Обзор», активном по умолчанию.
+//   — Equity создаётся lazy: он в табе «Стратегия», который может быть скрыт.
+//     Lightweight Charts не умеет рисовать в контейнер с width=0.
+//   — Macro-график тоже lazy — та же причина.
+
+// ---------- Палитра графиков из CSS-переменных ----------
+function getChartColors() {
+  const styles = getComputedStyle(document.documentElement);
+  const get = (name, fallback) => {
+    const v = styles.getPropertyValue(name).trim();
+    return v || fallback;
+  };
+  return {
+    bg: get('--bg', '#0a0d12'),
+    text: get('--text', '#e6e9ef'),
+    grid: get('--border', '#242933'),
+    border: get('--border-strong', '#30363f'),
+    accent: get('--accent', '#4ade80'),
+    danger: get('--danger', '#f87171'),
+    blue: get('--blue', '#60a5fa'),
+  };
+}
+
+// ---------- Свечной график (Обзор) ----------
 const chartEl = document.getElementById('chart');
 const chart = LightweightCharts.createChart(chartEl, {
-  layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
-  grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
-  rightPriceScale: { borderColor: '#2a2e39' },
-  timeScale: { borderColor: '#2a2e39', timeVisible: false },
+  width: chartEl.clientWidth,
+  height: chartEl.clientHeight || 320,
+  layout: { background: { color: getChartColors().bg }, textColor: getChartColors().text },
+  grid: { vertLines: { color: getChartColors().grid }, horzLines: { color: getChartColors().grid } },
+  rightPriceScale: { borderColor: getChartColors().border },
+  timeScale: { borderColor: getChartColors().border, timeVisible: false },
   crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
 });
 
 const candleSeries = chart.addCandlestickSeries({
-  upColor: '#26a69a', downColor: '#ef5350',
-  borderUpColor: '#26a69a', borderDownColor: '#ef5350',
-  wickUpColor: '#26a69a', wickDownColor: '#ef5350',
+  upColor: getChartColors().accent,
+  downColor: getChartColors().danger,
+  borderUpColor: getChartColors().accent,
+  borderDownColor: getChartColors().danger,
+  wickUpColor: getChartColors().accent,
+  wickDownColor: getChartColors().danger,
 });
-const emaFastSeries = chart.addLineSeries({ color: '#26a69a', lineWidth: 2 });
-const emaSlowSeries = chart.addLineSeries({ color: '#ef5350', lineWidth: 2 });
+const emaFastSeries = chart.addLineSeries({ color: getChartColors().accent, lineWidth: 2 });
+const emaSlowSeries = chart.addLineSeries({ color: getChartColors().danger, lineWidth: 2 });
 
-const equityEl = document.getElementById('equityChart');
-const equityChart = LightweightCharts.createChart(equityEl, {
-  layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
-  grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
-  rightPriceScale: { borderColor: '#2a2e39' },
-  timeScale: { borderColor: '#2a2e39', timeVisible: false },
-  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-});
-const equitySeries = equityChart.addAreaSeries({
-  lineColor: '#4a9eff',
-  topColor: 'rgba(74, 158, 255, 0.4)',
-  bottomColor: 'rgba(74, 158, 255, 0.0)',
-  lineWidth: 2,
-});
+// ---------- Equity-график (Стратегия) — LAZY ----------
+let equityChart = null;
+let equitySeries = null;
+let pendingEquityData = null;
 
-// ===== Мини-график IMOEX (lazy) =====
-// Создаётся НЕ сразу, а при первом показе секции макро.
-// Иначе ширина контейнера = 0 (секция display:none), и график не рисуется.
-let macroChart = null;
-let macroSeries = null;
+function ensureEquityChart() {
+  if (equityChart) return;
+  const el = document.getElementById('equityChart');
+  if (!el || el.clientWidth === 0) return;
 
-function ensureMacroChart() {
-  if (macroChart) return;
-  const el = document.getElementById('macroChart');
-  if (!el) return;
-
-  macroChart = LightweightCharts.createChart(el, {
+  const c = getChartColors();
+  equityChart = LightweightCharts.createChart(el, {
     width: el.clientWidth,
     height: el.clientHeight || 180,
-    layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
-    grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
-    rightPriceScale: { borderColor: '#2a2e39' },
-    timeScale: { borderColor: '#2a2e39', timeVisible: false },
+    layout: { background: { color: c.bg }, textColor: c.text },
+    grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+    rightPriceScale: { borderColor: c.border },
+    timeScale: { borderColor: c.border, timeVisible: false },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
   });
-  macroSeries = macroChart.addAreaSeries({
-    lineColor: '#4a9eff',
-    topColor: 'rgba(74, 158, 255, 0.3)',
-    bottomColor: 'rgba(74, 158, 255, 0.0)',
+  equitySeries = equityChart.addAreaSeries({
+    lineColor: c.accent,
+    topColor: 'rgba(74, 222, 128, 0.30)',
+    bottomColor: 'rgba(74, 222, 128, 0.0)',
     lineWidth: 2,
   });
 }
 
-function resizeCharts() {
-  chart.applyOptions({ width: chartEl.clientWidth });
-  equityChart.applyOptions({ width: equityEl.clientWidth });
+function applyEquityData(data) {
+  pendingEquityData = data;
+  if (!data) return;
+  if (!equityChart) {
+    // Создаём график только если контейнер уже виден
+    if (isTabActive('strategy')) {
+      ensureEquityChart();
+    }
+  }
+  if (equityChart && equitySeries) {
+    equitySeries.setData(data);
+    equityChart.timeScale().fitContent();
+  }
+}
+
+// ---------- Макро-график (Анализ) — LAZY ----------
+let macroChart = null;
+let macroSeries = null;
+let pendingMacroData = null;
+
+function ensureMacroChart() {
+  if (macroChart) return;
+  const el = document.getElementById('macroChart');
+  if (!el || el.clientWidth === 0) return;
+
+  const c = getChartColors();
+  macroChart = LightweightCharts.createChart(el, {
+    width: el.clientWidth,
+    height: el.clientHeight || 180,
+    layout: { background: { color: c.bg }, textColor: c.text },
+    grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+    rightPriceScale: { borderColor: c.border },
+    timeScale: { borderColor: c.border, timeVisible: false },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  });
+  macroSeries = macroChart.addAreaSeries({
+    lineColor: c.blue,
+    topColor: 'rgba(96, 165, 250, 0.30)',
+    bottomColor: 'rgba(96, 165, 250, 0.0)',
+    lineWidth: 2,
+  });
+}
+
+function applyMacroData(data) {
+  pendingMacroData = data;
+  if (!data) return;
+  if (!macroChart) {
+    if (isTabActive('analysis')) {
+      ensureMacroChart();
+    }
+  }
+  if (macroChart && macroSeries) {
+    macroSeries.setData(data);
+    const el = document.getElementById('macroChart');
+    if (el && el.clientWidth > 0) {
+      macroChart.applyOptions({ width: el.clientWidth });
+    }
+    macroChart.timeScale().fitContent();
+  }
+}
+
+// ---------- Реакция на смену темы и таба ----------
+
+function isTabActive(name) {
+  const el = document.querySelector(`.tab-content[data-tab="${name}"]`);
+  return !!(el && el.classList.contains('active'));
+}
+
+// Перекрашиваем все графики под текущую тему
+function applyThemeToCharts() {
+  const c = getChartColors();
+
+  // Свечной
+  chart.applyOptions({
+    layout: { background: { color: c.bg }, textColor: c.text },
+    grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+    rightPriceScale: { borderColor: c.border },
+    timeScale: { borderColor: c.border },
+  });
+  candleSeries.applyOptions({
+    upColor: c.accent,
+    downColor: c.danger,
+    borderUpColor: c.accent,
+    borderDownColor: c.danger,
+    wickUpColor: c.accent,
+    wickDownColor: c.danger,
+  });
+  emaFastSeries.applyOptions({ color: c.accent });
+  emaSlowSeries.applyOptions({ color: c.danger });
+
+  // Equity
+  if (equityChart) {
+    equityChart.applyOptions({
+      layout: { background: { color: c.bg }, textColor: c.text },
+      grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+      rightPriceScale: { borderColor: c.border },
+      timeScale: { borderColor: c.border },
+    });
+    if (equitySeries) equitySeries.applyOptions({ lineColor: c.accent });
+  }
+
+  // Macro
   if (macroChart) {
-    const macroChartEl = document.getElementById('macroChart');
-    if (macroChartEl && macroChartEl.clientWidth > 0) {
-      macroChart.applyOptions({ width: macroChartEl.clientWidth });
+    macroChart.applyOptions({
+      layout: { background: { color: c.bg }, textColor: c.text },
+      grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
+      rightPriceScale: { borderColor: c.border },
+      timeScale: { borderColor: c.border },
+    });
+    if (macroSeries) macroSeries.applyOptions({ lineColor: c.blue });
+  }
+}
+
+// Наблюдаем за сменой темы: inline-скрипт в index.html
+// ставит/убирает атрибут data-theme на <html>.
+const themeObserver = new MutationObserver(() => {
+  applyThemeToCharts();
+});
+themeObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['data-theme'],
+});
+
+// Наблюдаем за сменой таба: как только таб становится активным —
+// создаём графики, которые до этого момента были скрыты.
+const tabObserver = new MutationObserver((mutations) => {
+  for (const m of mutations) {
+    if (m.attributeName !== 'class') continue;
+    const el = m.target;
+    if (!el.classList.contains('active')) continue;
+
+    if (el.dataset.tab === 'strategy') {
+      ensureEquityChart();
+      if (pendingEquityData && equitySeries) {
+        equitySeries.setData(pendingEquityData);
+        equityChart.timeScale().fitContent();
+      }
+    }
+    if (el.dataset.tab === 'analysis') {
+      ensureMacroChart();
+      if (pendingMacroData && macroSeries) {
+        macroSeries.setData(pendingMacroData);
+        const mEl = document.getElementById('macroChart');
+        if (mEl && mEl.clientWidth > 0) {
+          macroChart.applyOptions({ width: mEl.clientWidth });
+        }
+        macroChart.timeScale().fitContent();
+      }
+    }
+  }
+});
+document.querySelectorAll('.tab-content').forEach(tc => {
+  tabObserver.observe(tc, { attributes: true, attributeFilter: ['class'] });
+});
+
+// ---------- Ресайз ----------
+function resizeCharts() {
+  if (chartEl.clientWidth > 0) {
+    chart.applyOptions({ width: chartEl.clientWidth });
+  }
+  if (equityChart) {
+    const el = document.getElementById('equityChart');
+    if (el && el.clientWidth > 0) {
+      equityChart.applyOptions({ width: el.clientWidth });
+    }
+  }
+  if (macroChart) {
+    const el = document.getElementById('macroChart');
+    if (el && el.clientWidth > 0) {
+      macroChart.applyOptions({ width: el.clientWidth });
     }
   }
 }
 window.addEventListener('resize', resizeCharts);
-resizeCharts();
+
+// ============================================================
+// 2. ЗАГРУЗКА ДАННЫХ
+// ============================================================
 
 const dataCache = new Map();
 let macroCache = null;
@@ -128,8 +311,6 @@ async function loadMacroData() {
   }
 }
 
-// ===== Корреляция: загрузка данных по всем 6 тикерам =====
-// Грузим параллельно, каждый тикер кэшируется в dataCache.
 async function loadCorrelationData() {
   if (correlationCache) return correlationCache;
   const tickers = ['SBER', 'GAZP', 'LKOH', 'GMKN', 'ROSN', 'NVTK'];
@@ -163,6 +344,10 @@ async function renderCorrelation() {
   }
 }
 
+// ============================================================
+// 3. ВСПОМОГАТЕЛЬНЫЕ
+// ============================================================
+
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -172,10 +357,14 @@ function showToast(msg) {
 }
 
 function updateNotesBadge() {
-  document.getElementById('notesCount').textContent = loadWatchlist().length;
+  const el = document.getElementById('notesCount');
+  if (el) el.textContent = loadWatchlist().length;
 }
 
-// ===== Метрики =====
+// ============================================================
+// 4. МЕТРИКИ
+// ============================================================
+
 function metricCard(label, value, cls = 'neutral') {
   return `
     <div class="metric">
@@ -212,7 +401,10 @@ function renderMetricsInto(elId, r) {
   document.getElementById(elId).innerHTML = cards.join('');
 }
 
-// ===== Анализ =====
+// ============================================================
+// 5. АНАЛИЗ (технический)
+// ============================================================
+
 function renderAnalysis(data) {
   const analysis = analyzeMarket(data);
   const { verdict, verdictClass, reasons, indicators } = analysis;
@@ -240,7 +432,10 @@ function renderAnalysis(data) {
   return analysis;
 }
 
-// ===== Фундаментальный анализ =====
+// ============================================================
+// 6. ФУНДАМЕНТАЛ
+// ============================================================
+
 function renderFundamentalSection(payload) {
   const section = document.getElementById('fundamentalSection');
   if (!section) return;
@@ -303,7 +498,10 @@ function renderFundamentalSection(payload) {
   section.style.display = 'block';
 }
 
-// ===== Управление риском =====
+// ============================================================
+// 7. РИСК-МЕНЕДЖМЕНТ
+// ============================================================
+
 function renderRiskSection(adjustedData, options) {
   const section = document.getElementById('riskSection');
   if (!section) return;
@@ -393,7 +591,10 @@ function renderRiskSection(adjustedData, options) {
   section.style.display = 'block';
 }
 
-// ===== Макро-контекст =====
+// ============================================================
+// 8. МАКРО
+// ============================================================
+
 function renderMacroSection(macroData) {
   const section = document.getElementById('macroSection');
   if (!section) return;
@@ -404,13 +605,11 @@ function renderMacroSection(macroData) {
     return;
   }
 
-  // Шапка
   const updatedEl = document.getElementById('macroUpdatedAt');
   if (updatedEl) {
     updatedEl.textContent = analysis.updatedAt ? `Обновлено: ${analysis.updatedAt}` : '';
   }
 
-  // Карточки
   const cardsHtml = analysis.cards.map(c => {
     const changesHtml = c.changes && c.changes.length > 0
       ? `<div class="macro-card-changes">
@@ -438,36 +637,35 @@ function renderMacroSection(macroData) {
   }).join('');
   document.getElementById('macroMetrics').innerHTML = cardsHtml;
 
-  // График: показываем секцию, ПОТОМ создаём график (lazy),
-  // потому что Lightweight Charts не умеет рисовать в элемент с width=0.
   const chartWrap = document.querySelector('.macro-chart-wrap');
   const hasChartData = analysis.chartData && analysis.chartData.length > 0;
 
   if (hasChartData) {
     if (chartWrap) chartWrap.style.display = '';
-
-    // 1. Сначала показываем секцию — чтобы у #macroChart появились размеры
-    section.style.display = 'block';
-
-    // 2. Теперь создаём график (если ещё не создан)
-    ensureMacroChart();
-
-    // 3. Отдаём данные и подгоняем размеры
-    if (macroSeries && macroChart) {
-      macroSeries.setData(analysis.chartData);
-      const el = document.getElementById('macroChart');
-      if (el && el.clientWidth > 0) {
-        macroChart.applyOptions({ width: el.clientWidth });
+    // Откладываем отрисовку графика до показа таба
+    pendingMacroData = analysis.chartData;
+    if (isTabActive('analysis')) {
+      ensureMacroChart();
+      if (macroChart && macroSeries) {
+        macroSeries.setData(pendingMacroData);
+        const el = document.getElementById('macroChart');
+        if (el && el.clientWidth > 0) {
+          macroChart.applyOptions({ width: el.clientWidth });
+        }
+        macroChart.timeScale().fitContent();
       }
-      macroChart.timeScale().fitContent();
     }
   } else {
     if (chartWrap) chartWrap.style.display = 'none';
-    section.style.display = 'block';
   }
+
+  section.style.display = 'block';
 }
 
-// ===== Секция корпоративных действий =====
+// ============================================================
+// 9. КОРПОРАТИВНЫЕ ДЕЙСТВИЯ
+// ============================================================
+
 function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends) {
   const section = document.getElementById('corpSection');
   if (!section) return;
@@ -579,7 +777,10 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
   section.style.display = 'block';
 }
 
-// ===== Параметры стратегии =====
+// ============================================================
+// 10. ПАРАМЕТРЫ СТРАТЕГИИ
+// ============================================================
+
 function renderStrategyParams() {
   const sid = document.getElementById('strategy').value;
   const wrap = document.getElementById('strategyParams');
@@ -649,10 +850,14 @@ let currentState = null;
 let currentLastResult = null;
 
 function updateAddButton() {
-  document.getElementById('addToNotes').disabled = !currentState;
+  const btn = document.getElementById('addToNotes');
+  if (btn) btn.disabled = !currentState;
 }
 
-// ===== Рендер =====
+// ============================================================
+// 11. ГЛАВНЫЙ РЕНДЕР
+// ============================================================
+
 async function render() {
   const ticker      = document.getElementById('ticker').value;
   const strategyId  = document.getElementById('strategy').value;
@@ -668,7 +873,7 @@ async function render() {
 
   if (strategyId === 'ema' && params.fast >= params.slow) {
     document.getElementById('stats').innerHTML =
-      '<b style="color:#ef5350">Быстрая EMA должна быть меньше медленной.</b>';
+      '<b style="color:#f87171">Быстрая EMA должна быть меньше медленной.</b>';
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
@@ -689,7 +894,7 @@ async function render() {
   } catch (err) {
     console.error(err);
     document.getElementById('stats').innerHTML =
-      `<b style="color:#ef5350">Ошибка загрузки: ${err.message}</b>`;
+      `<b style="color:#f87171">Ошибка загрузки: ${err.message}</b>`;
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
@@ -733,7 +938,7 @@ async function render() {
   const markers = signals.map(s => ({
     time: adjusted[s.index].time,
     position: s.type === 'buy' ? 'belowBar' : 'aboveBar',
-    color: s.type === 'buy' ? '#26a69a' : '#ef5350',
+    color: s.type === 'buy' ? getChartColors().accent : getChartColors().danger,
     shape: s.type === 'buy' ? 'arrowUp' : 'arrowDown',
     text: s.type === 'buy' ? 'BUY' : 'SELL',
   }));
@@ -743,7 +948,7 @@ async function render() {
       markers.push({
         time: e.date,
         position: 'aboveBar',
-        color: '#4a9eff',
+        color: getChartColors().blue,
         shape: 'square',
         text: 'S',
       });
@@ -755,7 +960,7 @@ async function render() {
       markers.push({
         time: g.date,
         position: 'aboveBar',
-        color: '#d4a72c',
+        color: '#fbbf24',
         shape: 'circle',
         text: 'D',
       });
@@ -776,7 +981,9 @@ async function render() {
   const result = runBacktest(adjusted, signals, backtestOptions);
   currentLastResult = { ticker, strategyId, params, result, payload };
 
-  equitySeries.setData(result.equity);
+  // Equity — откладываем отрисовку, если таб «Стратегия» не активен
+  applyEquityData(result.equity);
+
   renderMetricsInto('metrics', result);
 
   if (useSplit) {
@@ -802,8 +1009,8 @@ async function render() {
     `@ <b>${rawLastBar.close.toFixed(2)} ₽</b> ` +
     (showRawPrice ? `<span class="badge-adjusted" title="На графике цена приведена к текущему масштабу">скорр.</span>` : '') +
     ` · Сигналов: <b>${signals.length}</b> ` +
-    `(<span style="color:#26a69a">BUY ${buys}</span> / ` +
-    `<span style="color:#ef5350">SELL ${sells}</span>)`;
+    `(<span style="color:${getChartColors().accent}">BUY ${buys}</span> / ` +
+    `<span style="color:${getChartColors().danger}">SELL ${sells}</span>)`;
 
   renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends);
   renderAnalysis(adjusted);
@@ -817,7 +1024,7 @@ async function render() {
     rawPrice: rawLastBar.close,
   });
 
-  // Макро-контекст (загружается отдельно, не зависит от тикера)
+  // Макро
   try {
     const macroData = await loadMacroData();
     renderMacroSection(macroData);
@@ -826,7 +1033,7 @@ async function render() {
     document.getElementById('macroSection').style.display = 'none';
   }
 
-  // Корреляция (не зависит от выбранного тикера, но зависит от корректировок)
+  // Корреляция
   await renderCorrelation();
 
   currentState = {
@@ -838,11 +1045,13 @@ async function render() {
   };
   updateAddButton();
 
-  chart.timeScale().fitContent();
-  equityChart.timeScale().fitContent();
+  if (chartEl.clientWidth > 0) chart.timeScale().fitContent();
 }
 
-// ===== Кнопки =====
+// ============================================================
+// 12. КНОПКИ
+// ============================================================
+
 document.getElementById('addToNotes').addEventListener('click', () => {
   if (!currentState) return;
   const entry = {
@@ -1035,6 +1244,10 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
   showToast('Сводка скачана');
 });
 
+// ============================================================
+// 13. ИНИЦИАЛИЗАЦИЯ
+// ============================================================
+
 document.getElementById('reload').addEventListener('click', render);
 document.getElementById('ticker').addEventListener('change', render);
 document.getElementById('strategy').addEventListener('change', () => {
@@ -1058,4 +1271,5 @@ document.getElementById('riskPct').addEventListener('change', render);
 
 renderStrategyParams();
 updateNotesBadge();
+resizeCharts();
 render();
