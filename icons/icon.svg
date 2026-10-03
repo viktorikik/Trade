@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Фон -->
+  <rect width="512" height="512" rx="96" fill="#0a0d12"/>
+
+  <!-- Свеча: тело (зелёное) -->
+  <rect x="216" y="180" width="80" height="200" rx="8" fill="#4ade80"/>
+
+  <!-- Свеча: верхняя тень -->
+  <rect x="250" y="110" width="12" height="80" fill="#4ade80"/>
+
+  <!-- Свеча: нижняя тень -->
+  <rect x="250" y="380" width="12" height="60" fill="#4ade80"/>
+
+  <!-- Линия тренда (светлая) -->
+  <polyline points="96,340 176,280 256,240 336,200 416,160"
+            fill="none" stroke="#60a5fa" stroke-width="14"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Точки на линии -->
+  <circle cx="176" cy="280" r="14" fill="#60a5fa"/>
+  <circle cx="336" cy="200" r="14" fill="#60a5fa"/>
+</svg>
