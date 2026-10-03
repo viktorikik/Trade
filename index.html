@@ -2,22 +2,96 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Trading Signals MVP</title>
   <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <header>
-    <div class="header-top">
-      <h1>Trading Signals MVP</h1>
-      <a id="notesLink" href="notes.html" class="notes-link">
-        📝 Заметки <span id="notesCount" class="notes-badge">0</span>
-      </a>
-    </div>
+  <style>
+    /* ============================================================
+       Локальные стили — то, что относится именно к index.html.
+       Всё остальное — в css/style.css.
+       ============================================================ */
 
-    <div class="controls">
-      <label title="Код акции на бирже">Тикер:
-        <select id="ticker">
+    .ticker-select {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .ticker-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .tab-content-wrap {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Спойлер с пояснением out-of-sample */
+    .explainer {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: var(--radius-card);
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-md);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .explainer b { color: var(--text); }
+    .explainer summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+      list-style: none;
+      padding: 4px 0;
+    }
+    .explainer summary::-webkit-details-marker { display: none; }
+    .explainer summary::before {
+      content: "▸ ";
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .explainer[open] summary::before { content: "▾ "; }
+    .explainer .explainer-body {
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
+    .explainer .explainer-body p { margin: 0 0 var(--space-sm) 0; }
+    .explainer .explainer-body p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body class="has-tabbar">
+
+  <!-- ===== ШАПКА ===== -->
+  <header>
+    <div class="app-header">
+      <div class="app-title">
+        <span class="app-title-icon">📈</span>
+        <span>Trading Signals</span>
+      </div>
+      <div class="app-header-actions">
+        <select id="ticker" class="ticker-select" title="Выбор акции">
           <option value="SBER">SBER</option>
           <option value="GAZP">GAZP</option>
           <option value="LKOH">LKOH</option>
@@ -25,211 +99,364 @@
           <option value="ROSN">ROSN</option>
           <option value="NVTK">NVTK</option>
         </select>
-      </label>
-      <label title="Какую стратегию применять в бэктесте">Стратегия:
-        <select id="strategy">
-          <option value="ema">EMA-кроссовер</option>
-          <option value="rsi">RSI mean-reversion</option>
-          <option value="bollinger">Bollinger breakout</option>
-          <option value="buyhold">Buy &amp; Hold</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="controls" id="strategyParams"></div>
-
-    <div class="controls">
-      <label title="Сколько денег ты вкладываешь в стратегию на старте">Капитал, ₽:
-        <input id="capital" type="number" value="100000" min="1000" step="1000" />
-      </label>
-      <label title="Процент, который брокер берёт с каждой сделки">Комиссия, %:
-        <input id="commission" type="number" value="0.05" min="0" max="2" step="0.01" />
-      </label>
-      <label title="Разница между ожидаемой и реальной ценой сделки">Проскальзывание, %:
-        <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
-      </label>
-      <label title="Какой процент капитала ты готов потерять на одной сделке (при срабатывании стопа)">
-        Риск на сделку, %:
-        <input id="riskPct" type="number" value="1" min="0.1" max="10" step="0.1" />
-      </label>
-      <label title="Разбить историю на 70% обучение / 30% проверка">
-        <input id="useSplit" type="checkbox" />
-        Out-of-sample 70/30
-      </label>
-    </div>
-
-    <div class="controls">
-      <label title="Приводить исторические цены к текущему масштабу после дробления акций. Текущая цена всегда реальная.">
-        <input id="useCorpSplits" type="checkbox" checked />
-        Корректировать сплиты
-      </label>
-      <label title="Корректировать график на дивидендные гэпы и начислять дивиденды в бэктест (НДФЛ 13%).">
-        <input id="useCorpDividends" type="checkbox" checked />
-        Учитывать дивиденды
-      </label>
-    </div>
-
-    <div class="controls">
-      <button id="reload">Пересчитать</button>
-      <button id="optimize" class="secondary">🔬 Оптимизировать EMA</button>
-      <button id="exportCsv" class="secondary">📄 Сделки CSV</button>
-      <button id="exportSummary" class="secondary">📊 Сводка CSV</button>
-      <button id="addToNotes" class="secondary" disabled>📝 В заметки</button>
-    </div>
-
-    <div id="stats" class="stats"></div>
-
-    <!-- ===== Корпоративные действия ===== -->
-    <div id="corpSection" class="corp-section" style="display:none;">
-      <div class="corp-header">
-        <span id="corpSummary"></span>
+        <button id="themeToggle" class="header-icon-btn" title="Переключить тему">🌙</button>
+        <button id="settingsBtn" class="header-icon-btn" title="Настройки">⚙️</button>
       </div>
-      <div id="corpTable" class="corp-table-wrap"></div>
-    </div>
-
-    <div id="verdict" class="verdict"></div>
-
-    <div class="analysis-details">
-      <div id="indicatorValues" class="indicator-values"></div>
-      <ul id="reasons" class="reasons-list"></ul>
-    </div>
-
-    <!-- ===== Фундаментальный анализ ===== -->
-    <div id="fundamentalSection" class="fundamental-section" style="display:none;">
-      <div class="fundamental-header">
-        <h3 class="section-title">📊 Фундаментальный анализ</h3>
-        <span id="fundamentalAsOf" class="fundamental-asof"></span>
-      </div>
-
-      <div id="fundamentalVerdict" class="fundamental-verdict-box"></div>
-
-      <div id="fundamentalMetrics" class="fundamental-metrics"></div>
-
-      <details class="fundamental-history-wrap">
-        <summary>История показателей по годам</summary>
-        <div id="fundamentalHistory" class="fundamental-history"></div>
-      </details>
-
-      <p class="fundamental-note">
-        ℹ️ Фундаментал показывает <b>саму компанию</b> (прибыль, эффективность, долги),
-        в отличие от технического анализа, который смотрит только на график цены.
-        Данные со Smart-Lab, обновляются раз в сутки.
-        Это <b>не инвестиционная рекомендация</b> — только учебный материал.
-      </p>
-    </div>
-
-    <!-- ===== Управление риском ===== -->
-    <div id="riskSection" class="risk-section" style="display:none;">
-      <div class="risk-header">
-        <h3 class="section-title">🛡️ Управление риском</h3>
-        <span id="riskSubtitle" class="risk-subtitle"></span>
-      </div>
-
-      <div id="riskMetrics" class="risk-metrics"></div>
-
-      <p class="risk-note">
-        ℹ️ <b>ATR (Average True Range)</b> — средний дневной размах цены.
-        Показывает, насколько сильно акция «дёргается». Стоп ставится ниже
-        текущей цены на <b>2 × ATR</b> — это классический приём: он даёт цене
-        «дышать», но ограничивает потерю, если тренд развернулся.
-        Размер позиции подобран так, чтобы потеря при срабатывании стопа
-        не превысила <b>заданный % от капитала</b>. Это не рекомендация
-        к покупке — только расчёт риска.
-      </p>
-    </div>
-
-    <!-- ===== Макро-контекст ===== -->
-    <div id="macroSection" class="macro-section" style="display:none;">
-      <div class="macro-header">
-        <h3 class="section-title">🌍 Макро-контекст</h3>
-        <span id="macroUpdatedAt" class="macro-updated"></span>
-      </div>
-
-      <div id="macroMetrics" class="macro-metrics"></div>
-
-      <div class="macro-chart-wrap">
-        <div class="macro-chart-title">IMOEX за последние ~3 месяца</div>
-        <div id="macroChart" class="macro-chart"></div>
-      </div>
-
-      <p class="macro-note">
-        ℹ️ <b>IMOEX</b> — индекс Московской биржи (главный барометр рынка РФ).
-        <b>USD/RUB</b> — курс доллара: рост обычно давит на акции, потому что
-        инвесторы уходят в валюту. <b>Ключевая ставка ЦБ</b> — процент, под
-        который ЦБ даёт деньги банкам: высокая ставка делает вклады
-        привлекательнее акций и охлаждает рынок. Данные с MOEX ISS и ЦБ РФ,
-        обновляются раз в сутки.
-      </p>
-    </div>
-
-    <!-- ===== Корреляция бумаг ===== -->
-    <div id="correlationSection" class="correlation-section" style="display:none;">
-      <div class="correlation-header">
-        <h3 class="section-title">🔗 Корреляция бумаг</h3>
-        <span id="correlationSubtitle" class="correlation-subtitle"></span>
-      </div>
-
-      <div id="correlationMatrix" class="correlation-matrix"></div>
-
-      <div id="correlationPairs" class="correlation-pairs"></div>
-
-      <p class="correlation-note">
-        ℹ️ <b>Что такое корреляция?</b> Это число от −1 до +1, которое показывает,
-        насколько две акции двигаются <b>синхронно</b>.
-        <b>+1</b> — всегда вместе (одна растёт, вторая тоже).
-        <b>0</b> — связи нет, двигаются независимо.
-        <b>−1</b> — двигаются противоположно (одна растёт, вторая падает).
-        <br><br>
-        <b>Зачем это нужно?</b> Если собрать портфель из бумаг с корреляцией +0.9 —
-        это <b>иллюзия диверсификации</b>: упадут все одновременно. А бумаги
-        с корреляцией около нуля или отрицательной падают и растут в разное время,
-        и портфель ведёт себя спокойнее.
-        <br><br>
-        <b>Как читать матрицу?</b> По диагонали всегда <b>1.00</b> (бумага сама
-        с собой). 🟢 зелёные клетки — сильная связь, 🟡 жёлтые — средняя,
-        ⚪ серые — слабая, 🔴 красные — обратная связь. Матрица симметричная:
-        значение между SBER и GAZP такое же, как между GAZP и SBER.
-        Наведи курсор на клетку — появится подсказка, что означает эта пара.
-        <br><br>
-        <b>Важно:</b> корреляция не постоянна. Она меняется в кризисы,
-        при смене режима рынка, под действием новостей. Значения за 2023–2026 —
-        это <b>историческая</b> корреляция, она не гарантирует такое же
-        поведение в будущем.
-      </p>
-    </div>
-
-    <div id="metricsWrap">
-      <div id="metrics" class="metrics"></div>
-    </div>
-
-    <div id="splitSection" style="display:none;">
-      <h3 class="section-title">Out-of-sample: обучение vs проверка</h3>
-      <div class="split-grid">
-        <div class="split-col">
-          <div class="split-label">Train (70%)</div>
-          <div id="trainMetrics" class="metrics"></div>
-        </div>
-        <div class="split-col">
-          <div class="split-label">Test (30%)</div>
-          <div id="testMetrics" class="metrics"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="optimizerSection" style="display:none;">
-      <h3 class="section-title">Топ-10 пар EMA по доходности</h3>
-      <div id="optimizerResults" class="optimizer-results"></div>
     </div>
   </header>
 
-  <main>
-    <div id="chart"></div>
-    <div class="equity-title">Equity (стоимость портфеля во времени)</div>
-    <div id="equityChart"></div>
-  </main>
+  <!-- ===== КОНТЕНТ ТАБОВ ===== -->
+  <div class="tab-content-wrap">
+
+    <!-- ============ ТАБ: ОБЗОР ============ -->
+    <section class="tab-content active" data-tab="overview">
+
+      <div id="stats" class="stats"></div>
+
+      <div id="verdict" class="verdict"></div>
+
+      <div class="analysis-details">
+        <div id="indicatorValues" class="indicator-values"></div>
+        <ul id="reasons" class="reasons-list"></ul>
+      </div>
+
+      <div id="chart"></div>
+
+    </section>
+
+    <!-- ============ ТАБ: АНАЛИЗ ============ -->
+    <section class="tab-content" data-tab="analysis">
+
+      <div id="fundamentalSection" class="fundamental-section" style="display:none;">
+        <div class="fundamental-header">
+          <h3 class="section-title">📊 Фундаментальный анализ</h3>
+          <span id="fundamentalAsOf" class="fundamental-asof"></span>
+        </div>
+        <div id="fundamentalVerdict" class="fundamental-verdict-box"></div>
+        <div id="fundamentalMetrics" class="fundamental-metrics"></div>
+        <details class="fundamental-history-wrap">
+          <summary>История показателей по годам</summary>
+          <div id="fundamentalHistory" class="fundamental-history"></div>
+        </details>
+        <p class="fundamental-note">
+          ℹ️ Фундаментал показывает <b>саму компанию</b> (прибыль, эффективность, долги),
+          в отличие от технического анализа, который смотрит только на график цены.
+          Данные со Smart-Lab, обновляются раз в сутки.
+          Это <b>не инвестиционная рекомендация</b> — только учебный материал.
+        </p>
+      </div>
+
+      <div id="riskSection" class="risk-section" style="display:none;">
+        <div class="risk-header">
+          <h3 class="section-title">🛡️ Управление риском</h3>
+          <span id="riskSubtitle" class="risk-subtitle"></span>
+        </div>
+        <div id="riskMetrics" class="risk-metrics"></div>
+        <p class="risk-note">
+          ℹ️ <b>ATR (Average True Range)</b> — средний дневной размах цены.
+          Показывает, насколько сильно акция «дёргается». Стоп ставится ниже
+          текущей цены на <b>2 × ATR</b> — это классический приём: он даёт цене
+          «дышать», но ограничивает потерю, если тренд развернулся.
+          Размер позиции подобран так, чтобы потеря при срабатывании стопа
+          не превысила <b>заданный % от капитала</b>. Это не рекомендация
+          к покупке — только расчёт риска.
+        </p>
+      </div>
+
+      <div id="macroSection" class="macro-section" style="display:none;">
+        <div class="macro-header">
+          <h3 class="section-title">🌍 Макро-контекст</h3>
+          <span id="macroUpdatedAt" class="macro-updated"></span>
+        </div>
+        <div id="macroMetrics" class="macro-metrics"></div>
+        <div class="macro-chart-wrap">
+          <div class="macro-chart-title">IMOEX за последние ~3 месяца</div>
+          <div id="macroChart" class="macro-chart"></div>
+        </div>
+        <p class="macro-note">
+          ℹ️ <b>IMOEX</b> — индекс Московской биржи (главный барометр рынка РФ).
+          <b>USD/RUB</b> — курс доллара: рост обычно давит на акции, потому что
+          инвесторы уходят в валюту. <b>Ключевая ставка ЦБ</b> — процент, под
+          который ЦБ даёт деньги банкам: высокая ставка делает вклады
+          привлекательнее акций и охлаждает рынок. Данные с MOEX ISS и ЦБ РФ,
+          обновляются раз в сутки.
+        </p>
+      </div>
+
+      <div id="correlationSection" class="correlation-section" style="display:none;">
+        <div class="correlation-header">
+          <h3 class="section-title">🔗 Корреляция бумаг</h3>
+          <span id="correlationSubtitle" class="correlation-subtitle"></span>
+        </div>
+        <div id="correlationMatrix" class="correlation-matrix"></div>
+        <div id="correlationPairs" class="correlation-pairs"></div>
+        <p class="correlation-note">
+          ℹ️ <b>Что такое корреляция?</b> Это число от −1 до +1, которое показывает,
+          насколько две акции двигаются <b>синхронно</b>.
+          <b>+1</b> — всегда вместе (одна растёт, вторая тоже).
+          <b>0</b> — связи нет, двигаются независимо.
+          <b>−1</b> — двигаются противоположно (одна растёт, вторая падает).
+          <br><br>
+          <b>Зачем это нужно?</b> Если собрать портфель из бумаг с корреляцией +0.9 —
+          это <b>иллюзия диверсификации</b>: упадут все одновременно. А бумаги
+          с корреляцией около нуля или отрицательной падают и растут в разное время,
+          и портфель ведёт себя спокойнее.
+          <br><br>
+          <b>Как читать матрицу?</b> По диагонали всегда <b>1.00</b> (бумага сама
+          с собой). 🟢 зелёные клетки — сильная связь, 🟡 жёлтые — средняя,
+          ⚪ серые — слабая, 🔴 красные — обратная связь. Матрица симметричная:
+          значение между SBER и GAZP такое же, как между GAZP и SBER.
+          Наведи курсор на клетку — появится подсказка, что означает эта пара.
+          <br><br>
+          <b>Важно:</b> корреляция не постоянна. Она меняется в кризисы,
+          при смене режима рынка, под действием новостей. Значения за 2023–2026 —
+          это <b>историческая</b> корреляция, она не гарантирует такое же
+          поведение в будущем.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- ============ ТАБ: СТРАТЕГИЯ ============ -->
+    <section class="tab-content" data-tab="strategy">
+
+      <div id="corpSection" class="corp-section" style="display:none;">
+        <div class="corp-header">
+          <span id="corpSummary"></span>
+        </div>
+        <div id="corpTable" class="corp-table-wrap"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="optimize" class="secondary">🔬 Оптимизировать EMA</button>
+        <button id="exportCsv" class="secondary">📄 Сделки CSV</button>
+        <button id="exportSummary" class="secondary">📊 Сводка CSV</button>
+        <button id="addToNotes" class="secondary" disabled>📝 В заметки</button>
+      </div>
+
+      <div id="metricsWrap">
+        <div id="metrics" class="metrics"></div>
+      </div>
+
+      <div class="equity-title">Equity (стоимость портфеля во времени)</div>
+      <div id="equityChart"></div>
+
+      <!-- Out-of-sample: сначала объяснение, потом метрики -->
+      <div class="explainer">
+        <b>Что такое Train vs Test?</b> Стратегия «училась» на первых 70% истории
+        (Train), а проверялась на последних 30% (Test). Если на Test результат
+        резко хуже — стратегия «подогнана» под прошлое и в будущем, скорее всего,
+        не сработает.
+        <details style="margin-top:8px;">
+          <summary>Показать подробнее — что это значит для меня?</summary>
+          <div class="explainer-body">
+            <p>Представь, что ты весь год готовилась по одному учебнику, а на
+              экзамене дали задачи из другого. Если ты выучила <b>принципы</b> —
+              решишь. Если просто <b>зазубрила ответы</b> — провалишь.</p>
+            <p>Train — это «учебник». Test — «экзамен». Разница между их
+              результатами показывает, насколько стратегия <b>зазубрила</b>
+              историю, а не выучила принцип.</p>
+            <p>Чем <b>меньше разрыв</b> между Train и Test — тем честнее стратегия.
+              Если на Train +80%, а на Test −20%, значит, стратегия работала
+              только на конкретном участке истории и проваливается на новых данных.</p>
+          </div>
+        </details>
+      </div>
+
+      <div id="splitSection" style="display:none;">
+        <div class="split-grid">
+          <div class="split-col">
+            <div class="split-label">Train (70%)</div>
+            <div id="trainMetrics" class="metrics"></div>
+          </div>
+          <div class="split-col">
+            <div class="split-label">Test (30%)</div>
+            <div id="testMetrics" class="metrics"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="optimizerSection" style="display:none;">
+        <h3 class="section-title">Топ-10 пар EMA по доходности</h3>
+        <div id="optimizerResults" class="optimizer-results"></div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- ===== МОДАЛКА НАСТРОЕК ===== -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">⚙️ Настройки</h2>
+        <button class="modal-close" id="closeSettings">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="controls">
+          <label>Стратегия:
+            <select id="strategy">
+              <option value="ema">EMA-кроссовер</option>
+              <option value="rsi">RSI mean-reversion</option>
+              <option value="bollinger">Bollinger breakout</option>
+              <option value="buyhold">Buy &amp; Hold</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="controls" id="strategyParams"></div>
+
+        <div class="controls">
+          <label>Капитал, ₽:
+            <input id="capital" type="number" value="100000" min="1000" step="1000" />
+          </label>
+          <label>Комиссия, %:
+            <input id="commission" type="number" value="0.05" min="0" max="2" step="0.01" />
+          </label>
+          <label>Проскальзывание, %:
+            <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
+          </label>
+          <label>Риск на сделку, %:
+            <input id="riskPct" type="number" value="1" min="0.1" max="10" step="0.1" />
+          </label>
+        </div>
+
+        <div class="controls">
+          <label>
+            <input id="useSplit" type="checkbox" />
+            Out-of-sample 70/30
+          </label>
+          <label>
+            <input id="useCorpSplits" type="checkbox" checked />
+            Корректировать сплиты
+          </label>
+          <label>
+            <input id="useCorpDividends" type="checkbox" checked />
+            Учитывать дивиденды
+          </label>
+        </div>
+
+        <div class="controls" style="margin-top: 16px;">
+          <button id="reload">Применить</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ТАБ-БАР ===== -->
+  <nav class="tab-bar">
+    <button class="tab-button active" data-tab="overview">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">Обзор</span>
+    </button>
+    <button class="tab-button" data-tab="analysis">
+      <span class="tab-icon">🔍</span>
+      <span class="tab-label">Анализ</span>
+    </button>
+    <button class="tab-button" data-tab="strategy">
+      <span class="tab-icon">🎯</span>
+      <span class="tab-label">Стратегия</span>
+    </button>
+    <a class="tab-button" href="notes.html">
+      <span class="tab-icon">📝</span>
+      <span class="tab-label">Заметки <span class="notes-badge" id="notesCount">0</span></span>
+    </a>
+  </nav>
 
   <div id="toast" class="toast"></div>
 
+  <!-- ===== INLINE: логика табов, темы и модалки ===== -->
+  <script>
+    (function () {
+      // ---------- Тема ----------
+      const THEME_KEY = 'trading-signals-theme';
+      const themeToggle = document.getElementById('themeToggle');
+      const rootEl = document.documentElement;
+
+      function applyTheme(theme) {
+        if (theme === 'light') {
+          rootEl.setAttribute('data-theme', 'light');
+          themeToggle.textContent = '☀️';
+        } else {
+          rootEl.removeAttribute('data-theme');
+          themeToggle.textContent = '🌙';
+        }
+      }
+
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'light' || saved === 'dark') {
+        applyTheme(saved);
+      } else {
+        const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        themeToggle.textContent = isLight ? '☀️' : '🌙';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const isLight = rootEl.getAttribute('data-theme') === 'light';
+        const next = isLight ? 'dark' : 'light';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+        // Перерисовать графики под новую тему
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+      });
+
+      // ---------- Табы ----------
+      const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const TAB_KEY = 'trading-signals-tab';
+
+      function activateTab(name) {
+        tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+        tabContents.forEach(c => c.classList.toggle('active', c.dataset.tab === name));
+        localStorage.setItem(TAB_KEY, name);
+        // Графики в скрытых табах имели ширину 0 — пересчитываем
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+      }
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          activateTab(btn.dataset.tab);
+        });
+      });
+
+      // Восстанавливаем последний активный таб
+      const savedTab = localStorage.getItem(TAB_KEY);
+      if (savedTab && ['overview', 'analysis', 'strategy'].includes(savedTab)) {
+        activateTab(savedTab);
+      }
+
+      // ---------- Модалка настроек ----------
+      const modal = document.getElementById('settingsModal');
+      const settingsBtn = document.getElementById('settingsBtn');
+      const closeBtn = document.getElementById('closeSettings');
+
+      function openModal() { modal.classList.add('show'); }
+      function closeModal() { modal.classList.remove('show'); }
+
+      settingsBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+      });
+
+      // Кнопка «Применить» в модалке (#reload) — app.js навесит на неё render().
+      // Дополнительно закрываем модалку через мгновение, чтобы увидеть результат.
+      const reloadBtn = document.getElementById('reload');
+      if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+          setTimeout(closeModal, 150);
+        });
+      }
+    })();
+  </script>
+
+  <!-- ===== СКРИПТЫ ПРИЛОЖЕНИЯ ===== -->
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/indicators.js"></script>
