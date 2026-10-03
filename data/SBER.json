@@ -7644,24 +7644,7 @@
       "volume": 13432967
     }
   ],
-  "dividends": [
-    {
-      "date": "2023-05-08",
-      "amount": 25.0
-    },
-    {
-      "date": "2024-07-10",
-      "amount": 33.3
-    },
-    {
-      "date": "2025-07-17",
-      "amount": 34.84
-    },
-    {
-      "date": "2026-07-17",
-      "amount": 37.64
-    }
-  ],
+  "dividends": [],
   "splits": [],
   "fundamentals": {
     "asOf": "LTM",
