@@ -1,6 +1,6 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 9.2 · две темы · фикс переключения · фикс safe-area
+   Версия 9.6 · две темы · фикс safe-area · сворачиваемые секции
    ============================================================ */
 
 /* ============================================================
@@ -151,6 +151,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.2s ease, color 0.2s ease;
+  /* Минимум — во всю высоту экрана. На коротких страницах
+     (Анализ, Заметки) body раньше был коротким, и фон под
+     таб-баром мог отличаться. Теперь фон всегда одинаковый. */
+  min-height: 100dvh;
 }
 
 img, svg { max-width: 100%; display: block; }
@@ -1377,9 +1381,11 @@ h1 {
   grid-template-columns: repeat(4, 1fr);
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0));
   padding-bottom: env(safe-area-inset-bottom, 0);
-  background: color-mix(in srgb, var(--card) 90%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* Плотный фон вместо полупрозрачного: убирает серую полосу
+     под иконками на коротких страницах (Анализ, Заметки).
+     Побочный эффект — теряем «стеклянный» эффект, но зато
+     одинаковый цвет по всей высоте таб-бара. */
+  background: var(--card);
   border-top: 1px solid var(--border);
 }
 
@@ -1530,7 +1536,6 @@ body.has-tabbar .tab-content-wrap {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
-
 /* ============================================================
    22. СВОРАЧИВАЕМЫЕ СЕКЦИИ (таб «Анализ»)
    ============================================================ */
@@ -1600,4 +1605,3 @@ body.has-tabbar .tab-content-wrap {
 .collapsible-body {
   margin-top: var(--space-md);
 }
-
