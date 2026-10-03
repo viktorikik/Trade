@@ -1,5 +1,6 @@
 // js/notes.js
-// Страница заметок с учётом сплитов и дивидендов.
+// Страница заметок. Показывает актуальные вердикты, считает изменение
+// цены с момента добавления, экспортирует список в CSV.
 
 const dataCache = new Map();
 
@@ -33,6 +34,7 @@ async function loadTickerData(ticker) {
 
 function showToast(msg) {
   const el = document.getElementById('toast');
+  if (!el) return;
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(el._timer);
@@ -48,6 +50,10 @@ function fmtDate(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
+
+// ============================================================
+// КАРТОЧКА
+// ============================================================
 
 async function renderNoteCard(entry) {
   const card = document.createElement('div');
@@ -97,12 +103,13 @@ async function renderNoteCard(entry) {
       </div>
     `;
 
-    card.querySelector('.note-delete').addEventListener('click', (e) => {
+    const delBtn = card.querySelector('.note-delete');
+    delBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const remaining = removeFromWatchlist(entry.ticker);
       showToast(`${entry.ticker} удалён из заметок`);
       card.remove();
-      updateStats(remaining);
+      updateBadge(remaining);
       if (remaining === 0) toggleEmptyState(true);
     });
 
@@ -117,31 +124,129 @@ async function renderNoteCard(entry) {
       </div>
       <div class="note-error">Не удалось загрузить данные: ${err.message}</div>
     `;
-    card.querySelector('.note-delete').addEventListener('click', () => {
+    const delBtn = card.querySelector('.note-delete');
+    delBtn.addEventListener('click', () => {
       const remaining = removeFromWatchlist(entry.ticker);
       showToast(`${entry.ticker} удалён из заметок`);
       card.remove();
-      updateStats(remaining);
+      updateBadge(remaining);
       if (remaining === 0) toggleEmptyState(true);
     });
     return card;
   }
 }
 
-function updateStats(count) {
-  document.getElementById('notesStats').innerHTML = `Всего бумаг: <b>${count}</b>`;
+// ============================================================
+// СЛУЖЕБНОЕ
+// ============================================================
+
+function updateBadge(count) {
+  // Бейджа на странице заметок нет, но если появится — обновим.
+  const badge = document.getElementById('notesCount');
+  if (badge) badge.textContent = count;
 }
 
 function toggleEmptyState(show) {
-  document.getElementById('emptyState').style.display = show ? 'block' : 'none';
-  document.getElementById('notesGrid').style.display = show ? 'none' : 'grid';
+  const emptyEl = document.getElementById('emptyState');
+  const gridEl = document.getElementById('notesGrid');
+  if (emptyEl) emptyEl.style.display = show ? 'block' : 'none';
+  if (gridEl) gridEl.style.display = show ? 'none' : 'grid';
 }
+
+// ============================================================
+// ЭКСПОРТ CSV
+// ============================================================
+
+function downloadBlob(filename, text) {
+  const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function exportNotesCsv() {
+  const list = loadWatchlist();
+  if (list.length === 0) {
+    showToast('Заметок нет — экспортировать нечего');
+    return;
+  }
+
+  const btn = document.getElementById('exportNotes');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Готовим…';
+
+  const header = 'ticker,name,lot_size,price_at_add,price_now,change_pct,verdict,score,added_at\n';
+  const rows = [];
+
+  for (const entry of list) {
+    try {
+      const payload = await loadTickerData(entry.ticker);
+      const { adjusted } = applyCorporateActions(payload.candles, payload, {
+        useSplits: true,
+        useDividends: true,
+      });
+      const analysis = analyzeMarket(adjusted);
+      const rawLast = payload.candles[payload.candles.length - 1];
+      const changePct = (rawLast.close / entry.priceAtAdd - 1) * 100;
+
+      rows.push([
+        entry.ticker,
+        `"${payload.name}"`,
+        payload.lotSize,
+        entry.priceAtAdd.toFixed(2),
+        rawLast.close.toFixed(2),
+        changePct.toFixed(2),
+        `"${analysis.verdict}"`,
+        analysis.score,
+        entry.addedAt,
+      ].join(','));
+    } catch (err) {
+      rows.push([
+        entry.ticker, '"—"', '', entry.priceAtAdd.toFixed(2), '', '', 'error', '', entry.addedAt,
+      ].join(','));
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = originalText;
+
+  const text = header + rows.join('\n');
+  downloadBlob(`watchlist_${new Date().toISOString().slice(0, 10)}.csv`, text);
+  showToast(`Экспортировано: ${rows.length} бумаг`);
+}
+
+// ============================================================
+// ОЧИСТКА ВСЕГО СПИСКА
+// ============================================================
+
+function clearAllNotes() {
+  const list = loadWatchlist();
+  if (list.length === 0) {
+    showToast('Список уже пуст');
+    return;
+  }
+  const ok = confirm(`Удалить все ${list.length} бумаг из заметок?`);
+  if (!ok) return;
+  clearWatchlist();
+  showToast('Все заметки очищены');
+  renderAll();
+}
+
+// ============================================================
+// ГЛАВНЫЙ РЕНДЕР
+// ============================================================
 
 async function renderAll() {
   const list = loadWatchlist();
   const grid = document.getElementById('notesGrid');
+  if (!grid) return;
+
   grid.innerHTML = '';
-  updateStats(list.length);
+  updateBadge(list.length);
 
   if (list.length === 0) {
     toggleEmptyState(true);
@@ -159,22 +264,14 @@ async function renderAll() {
   }
 }
 
-document.getElementById('refresh').addEventListener('click', () => {
-  dataCache.clear();
-  renderAll();
-});
+// ============================================================
+// НАВЕШИВАЕМ ОБРАБОТЧИКИ
+// ============================================================
 
-document.getElementById('clearAll').addEventListener('click', () => {
-  const list = loadWatchlist();
-  if (list.length === 0) {
-    showToast('Список уже пуст');
-    return;
-  }
-  const ok = confirm(`Удалить все ${list.length} бумаг из заметок?`);
-  if (!ok) return;
-  clearWatchlist();
-  showToast('Все заметки очищены');
-  renderAll();
-});
+const exportBtn = document.getElementById('exportNotes');
+if (exportBtn) exportBtn.addEventListener('click', exportNotesCsv);
+
+const clearBtn = document.getElementById('clearNotes');
+if (clearBtn) clearBtn.addEventListener('click', clearAllNotes);
 
 renderAll();
