@@ -1358,3 +1358,59 @@ renderStrategyParams();
 updateNotesBadge();
 resizeCharts();
 render();
+
+// ============================================================
+// 14. СОХРАНЕНИЕ СОСТОЯНИЯ СВОРАЧИВАЕМЫХ СЕКЦИЙ (таб «Анализ»)
+// ============================================================
+// Пользователь тапнул «Фундаментал» → раскрылось. Ушёл на другой таб,
+// вернулся — секция всё ещё раскрыта. Сохраняем в localStorage.
+// Плюс: если секция содержит график (макро) — дорисовываем его
+// при раскрытии, потому что в свёрнутом виде контейнер имеет width=0.
+
+(function initCollapsiblePersistence() {
+  const STORAGE_KEY = 'trading-signals-collapsible';
+  const collapsibles = document.querySelectorAll('details.collapsible[id]');
+  if (collapsibles.length === 0) return;
+
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch (e) {
+    saved = {};
+  }
+
+  collapsibles.forEach(el => {
+    const key = el.id;
+
+    // Восстанавливаем сохранённое состояние
+    if (typeof saved[key] === 'boolean') {
+      el.open = saved[key];
+    }
+
+    // Слушаем изменения
+    el.addEventListener('toggle', () => {
+      saved[key] = el.open;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      } catch (e) { /* приватный режим — игнорируем */ }
+
+      // Если раскрылась макро-секция — дорисовываем график.
+      // В свёрнутом виде у контейнера width=0, и Lightweight Charts
+      // не может создать canvas. Поэтому создаём график только сейчас.
+      if (el.open && el.id === 'macroSection') {
+        requestAnimationFrame(() => {
+          if (typeof ensureMacroChart !== 'function') return;
+          ensureMacroChart();
+          if (macroChart && macroSeries && pendingMacroData) {
+            macroSeries.setData(pendingMacroData);
+            const mEl = document.getElementById('macroChart');
+            if (mEl && mEl.clientWidth > 0) {
+              macroChart.applyOptions({ width: mEl.clientWidth });
+            }
+            macroChart.timeScale().fitContent();
+          }
+        });
+      }
+    });
+  });
+})();
