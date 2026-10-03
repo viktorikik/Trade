@@ -1,6 +1,48 @@
 // js/app.js
 
 // ============================================================
+// [DEBUG] Панель производительности. УДАЛИТЬ после диагностики.
+// ============================================================
+const __debug = {
+  enabled: true,
+  starts: {},
+  data: {},
+  start(label) { this.starts[label] = performance.now(); },
+  end(label) {
+    if (this.starts[label] == null) return;
+    const dur = performance.now() - this.starts[label];
+    this.data[label] = (this.data[label] || 0) + dur;
+    delete this.starts[label];
+  },
+  reset() { this.starts = {}; this.data = {}; },
+  show() {
+    if (!this.enabled) return;
+    let el = document.getElementById('__debug');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = '__debug';
+      el.style.cssText = `
+        position:fixed; top:56px; right:8px; z-index:9999;
+        background:rgba(0,0,0,0.88); color:#4ade80;
+        font-family:ui-monospace,Menlo,monospace; font-size:11px;
+        padding:8px 10px; border-radius:6px;
+        max-width:260px; white-space:pre; line-height:1.4;
+        cursor:pointer;
+      `;
+      el.title = 'Тап — скрыть';
+      el.addEventListener('click', () => el.remove());
+      document.body.appendChild(el);
+    }
+    const rows = Object.entries(this.data).sort((a, b) => b[1] - a[1]);
+    el.textContent = '⏱ PERFORMANCE\n' +
+      rows.map(([k, v]) => `${k}: ${v.toFixed(0)} ms`).join('\n');
+  },
+};
+// ============================================================
+// [/DEBUG]
+// ============================================================
+
+// ============================================================
 // 1. ГРАФИКИ
 // ============================================================
 // Свечной график и equity-график создаются ПО-РАЗНОМУ:
@@ -333,11 +375,20 @@ async function renderCorrelation() {
   if (!section) return;
 
   try {
+    __debug.start('corr.load');
     const payloads = await loadCorrelationData();
+    __debug.end('corr.load');
+
     const useSplits = document.getElementById('useCorpSplits').checked;
     const useDividends = document.getElementById('useCorpDividends').checked;
+
+    __debug.start('corr.compute');
     const result = computeCorrelations(payloads, { useSplits, useDividends });
+    __debug.end('corr.compute');
+
+    __debug.start('corr.render');
     renderCorrelationSection(result);
+    __debug.end('corr.render');
   } catch (err) {
     console.warn('[correlation] ошибка:', err);
     section.style.display = 'none';
@@ -859,6 +910,9 @@ function updateAddButton() {
 // ============================================================
 
 async function render() {
+  __debug.reset();
+  __debug.start('total');
+
   const ticker      = document.getElementById('ticker').value;
   const strategyId  = document.getElementById('strategy').value;
   const capital     = parseFloat(document.getElementById('capital').value);
@@ -884,13 +938,17 @@ async function render() {
     currentState = null;
     currentLastResult = null;
     updateAddButton();
+    __debug.end('total');
+    __debug.show();
     return;
   }
 
   let payload;
   try {
     document.getElementById('stats').innerHTML = 'Загрузка данных…';
+    __debug.start('loadData');
     payload = await loadRealData(ticker);
+    __debug.end('loadData');
   } catch (err) {
     console.error(err);
     document.getElementById('stats').innerHTML =
@@ -905,20 +963,28 @@ async function render() {
     currentState = null;
     currentLastResult = null;
     updateAddButton();
+    __debug.end('total');
+    __debug.show();
     return;
   }
 
   const realData = payload.candles;
 
+  __debug.start('corpActions');
   const { adjusted, splitEvents, gapDates } = applyCorporateActions(realData, payload, {
     useSplits,
     useDividends,
   });
+  __debug.end('corpActions');
 
   const closes = adjusted.map(d => d.close);
   const strategy = STRATEGIES[strategyId];
-  const signals = strategy.generate(adjusted, params);
 
+  __debug.start('signals');
+  const signals = strategy.generate(adjusted, params);
+  __debug.end('signals');
+
+  __debug.start('chart');
   candleSeries.setData(adjusted);
 
   if (strategyId === 'ema') {
@@ -969,6 +1035,7 @@ async function render() {
 
   markers.sort((a, b) => a.time.localeCompare(b.time));
   candleSeries.setMarkers(markers);
+  __debug.end('chart');
 
   const backtestOptions = {
     initialCapital: isNaN(capital) ? 100000 : capital,
@@ -978,6 +1045,7 @@ async function render() {
     dividends:      useDividends ? payload.dividends : [],
   };
 
+  __debug.start('backtest');
   const result = runBacktest(adjusted, signals, backtestOptions);
   currentLastResult = { ticker, strategyId, params, result, payload };
 
@@ -985,12 +1053,15 @@ async function render() {
   applyEquityData(result.equity);
 
   renderMetricsInto('metrics', result);
+  __debug.end('backtest');
 
   if (useSplit) {
+    __debug.start('split');
     const split = runSplitBacktest(adjusted, signals, backtestOptions, 0.7);
     renderMetricsInto('trainMetrics', split.train);
     renderMetricsInto('testMetrics', split.test);
     document.getElementById('splitSection').style.display = 'block';
+    __debug.end('split');
   } else {
     document.getElementById('splitSection').style.display = 'none';
   }
@@ -1012,7 +1083,11 @@ async function render() {
     `(<span style="color:${getChartColors().accent}">BUY ${buys}</span> / ` +
     `<span style="color:${getChartColors().danger}">SELL ${sells}</span>)`;
 
+  __debug.start('corpRender');
   renderCorpSection(payload, result, splitEvents, gapDates, useSplits, useDividends);
+  __debug.end('corpRender');
+
+  __debug.start('analysis');
   renderAnalysis(adjusted);
   renderFundamentalSection(payload);
   renderRiskSection(adjusted, {
@@ -1023,8 +1098,10 @@ async function render() {
     atrMultiplier: 2,
     rawPrice: rawLastBar.close,
   });
+  __debug.end('analysis');
 
   // Макро
+  __debug.start('macro');
   try {
     const macroData = await loadMacroData();
     renderMacroSection(macroData);
@@ -1032,10 +1109,14 @@ async function render() {
     console.warn('[macro] не удалось отрисовать:', err);
     document.getElementById('macroSection').style.display = 'none';
   }
+  __debug.end('macro');
 
   // Корреляция
+  __debug.start('correlation');
   await renderCorrelation();
+  __debug.end('correlation');
 
+  __debug.start('finalize');
   currentState = {
     ticker,
     price: rawLastBar.close,
@@ -1046,6 +1127,10 @@ async function render() {
   updateAddButton();
 
   if (chartEl.clientWidth > 0) chart.timeScale().fitContent();
+  __debug.end('finalize');
+
+  __debug.end('total');
+  __debug.show();
 }
 
 // ============================================================
