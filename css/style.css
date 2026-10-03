@@ -1,1529 +1,501 @@
-/* ============================================================
-   Trading Signals MVP — стили
-   Версия 9.1 · две темы · фикс переключения
-   ============================================================ */
-
-/* ============================================================
-   1. ТЕМЫ И ПЕРЕМЕННЫЕ
-   ============================================================ */
-
-/* --- ТЁМНАЯ ТЕМА (по умолчанию) --- */
-:root,
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg: #0a0d12;
-  --card: #161a21;
-  --card-hover: #1d222b;
-  --card-elev: #1a1f27;
-  --border: #242933;
-  --border-strong: #30363f;
-
-  --text: #e6e9ef;
-  --text-muted: #8b949e;
-  --text-dim: #6b7280;
-
-  --accent: #4ade80;
-  --accent-hover: #34d16b;
-  --accent-text: #0a0d12;
-  --accent-soft: rgba(74, 222, 128, 0.12);
-  --accent-soft-hover: rgba(74, 222, 128, 0.20);
-
-  --blue: #60a5fa;
-  --blue-soft: rgba(96, 165, 250, 0.12);
-
-  --danger: #f87171;
-  --danger-soft: rgba(248, 113, 113, 0.12);
-
-  --warn: #fbbf24;
-  --warn-soft: rgba(251, 191, 36, 0.12);
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 24px;
-  --space-2xl: 32px;
-
-  --radius-card: 16px;
-  --radius-button: 12px;
-  --radius-input: 10px;
-  --radius-badge: 8px;
-
-  --header-h: 56px;
-  --tabbar-h: 64px;
-  --content-max: 960px;
-}
-
-/* --- СВЕТЛАЯ ТЕМА --- */
-:root[data-theme="light"] {
-  color-scheme: light;
-
-  --bg: #f5f7fa;
-  --card: #ffffff;
-  --card-hover: #f9fafb;
-  --card-elev: #ffffff;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
-
-  --text: #111827;
-  --text-muted: #6b7280;
-  --text-dim: #9ca3af;
-
-  --accent: #16a34a;
-  --accent-hover: #15803d;
-  --accent-text: #ffffff;
-  --accent-soft: rgba(22, 163, 74, 0.10);
-  --accent-soft-hover: rgba(22, 163, 74, 0.18);
-
-  --blue: #2563eb;
-  --blue-soft: rgba(37, 99, 235, 0.10);
-
-  --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.08);
-
-  --warn: #d97706;
-  --warn-soft: rgba(217, 119, 6, 0.10);
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-}
-
-/* --- АВТООПРЕДЕЛЕНИЕ СИСТЕМЫ ---
-   Срабатывает ТОЛЬКО если пользователь ещё не выбрал тему вручную.
-   Явный :root[data-theme="dark"] выше имеет большую специфичность
-   и перебивает этот медиа-запрос. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    color-scheme: light;
-
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --card-hover: #f9fafb;
-    --card-elev: #ffffff;
-    --border: #e5e7eb;
-    --border-strong: #d1d5db;
-
-    --text: #111827;
-    --text-muted: #6b7280;
-    --text-dim: #9ca3af;
-
-    --accent: #16a34a;
-    --accent-hover: #15803d;
-    --accent-text: #ffffff;
-    --accent-soft: rgba(22, 163, 74, 0.10);
-    --accent-soft-hover: rgba(22, 163, 74, 0.18);
-
-    --blue: #2563eb;
-    --blue-soft: rgba(37, 99, 235, 0.10);
-
-    --danger: #dc2626;
-    --danger-soft: rgba(220, 38, 38, 0.08);
-
-    --warn: #d97706;
-    --warn-soft: rgba(217, 119, 6, 0.10);
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-  }
-}
-
-/* ============================================================
-   2. СБРОС И БАЗА
-   ============================================================ */
-
-*, *::before, *::after { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-img, svg { max-width: 100%; display: block; }
-
-button, input, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-}
-
-a { color: var(--blue); text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-.hint {
-  color: var(--text-muted);
-  font-size: 13px;
-  font-style: italic;
-}
-
-/* ============================================================
-   3. ШАПКА ПРИЛОЖЕНИЯ (sticky)
-   ============================================================ */
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 var(--space-lg);
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-  height: var(--header-h);
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(15px, 3.5vw, 17px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  height: var(--header-h);
-}
-
-.app-title {
-  font-size: clamp(15px, 3.5vw, 17px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.app-title-icon {
-  color: var(--accent);
-  font-size: 18px;
-}
-
-.app-header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.header-icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-input);
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 1;
-  transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
-}
-.header-icon-btn:hover {
-  background: var(--card-hover);
-  border-color: var(--border-strong);
-}
-.header-icon-btn:active { transform: scale(0.95); }
-
-.notes-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--blue);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  transition: background-color 0.15s;
-}
-.notes-link:hover { background: var(--card-hover); text-decoration: none; }
-
-.notes-badge {
-  display: inline-block;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 10px;
-  padding: 1px 7px;
-  min-width: 18px;
-  text-align: center;
-}
-
-/* ============================================================
-   4. КОНТРОЛЫ
-   ============================================================ */
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  align-items: center;
-  font-size: 13px;
-  padding: var(--space-md) 0;
-  border-top: 1px solid var(--border);
-}
-.controls:first-of-type { border-top: none; }
-
-.controls label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-}
-
-.controls select,
-.controls input {
-  background: var(--card);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 6px 10px;
-  font-size: 13px;
-  transition: border-color 0.15s, background-color 0.15s;
-}
-.controls select:focus,
-.controls input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-
-.controls input { width: 90px; }
-.controls input[type="checkbox"] { width: auto; accent-color: var(--accent); }
-
-.controls button,
-.btn {
-  background: var(--accent);
-  color: var(--accent-text);
-  border: none;
-  border-radius: var(--radius-button);
-  padding: 8px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.15s, transform 0.1s, opacity 0.15s;
-}
-.controls button:hover,
-.btn:hover { background: var(--accent-hover); }
-.controls button:active,
-.btn:active { transform: scale(0.97); }
-.controls button:disabled,
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.controls button.secondary,
-.btn.secondary {
-  background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-}
-.controls button.secondary:hover,
-.btn.secondary:hover {
-  background: var(--accent-soft);
-}
-.controls button.secondary:disabled {
-  color: var(--text-dim);
-  border-color: var(--border);
-  background: transparent;
-}
-
-.controls button.danger {
-  background: transparent;
-  color: var(--danger);
-  border: 1px solid var(--danger);
-}
-.controls button.danger:hover { background: var(--danger-soft); }
-
-.stats {
-  margin-top: var(--space-sm);
-  font-size: 12.5px;
-  color: var(--text-muted);
-  line-height: 1.7;
-  padding-bottom: var(--space-md);
-}
-.stats b { color: var(--text); }
-
-.badge-adjusted {
-  display: inline-block;
-  background: var(--blue-soft);
-  color: var(--blue);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: var(--radius-badge);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-left: 4px;
-  cursor: help;
-  vertical-align: middle;
-}
-
-/* ============================================================
-   5. КАРТОЧКИ И СЕКЦИИ
-   ============================================================ */
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-md);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, background-color 0.15s;
-}
-
-.card-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 var(--space-md) 0;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.card-title-icon {
-  font-size: 17px;
-  line-height: 1;
-}
-
-.section-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin: var(--space-xl) 0 var(--space-md) 0;
-  color: var(--text);
-}
-
-/* ============================================================
-   6. КОРПОРАТИВНЫЕ ДЕЙСТВИЯ
-   ============================================================ */
-
-.corp-section {
-  margin-top: var(--space-md);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--blue);
-  border-radius: var(--radius-card);
-  padding: var(--space-md) var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.corp-header {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-bottom: var(--space-md);
-  line-height: 1.6;
-}
-.corp-header b { color: var(--text); }
-
-.corp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-.corp-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12.5px;
-}
-
-.corp-table th,
-.corp-table td {
-  padding: 8px 10px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-
-.corp-table th {
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.corp-table td b { color: var(--text); }
-.corp-table td .good { color: var(--accent); }
-.corp-table td .muted { color: var(--text-muted); font-style: italic; }
-
-.corp-note {
-  margin: var(--space-md) 0 0;
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  border-top: 1px solid var(--border);
-  padding-top: var(--space-sm);
-}
-
-/* ============================================================
-   7. МЕТРИКИ
-   ============================================================ */
-
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-}
-
-.metric {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 10px 12px;
-  transition: border-color 0.15s;
-}
-
-.metric .label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-.metric .value {
-  font-size: 16px;
-  font-weight: 700;
-  margin-top: 4px;
-  color: var(--text);
-}
-
-.metric .value.good { color: var(--accent); }
-.metric .value.bad  { color: var(--danger); }
-.metric .value.neutral { color: var(--text); }
-
-/* ============================================================
-   8. ВЕРДИКТ
-   ============================================================ */
-
-.verdict {
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-card);
-  margin-top: var(--space-md);
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-  border: 1px solid transparent;
-}
-
-.verdict.strong-buy,
-.verdict.buy {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.verdict.sell {
-  background: var(--danger-soft);
-  border-color: var(--danger);
-  color: var(--danger);
-}
-.verdict.neutral {
-  background: var(--card-hover);
-  border-color: var(--border);
-  color: var(--text-muted);
-}
-
-.verdict-main {
-  font-size: clamp(16px, 3.5vw, 20px);
-  letter-spacing: 0.3px;
-}
-.verdict-score {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-/* ============================================================
-   9. ДЕТАЛИ АНАЛИЗА
-   ============================================================ */
-
-.analysis-details {
-  margin-top: var(--space-sm);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-md) var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.indicator-values {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-lg);
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border);
-}
-
-.indicator-values .indicator-value span { color: var(--text-muted); }
-.indicator-values .indicator-value b { color: var(--text); margin-left: 4px; }
-
-.reasons-list {
-  margin: 0;
-  padding-left: 20px;
-  font-size: 12.5px;
-  line-height: 1.7;
-  color: var(--text);
-}
-.reasons-list li { margin-bottom: 3px; }
-
-/* ============================================================
-   10. OUT-OF-SAMPLE
-   ============================================================ */
-
-.split-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
-}
-
-.split-col {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-md);
-}
-
-.split-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: var(--space-sm);
-  font-weight: 600;
-}
-
-.split-col .metrics {
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-}
-
-/* ============================================================
-   11. ОПТИМИЗАТОР
-   ============================================================ */
-
-.optimizer-results {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-md);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: var(--shadow-sm);
-}
-
-.opt-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12.5px;
-}
-
-.opt-table th,
-.opt-table td {
-  padding: 8px 10px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-
-.opt-table th {
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.opt-table td.good { color: var(--accent); font-weight: 600; }
-.opt-table td.bad  { color: var(--danger); font-weight: 600; }
-.opt-table td.neutral { color: var(--text); }
-
-.opt-table tr.row-current { background: var(--blue-soft); }
-
-.opt-table .tag {
-  display: inline-block;
-  font-size: 10px;
-  background: var(--blue);
-  color: var(--accent-text);
-  padding: 1px 6px;
-  border-radius: var(--radius-badge);
-  margin-left: 6px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.opt-warning {
-  margin: var(--space-md) 0 0;
-  font-size: 12px;
-  color: var(--warn);
-  line-height: 1.6;
-}
-
-/* ============================================================
-   12. ГРАФИКИ
-   ============================================================ */
-
-#chart {
-  width: 100%;
-  height: 55vh;
-  min-height: 320px;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
-
-.equity-title {
-  padding: var(--space-md) var(--space-lg) 4px;
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-#equityChart {
-  width: 100%;
-  height: 28vh;
-  min-height: 180px;
-}
-
-/* ============================================================
-   13. ЗАМЕТКИ
-   ============================================================ */
-
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-md);
-  padding: var(--space-xl) var(--space-lg) 80px;
-  max-width: var(--content-max);
-  margin: 0 auto;
-}
-
-.note-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.note-card:hover {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-}
-
-.note-card-error { border-color: var(--danger); opacity: 0.7; }
-
-.note-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.note-ticker {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--accent);
-  text-decoration: none;
-  letter-spacing: 0.3px;
-}
-.note-ticker:hover { text-decoration: underline; }
-
-.note-name { font-size: 12px; color: var(--text-muted); margin-top: -4px; }
-
-.note-delete {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: var(--radius-badge);
-  line-height: 1;
-  transition: background-color 0.15s, color 0.15s;
-}
-.note-delete:hover {
-  color: var(--danger);
-  background: var(--danger-soft);
-}
-
-.note-verdict { margin-top: 0; padding: 8px 12px; font-size: 13px; }
-.note-verdict .verdict-main { font-size: 14px; }
-.note-verdict .verdict-score { font-size: 11px; }
-
-.note-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12.5px;
-  color: var(--text-muted);
-}
-.note-row b { color: var(--text); font-weight: 600; }
-.note-row b.good { color: var(--accent); }
-.note-row b.bad  { color: var(--danger); }
-
-.note-row-muted {
-  border-top: 1px solid var(--border);
-  padding-top: var(--space-sm);
-  margin-top: 4px;
-  font-size: 12px;
-}
-
-.note-error { font-size: 12.5px; color: var(--danger); padding: var(--space-sm) 0; }
-
-.empty-state {
-  text-align: center;
-  padding: 80px var(--space-lg);
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.7;
-  max-width: var(--content-max);
-  margin: 0 auto;
-}
-
-/* ============================================================
-   14. ТОСТ
-   ============================================================ */
-
-.toast {
-  position: fixed;
-  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
-  left: 50%;
-  transform: translateX(-50%) translateY(120px);
-  background: var(--card-elev);
-  color: var(--text);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-button);
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  z-index: 1000;
-  max-width: calc(100vw - 32px);
-  text-align: center;
-}
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-/* ============================================================
-   15. ФУНДАМЕНТАЛЬНЫЙ АНАЛИЗ
-   ============================================================ */
-
-.fundamental-section {
-  margin-top: var(--space-md);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--blue);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.fundamental-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: 4px;
-}
-
-.fundamental-header .section-title { margin: 0 0 6px 0; }
-
-.fundamental-asof { font-size: 12px; color: var(--text-muted); }
-
-.fundamental-verdict-box { margin-top: var(--space-sm); margin-bottom: var(--space-lg); }
-
-.fundamental-metrics {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-@media (min-width: 600px) {
-  .fundamental-metrics { grid-template-columns: 1fr 1fr; }
-}
-
-.fundamental-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 10px 12px 12px;
-}
-
-.fundamental-card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: 4px;
-}
-
-.fundamental-card-key {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.fundamental-card-badge {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: var(--radius-badge);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.fundamental-card-badge.good { color: var(--accent); background: var(--accent-soft); }
-.fundamental-card-badge.bad { color: var(--danger); background: var(--danger-soft); }
-.fundamental-card-badge.neutral { color: var(--warn); background: var(--warn-soft); }
-
-.fundamental-card-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
-  margin-bottom: 2px;
-}
-
-.fundamental-card-full { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
-
-.fundamental-card-hint { font-size: 12.5px; line-height: 1.5; color: var(--text); opacity: 0.85; }
-
-.fundamental-history-wrap {
-  margin: var(--space-md) 0;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--bg);
-  border-radius: var(--radius-input);
-  border: 1px solid var(--border);
-}
-
-.fundamental-history-wrap summary {
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text-muted);
-  padding: 4px 0;
-  user-select: none;
-  list-style: none;
-}
-.fundamental-history-wrap summary::-webkit-details-marker { display: none; }
-.fundamental-history-wrap summary::before {
-  content: "▸ ";
-  color: var(--accent);
-  font-weight: 700;
-  margin-right: 4px;
-}
-.fundamental-history-wrap[open] summary::before { content: "▾ "; }
-
-.fundamental-history-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin-top: var(--space-sm);
-}
-.fundamental-history-table th,
-.fundamental-history-table td {
-  padding: 6px 4px;
-  text-align: right;
-  border-bottom: 1px solid var(--border);
-}
-.fundamental-history-table th {
-  color: var(--text-muted);
-  font-weight: 500;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.fundamental-history-table td:first-child,
-.fundamental-history-table th:first-child { text-align: left; }
-.fundamental-history-table td b { color: var(--text); }
-
-.fundamental-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: var(--space-md) 0 0;
-  padding: 10px 12px;
-  background: var(--blue-soft);
-  border-left: 3px solid var(--blue);
-  border-radius: var(--radius-badge);
-}
-.fundamental-note b { color: var(--text); }
-
-/* ============================================================
-   16. УПРАВЛЕНИЕ РИСКОМ
-   ============================================================ */
-
-.risk-section {
-  margin-top: var(--space-md);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--warn);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.risk-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: 4px;
-}
-.risk-header .section-title { margin: 0 0 6px 0; }
-
-.risk-subtitle { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-.risk-metrics {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-sm);
-  margin: var(--space-md) 0;
-}
-@media (min-width: 600px) { .risk-metrics { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 900px) { .risk-metrics { grid-template-columns: repeat(3, 1fr); } }
-
-.risk-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 10px 12px 12px;
-}
-
-.risk-card-head { margin-bottom: 4px; }
-
-.risk-card-key {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.risk-card-value {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 2px;
-  color: var(--text);
-}
-.risk-card-value.good { color: var(--accent); }
-.risk-card-value.bad  { color: var(--danger); }
-.risk-card-value.neutral { color: var(--text); }
-
-.risk-card-sub { font-size: 12px; color: var(--text); opacity: 0.8; margin-bottom: 6px; }
-.risk-card-full { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
-
-.risk-warn {
-  grid-column: 1 / -1;
-  margin-top: 4px;
-  padding: 10px 12px;
-  background: var(--danger-soft);
-  border-left: 3px solid var(--danger);
-  border-radius: var(--radius-badge);
-  font-size: 12.5px;
-  color: var(--danger);
-}
-
-.risk-hint {
-  grid-column: 1 / -1;
-  margin-top: 4px;
-  padding: 10px 12px;
-  background: var(--warn-soft);
-  border-left: 3px solid var(--warn);
-  border-radius: var(--radius-badge);
-  font-size: 12px;
-  color: var(--text);
-  opacity: 0.9;
-}
-
-.risk-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: var(--space-md) 0 0;
-  padding: 10px 12px;
-  background: var(--warn-soft);
-  border-left: 3px solid var(--warn);
-  border-radius: var(--radius-badge);
-}
-.risk-note b { color: var(--text); }
-
-/* ============================================================
-   17. МАКРО-КОНТЕКСТ
-   ============================================================ */
-
-.macro-section {
-  margin-top: var(--space-md);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.macro-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-.macro-header .section-title { margin: 0; }
-
-.macro-updated { font-size: 12px; color: var(--text-muted); }
-
-.macro-metrics {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-@media (min-width: 700px) { .macro-metrics { grid-template-columns: repeat(3, 1fr); } }
-
-.macro-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 10px 12px 12px;
-}
-
-.macro-card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-sm);
-  margin-bottom: 4px;
-}
-
-.macro-card-key {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.macro-card-date { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-
-.macro-card-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
-  margin-bottom: 2px;
-}
-
-.macro-card-full { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
-
-.macro-card-changes {
-  display: flex;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.macro-card-changes-empty {
-  color: var(--text-muted);
-  font-size: 12px;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.macro-change { display: flex; flex-direction: column; gap: 2px; }
-
-.macro-change-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.macro-change-value { font-size: 13px; font-weight: 600; }
-.macro-change-value.good { color: var(--accent); }
-.macro-change-value.bad  { color: var(--danger); }
-.macro-change-value.neutral { color: var(--text); }
-
-.macro-card-hint { font-size: 12px; line-height: 1.5; color: var(--text); opacity: 0.85; }
-
-.macro-chart-wrap {
-  margin: var(--space-md) 0 0;
-  padding: var(--space-sm) 0 0;
-  border-top: 1px solid var(--border);
-}
-
-.macro-chart-title {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.macro-chart { width: 100%; height: 180px; }
-
-.macro-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: var(--space-md) 0 0;
-  padding: 10px 12px;
-  background: var(--accent-soft);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius-badge);
-}
-.macro-note b { color: var(--text); }
-
-/* ============================================================
-   18. КОРРЕЛЯЦИЯ
-   ============================================================ */
-
-.correlation-section {
-  margin-top: var(--space-md);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--blue);
-  border-radius: var(--radius-card);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.correlation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-.correlation-header .section-title { margin: 0; }
-
-.correlation-subtitle { font-size: 12px; color: var(--text-muted); }
-
-.correlation-matrix {
-  overflow-x: auto;
-  margin: var(--space-md) 0;
-  -webkit-overflow-scrolling: touch;
-}
-
-.corr-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 3px;
-  font-size: 12px;
-  min-width: 460px;
-}
-
-.corr-table th {
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 6px 4px;
-  text-align: center;
-  white-space: nowrap;
-}
-.corr-table th:first-child { text-align: left; }
-
-.corr-table td {
-  padding: 8px 6px;
-  text-align: center;
-  border-radius: var(--radius-badge);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  transition: transform 0.1s;
-}
-
-.corr-cell:hover { transform: scale(1.05); cursor: help; }
-
-.corr-cell.corr-very-high     { background: rgba(38, 166, 154, 0.55); color: #fff; }
-.corr-cell.corr-high          { background: rgba(38, 166, 154, 0.35); color: var(--text); }
-.corr-cell.corr-mid           { background: rgba(212, 167, 44, 0.25); color: var(--text); }
-.corr-cell.corr-low           { background: rgba(139, 148, 158, 0.15); color: var(--text); }
-.corr-cell.corr-negative-low  { background: rgba(239, 83, 80, 0.20); color: var(--text); }
-.corr-cell.corr-negative-high { background: rgba(239, 83, 80, 0.50); color: #fff; }
-.corr-cell.corr-na            { background: transparent; color: var(--text-muted); }
-
-.correlation-pairs {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-@media (min-width: 700px) { .correlation-pairs { grid-template-columns: 1fr 1fr; } }
-
-.corr-pairs-block {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 10px 12px;
-}
-
-.corr-pairs-title {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin: 0 0 var(--space-sm) 0;
-  font-weight: 600;
-}
-
-.corr-pair {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: var(--space-sm);
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 12.5px;
-}
-.corr-pair:last-child { border-bottom: none; }
-
-.corr-pair-names { color: var(--text); }
-
-.corr-pair-value {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  min-width: 46px;
-  text-align: right;
-}
-.corr-pair-value.corr-very-high     { color: var(--accent); }
-.corr-pair-value.corr-high          { color: var(--accent); }
-.corr-pair-value.corr-mid           { color: var(--warn); }
-.corr-pair-value.corr-low           { color: var(--text-muted); }
-.corr-pair-value.corr-negative-low  { color: var(--danger); }
-.corr-pair-value.corr-negative-high { color: var(--danger); }
-
-.corr-pair-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-
-.corr-pairs-hint {
-  margin: var(--space-sm) 0 0;
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.4;
-  font-style: italic;
-}
-
-.correlation-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: var(--space-md) 0 0;
-  padding: 10px 12px;
-  background: var(--blue-soft);
-  border-left: 3px solid var(--blue);
-  border-radius: var(--radius-badge);
-}
-.correlation-note b { color: var(--text); }
-
-/* ============================================================
-   19. ТАБ-БАР
-   ============================================================ */
-
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 40;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0));
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  background: color-mix(in srgb, var(--card) 90%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border);
-}
-
-.tab-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 6px 4px;
-  transition: color 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.tab-button:hover { color: var(--text); }
-.tab-button.active {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.tab-icon {
-  font-size: 20px;
-  line-height: 1;
-  margin-bottom: 2px;
-}
-
-.tab-label { font-size: 11px; letter-spacing: 0.2px; }
-
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-body.has-tabbar main,
-body.has-tabbar .tab-content-wrap {
-  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
-}
-
-/* ============================================================
-   20. МОДАЛКА НАСТРОЕК
-   ============================================================ */
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 100;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-}
-.modal-backdrop.show { display: flex; }
-
-.modal {
-  background: var(--card);
-  width: 100%;
-  max-width: 500px;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
-  padding: var(--space-lg) var(--space-lg) calc(var(--space-lg) + env(safe-area-inset-bottom, 0));
-  border-top: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  animation: modalSlideUp 0.25s ease;
-}
-
-@keyframes modalSlideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-lg);
-}
-
-.modal-title {
-  font-size: 17px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.modal-close {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 22px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: var(--radius-badge);
-  line-height: 1;
-}
-.modal-close:hover { color: var(--text); background: var(--card-hover); }
-
-.modal-body .controls {
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-md);
-  padding: var(--space-sm) 0;
-  border-top: none;
-}
-.modal-body .controls label {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-}
-.modal-body .controls input,
-.modal-body .controls select {
-  width: 100%;
-  padding: 10px 12px;
-}
-.modal-body .controls input[type="checkbox"] { width: auto; }
-
-/* ============================================================
-   21. АДАПТИВ И ДОСТУПНОСТЬ
-   ============================================================ */
-
-@media (max-width: 700px) {
-  .notes-grid { grid-template-columns: 1fr; }
-  .header-top { flex-direction: column; align-items: flex-start; height: auto; padding: var(--space-md) 0; }
-  .split-grid { grid-template-columns: 1fr; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-:root { scrollbar-color: var(--border-strong) transparent; }
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Trading Signals MVP</title>
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- ===== PWA ===== -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trading Signals">
+  <meta name="theme-color" content="#0a0d12">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* ============================================================
+       Локальные стили — то, что относится именно к index.html.
+       Всё остальное — в css/style.css.
+       ============================================================ */
+
+    .ticker-select {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .ticker-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .tab-content-wrap {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Спойлер с пояснением out-of-sample */
+    .explainer {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: var(--radius-card);
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-md);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .explainer b { color: var(--text); }
+    .explainer summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+      list-style: none;
+      padding: 4px 0;
+    }
+    .explainer summary::-webkit-details-marker { display: none; }
+    .explainer summary::before {
+      content: "▸ ";
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .explainer[open] summary::before { content: "▾ "; }
+    .explainer .explainer-body {
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
+    .explainer .explainer-body p { margin: 0 0 var(--space-sm) 0; }
+    .explainer .explainer-body p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body class="has-tabbar">
+
+  <!-- ===== ШАПКА ===== -->
+  <header>
+    <div class="app-header">
+      <div class="app-title">
+        <span class="app-title-icon">📈</span>
+        <span>Trading Signals</span>
+      </div>
+      <div class="app-header-actions">
+        <select id="ticker" class="ticker-select" title="Выбор акции">
+          <option value="SBER">SBER</option>
+          <option value="GAZP">GAZP</option>
+          <option value="LKOH">LKOH</option>
+          <option value="GMKN">GMKN</option>
+          <option value="ROSN">ROSN</option>
+          <option value="NVTK">NVTK</option>
+        </select>
+        <button id="themeToggle" class="header-icon-btn" title="Переключить тему">🌙</button>
+        <button id="settingsBtn" class="header-icon-btn" title="Настройки">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== КОНТЕНТ ТАБОВ ===== -->
+  <div class="tab-content-wrap">
+
+    <!-- ============ ТАБ: ОБЗОР ============ -->
+    <section class="tab-content active" data-tab="overview">
+
+      <div id="stats" class="stats"></div>
+
+      <div id="verdict" class="verdict"></div>
+
+      <div class="analysis-details">
+        <div id="indicatorValues" class="indicator-values"></div>
+        <ul id="reasons" class="reasons-list"></ul>
+      </div>
+
+      <div id="chart"></div>
+
+    </section>
+
+    <!-- ============ ТАБ: АНАЛИЗ ============ -->
+    <section class="tab-content" data-tab="analysis">
+
+      <div id="fundamentalSection" class="fundamental-section" style="display:none;">
+        <div class="fundamental-header">
+          <h3 class="section-title">📊 Фундаментальный анализ</h3>
+          <span id="fundamentalAsOf" class="fundamental-asof"></span>
+        </div>
+        <div id="fundamentalVerdict" class="fundamental-verdict-box"></div>
+        <div id="fundamentalMetrics" class="fundamental-metrics"></div>
+        <details class="fundamental-history-wrap">
+          <summary>История показателей по годам</summary>
+          <div id="fundamentalHistory" class="fundamental-history"></div>
+        </details>
+        <p class="fundamental-note">
+          ℹ️ Фундаментал показывает <b>саму компанию</b> (прибыль, эффективность, долги),
+          в отличие от технического анализа, который смотрит только на график цены.
+          Данные со Smart-Lab, обновляются раз в сутки.
+          Это <b>не инвестиционная рекомендация</b> — только учебный материал.
+        </p>
+      </div>
+
+      <div id="riskSection" class="risk-section" style="display:none;">
+        <div class="risk-header">
+          <h3 class="section-title">🛡️ Управление риском</h3>
+          <span id="riskSubtitle" class="risk-subtitle"></span>
+        </div>
+        <div id="riskMetrics" class="risk-metrics"></div>
+        <p class="risk-note">
+          ℹ️ <b>ATR (Average True Range)</b> — средний дневной размах цены.
+          Показывает, насколько сильно акция «дёргается». Стоп ставится ниже
+          текущей цены на <b>2 × ATR</b> — это классический приём: он даёт цене
+          «дышать», но ограничивает потерю, если тренд развернулся.
+          Размер позиции подобран так, чтобы потеря при срабатывании стопа
+          не превысила <b>заданный % от капитала</b>. Это не рекомендация
+          к покупке — только расчёт риска.
+        </p>
+      </div>
+
+      <div id="macroSection" class="macro-section" style="display:none;">
+        <div class="macro-header">
+          <h3 class="section-title">🌍 Макро-контекст</h3>
+          <span id="macroUpdatedAt" class="macro-updated"></span>
+        </div>
+        <div id="macroMetrics" class="macro-metrics"></div>
+        <div class="macro-chart-wrap">
+          <div class="macro-chart-title">IMOEX за последние ~3 месяца</div>
+          <div id="macroChart" class="macro-chart"></div>
+        </div>
+        <p class="macro-note">
+          ℹ️ <b>IMOEX</b> — индекс Московской биржи (главный барометр рынка РФ).
+          <b>USD/RUB</b> — курс доллара: рост обычно давит на акции, потому что
+          инвесторы уходят в валюту. <b>Ключевая ставка ЦБ</b> — процент, под
+          который ЦБ даёт деньги банкам: высокая ставка делает вклады
+          привлекательнее акций и охлаждает рынок. Данные с MOEX ISS и ЦБ РФ,
+          обновляются раз в сутки.
+        </p>
+      </div>
+
+      <div id="correlationSection" class="correlation-section" style="display:none;">
+        <div class="correlation-header">
+          <h3 class="section-title">🔗 Корреляция бумаг</h3>
+          <span id="correlationSubtitle" class="correlation-subtitle"></span>
+        </div>
+        <div id="correlationMatrix" class="correlation-matrix"></div>
+        <div id="correlationPairs" class="correlation-pairs"></div>
+        <p class="correlation-note">
+          ℹ️ <b>Что такое корреляция?</b> Это число от −1 до +1, которое показывает,
+          насколько две акции двигаются <b>синхронно</b>.
+          <b>+1</b> — всегда вместе (одна растёт, вторая тоже).
+          <b>0</b> — связи нет, двигаются независимо.
+          <b>−1</b> — двигаются противоположно (одна растёт, вторая падает).
+          <br><br>
+          <b>Зачем это нужно?</b> Если собрать портфель из бумаг с корреляцией +0.9 —
+          это <b>иллюзия диверсификации</b>: упадут все одновременно. А бумаги
+          с корреляцией около нуля или отрицательной падают и растут в разное время,
+          и портфель ведёт себя спокойнее.
+          <br><br>
+          <b>Как читать матрицу?</b> По диагонали всегда <b>1.00</b> (бумага сама
+          с собой). 🟢 зелёные клетки — сильная связь, 🟡 жёлтые — средняя,
+          ⚪ серые — слабая, 🔴 красные — обратная связь. Матрица симметричная:
+          значение между SBER и GAZP такое же, как между GAZP и SBER.
+          Наведи курсор на клетку — появится подсказка, что означает эта пара.
+          <br><br>
+          <b>Важно:</b> корреляция не постоянна. Она меняется в кризисы,
+          при смене режима рынка, под действием новостей. Значения за 2023–2026 —
+          это <b>историческая</b> корреляция, она не гарантирует такое же
+          поведение в будущем.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- ============ ТАБ: СТРАТЕГИЯ ============ -->
+    <section class="tab-content" data-tab="strategy">
+
+      <div id="corpSection" class="corp-section" style="display:none;">
+        <div class="corp-header">
+          <span id="corpSummary"></span>
+        </div>
+        <div id="corpTable" class="corp-table-wrap"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="optimize" class="secondary">🔬 Оптимизировать EMA</button>
+        <button id="exportCsv" class="secondary">📄 Сделки CSV</button>
+        <button id="exportSummary" class="secondary">📊 Сводка CSV</button>
+        <button id="addToNotes" class="secondary" disabled>📝 В заметки</button>
+      </div>
+
+      <div id="metricsWrap">
+        <div id="metrics" class="metrics"></div>
+      </div>
+
+      <div class="equity-title">Equity (стоимость портфеля во времени)</div>
+      <div id="equityChart"></div>
+
+      <!-- Out-of-sample: сначала объяснение, потом метрики -->
+      <div class="explainer">
+        <b>Что такое Train vs Test?</b> Стратегия «училась» на первых 70% истории
+        (Train), а проверялась на последних 30% (Test). Если на Test результат
+        резко хуже — стратегия «подогнана» под прошлое и в будущем, скорее всего,
+        не сработает.
+        <details style="margin-top:8px;">
+          <summary>Показать подробнее — что это значит для меня?</summary>
+          <div class="explainer-body">
+            <p>Представь, что ты весь год готовилась по одному учебнику, а на
+              экзамене дали задачи из другого. Если ты выучила <b>принципы</b> —
+              решишь. Если просто <b>зазубрила ответы</b> — провалишь.</p>
+            <p>Train — это «учебник». Test — «экзамен». Разница между их
+              результатами показывает, насколько стратегия <b>зазубрила</b>
+              историю, а не выучила принцип.</p>
+            <p>Чем <b>меньше разрыв</b> между Train и Test — тем честнее стратегия.
+              Если на Train +80%, а на Test −20%, значит, стратегия работала
+              только на конкретном участке истории и проваливается на новых данных.</p>
+          </div>
+        </details>
+      </div>
+
+      <div id="splitSection" style="display:none;">
+        <div class="split-grid">
+          <div class="split-col">
+            <div class="split-label">Train (70%)</div>
+            <div id="trainMetrics" class="metrics"></div>
+          </div>
+          <div class="split-col">
+            <div class="split-label">Test (30%)</div>
+            <div id="testMetrics" class="metrics"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="optimizerSection" style="display:none;">
+        <h3 class="section-title">Топ-10 пар EMA по доходности</h3>
+        <div id="optimizerResults" class="optimizer-results"></div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- ===== МОДАЛКА НАСТРОЕК ===== -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">⚙️ Настройки</h2>
+        <button class="modal-close" id="closeSettings">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="controls">
+          <label>Стратегия:
+            <select id="strategy">
+              <option value="ema">EMA-кроссовер</option>
+              <option value="rsi">RSI mean-reversion</option>
+              <option value="bollinger">Bollinger breakout</option>
+              <option value="buyhold">Buy &amp; Hold</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="controls" id="strategyParams"></div>
+
+        <div class="controls">
+          <label>Капитал, ₽:
+            <input id="capital" type="number" value="100000" min="1000" step="1000" />
+          </label>
+          <label>Комиссия, %:
+            <input id="commission" type="number" value="0.05" min="0" max="2" step="0.01" />
+          </label>
+          <label>Проскальзывание, %:
+            <input id="slippage" type="number" value="0.05" min="0" max="2" step="0.01" />
+          </label>
+          <label>Риск на сделку, %:
+            <input id="riskPct" type="number" value="1" min="0.1" max="10" step="0.1" />
+          </label>
+        </div>
+
+        <div class="controls">
+          <label>
+            <input id="useSplit" type="checkbox" />
+            Out-of-sample 70/30
+          </label>
+          <label>
+            <input id="useCorpSplits" type="checkbox" checked />
+            Корректировать сплиты
+          </label>
+          <label>
+            <input id="useCorpDividends" type="checkbox" checked />
+            Учитывать дивиденды
+          </label>
+        </div>
+
+        <div class="controls" style="margin-top: 16px;">
+          <button id="reload">Применить</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ТАБ-БАР ===== -->
+  <nav class="tab-bar">
+    <button class="tab-button active" data-tab="overview">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">Обзор</span>
+    </button>
+    <button class="tab-button" data-tab="analysis">
+      <span class="tab-icon">🔍</span>
+      <span class="tab-label">Анализ</span>
+    </button>
+    <button class="tab-button" data-tab="strategy">
+      <span class="tab-icon">🎯</span>
+      <span class="tab-label">Стратегия</span>
+    </button>
+    <a class="tab-button" href="notes.html">
+      <span class="tab-icon">📝</span>
+      <span class="tab-label">Заметки <span class="notes-badge" id="notesCount">0</span></span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- ===== INLINE: логика табов, темы, модалки и PWA ===== -->
+  <script>
+    (function () {
+      // ---------- Тема ----------
+      const THEME_KEY = 'trading-signals-theme';
+      const themeToggle = document.getElementById('themeToggle');
+      const rootEl = document.documentElement;
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+      function applyTheme(theme) {
+        // Всегда ставим ЯВНЫЙ атрибут — никогда не удаляем.
+        // Иначе @media (prefers-color-scheme: light) может вернуть светлую,
+        // если система в светлом режиме.
+        rootEl.setAttribute('data-theme', theme);
+        themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        if (metaTheme) {
+          metaTheme.setAttribute('content', theme === 'light' ? '#f5f7fa' : '#0a0d12');
+        }
+      }
+
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'light' || saved === 'dark') {
+        applyTheme(saved);
+      } else {
+        // Первый заход — подхватываем системную тему и тут же её фиксируем
+        const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(isLight ? 'light' : 'dark');
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const current = rootEl.getAttribute('data-theme') || 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+        // Перерисовать графики под новую тему
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+      });
+
+      // ---------- Табы ----------
+      const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const TAB_KEY = 'trading-signals-tab';
+
+      function activateTab(name) {
+        tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+        tabContents.forEach(c => c.classList.toggle('active', c.dataset.tab === name));
+        localStorage.setItem(TAB_KEY, name);
+        // Графики в скрытых табах имели ширину 0 — пересчитываем
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+      }
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          activateTab(btn.dataset.tab);
+        });
+      });
+
+      // Приоритет источников активного таба:
+      //   1. ?tab= в URL (переходы из notes.html)
+      //   2. localStorage (последний открытый)
+      //   3. 'overview' по умолчанию
+      const urlTab = new URLSearchParams(window.location.search).get('tab');
+      const validTabs = ['overview', 'analysis', 'strategy'];
+
+      if (urlTab && validTabs.includes(urlTab)) {
+        activateTab(urlTab);
+      } else {
+        const savedTab = localStorage.getItem(TAB_KEY);
+        if (savedTab && validTabs.includes(savedTab)) {
+          activateTab(savedTab);
+        }
+      }
+
+      // ---------- Модалка настроек ----------
+      const modal = document.getElementById('settingsModal');
+      const settingsBtn = document.getElementById('settingsBtn');
+      const closeBtn = document.getElementById('closeSettings');
+
+      function openModal() { modal.classList.add('show'); }
+      function closeModal() { modal.classList.remove('show'); }
+
+      settingsBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+      });
+
+      // Кнопка «Применить» в модалке — app.js уже навесил на неё render().
+      // Дополнительно закрываем модалку через мгновение, чтобы увидеть результат.
+      const reloadBtn = document.getElementById('reload');
+      if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+          setTimeout(closeModal, 150);
+        });
+      }
+
+      // ---------- PWA: регистрация service worker ----------
+      // Работает только на HTTPS (GitHub Pages это даёт) или на localhost.
+      // При открытии через file:// service worker не регистрируется.
+      if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((err) => {
+            console.warn('[PWA] SW registration failed:', err);
+          });
+        });
+      }
+    })();
+  </script>
+
+  <!-- ===== СКРИПТЫ ПРИЛОЖЕНИЯ ===== -->
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/indicators.js"></script>
+  <script src="js/correlation.js"></script>
+  <script src="js/backtest.js"></script>
+  <script src="js/optimizer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
