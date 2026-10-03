@@ -162,6 +162,42 @@
       </p>
     </div>
 
+    <!-- ===== Корреляция бумаг ===== -->
+    <div id="correlationSection" class="correlation-section" style="display:none;">
+      <div class="correlation-header">
+        <h3 class="section-title">🔗 Корреляция бумаг</h3>
+        <span id="correlationSubtitle" class="correlation-subtitle"></span>
+      </div>
+
+      <div id="correlationMatrix" class="correlation-matrix"></div>
+
+      <div id="correlationPairs" class="correlation-pairs"></div>
+
+      <p class="correlation-note">
+        ℹ️ <b>Что такое корреляция?</b> Это число от −1 до +1, которое показывает,
+        насколько две акции двигаются <b>синхронно</b>.
+        <b>+1</b> — всегда вместе (одна растёт, вторая тоже).
+        <b>0</b> — связи нет, двигаются независимо.
+        <b>−1</b> — двигаются противоположно (одна растёт, вторая падает).
+        <br><br>
+        <b>Зачем это нужно?</b> Если собрать портфель из бумаг с корреляцией +0.9 —
+        это <b>иллюзия диверсификации</b>: упадут все одновременно. А бумаги
+        с корреляцией около нуля или отрицательной падают и растут в разное время,
+        и портфель ведёт себя спокойнее.
+        <br><br>
+        <b>Как читать матрицу?</b> По диагонали всегда <b>1.00</b> (бумага сама
+        с собой). 🟢 зелёные клетки — сильная связь, 🟡 жёлтые — средняя,
+        ⚪ серые — слабая, 🔴 красные — обратная связь. Матрица симметричная:
+        значение между SBER и GAZP такое же, как между GAZP и SBER.
+        Наведи курсор на клетку — появится подсказка, что означает эта пара.
+        <br><br>
+        <b>Важно:</b> корреляция не постоянна. Она меняется в кризисы,
+        при смене режима рынка, под действием новостей. Значения за 2023–2026 —
+        это <b>историческая</b> корреляция, она не гарантирует такое же
+        поведение в будущем.
+      </p>
+    </div>
+
     <div id="metricsWrap">
       <div id="metrics" class="metrics"></div>
     </div>
@@ -197,6 +233,7 @@
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/indicators.js"></script>
+  <script src="js/correlation.js"></script>
   <script src="js/backtest.js"></script>
   <script src="js/optimizer.js"></script>
   <script src="js/app.js"></script>
