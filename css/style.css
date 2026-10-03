@@ -980,6 +980,170 @@ h1 { margin: 0; font-size: 18px; font-weight: 600; }
 
 .macro-note b { color: var(--text); }
 
+/* ===== Корреляция бумаг ===== */
+.correlation-section {
+  margin-top: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.correlation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.correlation-header .section-title {
+  margin: 0;
+}
+
+.correlation-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.correlation-matrix {
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.corr-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  font-size: 12px;
+  min-width: 460px;
+}
+
+.corr-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 6px 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.corr-table th:first-child {
+  text-align: left;
+}
+
+.corr-table td {
+  padding: 8px 6px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.1s;
+}
+
+.corr-cell:hover {
+  transform: scale(1.05);
+  cursor: help;
+}
+
+/* Цветовая шкала корреляции */
+.corr-cell.corr-very-high       { background: rgba(38, 166, 154, 0.55); color: #fff; }
+.corr-cell.corr-high            { background: rgba(38, 166, 154, 0.35); color: var(--text); }
+.corr-cell.corr-mid             { background: rgba(212, 167, 44, 0.25); color: var(--text); }
+.corr-cell.corr-low             { background: rgba(139, 148, 158, 0.15); color: var(--text); }
+.corr-cell.corr-negative-low    { background: rgba(239, 83, 80, 0.20); color: var(--text); }
+.corr-cell.corr-negative-high   { background: rgba(239, 83, 80, 0.50); color: #fff; }
+.corr-cell.corr-na              { background: transparent; color: var(--muted); }
+
+.correlation-pairs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 700px) {
+  .correlation-pairs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.corr-pairs-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.corr-pairs-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.corr-pair {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.corr-pair:last-child { border-bottom: none; }
+
+.corr-pair-names { color: var(--text); }
+
+.corr-pair-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  text-align: right;
+}
+
+.corr-pair-value.corr-very-high       { color: var(--green); }
+.corr-pair-value.corr-high            { color: var(--green); }
+.corr-pair-value.corr-mid             { color: var(--yellow); }
+.corr-pair-value.corr-low             { color: var(--muted); }
+.corr-pair-value.corr-negative-low    { color: #f0a0a0; }
+.corr-pair-value.corr-negative-high   { color: var(--red); }
+
+.corr-pair-label {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.corr-pairs-hint {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.correlation-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 12px 0 0 0;
+  padding: 10px 12px;
+  background: rgba(74, 158, 255, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+}
+
+.correlation-note b { color: var(--text); }
+
 @media (max-width: 700px) {
   .notes-grid { grid-template-columns: 1fr; }
   .header-top { flex-direction: column; align-items: flex-start; }
