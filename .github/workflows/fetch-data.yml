@@ -35,6 +35,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Fetch metadata (tickers.json)
+        run: python scripts/fetch_metadata.py
+
       - name: Fetch MOEX data
         run: python scripts/fetch_moex.py
 
