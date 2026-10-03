@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Trading Signals MVP</title>
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- ===== PWA ===== -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trading Signals">
+  <meta name="theme-color" content="#0a0d12">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
   <style>
     /* ============================================================
        Локальные стили — то, что относится именно к index.html.
@@ -367,21 +376,23 @@
 
   <div id="toast" class="toast"></div>
 
-  <!-- ===== INLINE: логика табов, темы и модалки ===== -->
+  <!-- ===== INLINE: логика табов, темы, модалки и PWA ===== -->
   <script>
     (function () {
       // ---------- Тема ----------
       const THEME_KEY = 'trading-signals-theme';
       const themeToggle = document.getElementById('themeToggle');
       const rootEl = document.documentElement;
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
 
       function applyTheme(theme) {
-        if (theme === 'light') {
-          rootEl.setAttribute('data-theme', 'light');
-          themeToggle.textContent = '☀️';
-        } else {
-          rootEl.removeAttribute('data-theme');
-          themeToggle.textContent = '🌙';
+        // Всегда ставим ЯВНЫЙ атрибут — никогда не удаляем.
+        // Иначе @media (prefers-color-scheme: light) может вернуть светлую,
+        // если система в светлом режиме.
+        rootEl.setAttribute('data-theme', theme);
+        themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        if (metaTheme) {
+          metaTheme.setAttribute('content', theme === 'light' ? '#f5f7fa' : '#0a0d12');
         }
       }
 
@@ -389,13 +400,14 @@
       if (saved === 'light' || saved === 'dark') {
         applyTheme(saved);
       } else {
+        // Первый заход — подхватываем системную тему и тут же её фиксируем
         const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-        themeToggle.textContent = isLight ? '☀️' : '🌙';
+        applyTheme(isLight ? 'light' : 'dark');
       }
 
       themeToggle.addEventListener('click', () => {
-        const isLight = rootEl.getAttribute('data-theme') === 'light';
-        const next = isLight ? 'dark' : 'light';
+        const current = rootEl.getAttribute('data-theme') || 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
         localStorage.setItem(THEME_KEY, next);
         applyTheme(next);
         // Перерисовать графики под новую тему
@@ -421,10 +433,20 @@
         });
       });
 
-      // Восстанавливаем последний активный таб
-      const savedTab = localStorage.getItem(TAB_KEY);
-      if (savedTab && ['overview', 'analysis', 'strategy'].includes(savedTab)) {
-        activateTab(savedTab);
+      // Приоритет источников активного таба:
+      //   1. ?tab= в URL (переходы из notes.html)
+      //   2. localStorage (последний открытый)
+      //   3. 'overview' по умолчанию
+      const urlTab = new URLSearchParams(window.location.search).get('tab');
+      const validTabs = ['overview', 'analysis', 'strategy'];
+
+      if (urlTab && validTabs.includes(urlTab)) {
+        activateTab(urlTab);
+      } else {
+        const savedTab = localStorage.getItem(TAB_KEY);
+        if (savedTab && validTabs.includes(savedTab)) {
+          activateTab(savedTab);
+        }
       }
 
       // ---------- Модалка настроек ----------
@@ -445,12 +467,23 @@
         if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
       });
 
-      // Кнопка «Применить» в модалке (#reload) — app.js навесит на неё render().
+      // Кнопка «Применить» в модалке — app.js уже навесил на неё render().
       // Дополнительно закрываем модалку через мгновение, чтобы увидеть результат.
       const reloadBtn = document.getElementById('reload');
       if (reloadBtn) {
         reloadBtn.addEventListener('click', () => {
           setTimeout(closeModal, 150);
+        });
+      }
+
+      // ---------- PWA: регистрация service worker ----------
+      // Работает только на HTTPS (GitHub Pages это даёт) или на localhost.
+      // При открытии через file:// service worker не регистрируется.
+      if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((err) => {
+            console.warn('[PWA] SW registration failed:', err);
+          });
         });
       }
     })();
