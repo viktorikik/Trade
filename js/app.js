@@ -33,27 +33,42 @@ const equitySeries = equityChart.addAreaSeries({
   lineWidth: 2,
 });
 
-// Мини-график IMOEX (в секции макро)
-const macroChartEl = document.getElementById('macroChart');
-const macroChart = macroChartEl ? LightweightCharts.createChart(macroChartEl, {
-  layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
-  grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
-  rightPriceScale: { borderColor: '#2a2e39' },
-  timeScale: { borderColor: '#2a2e39', timeVisible: false },
-  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-}) : null;
-const macroSeries = macroChart ? macroChart.addAreaSeries({
-  lineColor: '#4a9eff',
-  topColor: 'rgba(74, 158, 255, 0.3)',
-  bottomColor: 'rgba(74, 158, 255, 0.0)',
-  lineWidth: 2,
-}) : null;
+// ===== Мини-график IMOEX (lazy) =====
+// Создаётся НЕ сразу, а при первом показе секции макро.
+// Иначе ширина контейнера = 0 (секция display:none), и график не рисуется.
+let macroChart = null;
+let macroSeries = null;
+
+function ensureMacroChart() {
+  if (macroChart) return;
+  const el = document.getElementById('macroChart');
+  if (!el) return;
+
+  macroChart = LightweightCharts.createChart(el, {
+    width: el.clientWidth,
+    height: el.clientHeight || 180,
+    layout: { background: { color: '#0e1116' }, textColor: '#d1d4dc' },
+    grid: { vertLines: { color: '#1f2430' }, horzLines: { color: '#1f2430' } },
+    rightPriceScale: { borderColor: '#2a2e39' },
+    timeScale: { borderColor: '#2a2e39', timeVisible: false },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  });
+  macroSeries = macroChart.addAreaSeries({
+    lineColor: '#4a9eff',
+    topColor: 'rgba(74, 158, 255, 0.3)',
+    bottomColor: 'rgba(74, 158, 255, 0.0)',
+    lineWidth: 2,
+  });
+}
 
 function resizeCharts() {
   chart.applyOptions({ width: chartEl.clientWidth });
   equityChart.applyOptions({ width: equityEl.clientWidth });
-  if (macroChart && macroChartEl) {
-    macroChart.applyOptions({ width: macroChartEl.clientWidth });
+  if (macroChart) {
+    const macroChartEl = document.getElementById('macroChart');
+    if (macroChartEl && macroChartEl.clientWidth > 0) {
+      macroChart.applyOptions({ width: macroChartEl.clientWidth });
+    }
   }
 }
 window.addEventListener('resize', resizeCharts);
@@ -387,20 +402,33 @@ function renderMacroSection(macroData) {
   }).join('');
   document.getElementById('macroMetrics').innerHTML = cardsHtml;
 
-  // График
+  // График: показываем секцию, ПОТОМ создаём график (lazy),
+  // потому что Lightweight Charts не умеет рисовать в элемент с width=0.
   const chartWrap = document.querySelector('.macro-chart-wrap');
-  if (analysis.chartData && analysis.chartData.length > 0 && macroSeries) {
-    macroSeries.setData(analysis.chartData);
-    if (macroChart) {
-      macroChart.timeScale().fitContent();
-      macroChart.applyOptions({ width: macroChartEl.clientWidth });
-    }
+  const hasChartData = analysis.chartData && analysis.chartData.length > 0;
+
+  if (hasChartData) {
     if (chartWrap) chartWrap.style.display = '';
+
+    // 1. Сначала показываем секцию — чтобы у #macroChart появились размеры
+    section.style.display = 'block';
+
+    // 2. Теперь создаём график (если ещё не создан)
+    ensureMacroChart();
+
+    // 3. Отдаём данные и подгоняем размеры
+    if (macroSeries && macroChart) {
+      macroSeries.setData(analysis.chartData);
+      const el = document.getElementById('macroChart');
+      if (el && el.clientWidth > 0) {
+        macroChart.applyOptions({ width: el.clientWidth });
+      }
+      macroChart.timeScale().fitContent();
+    }
   } else {
     if (chartWrap) chartWrap.style.display = 'none';
+    section.style.display = 'block';
   }
-
-  section.style.display = 'block';
 }
 
 // ===== Секция корпоративных действий =====
