@@ -4,7 +4,7 @@
 // [DEBUG] Панель производительности. УДАЛИТЬ после диагностики.
 // ============================================================
 const __debug = {
-  enabled: true,
+  enabled: false,
   starts: {},
   data: {},
   start(label) { this.starts[label] = performance.now(); },
