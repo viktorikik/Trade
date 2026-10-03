@@ -1,5 +1,5 @@
 """
-Собирает паспорт всех бумаг основного режима TQBR:
+Собирает паспорт всех акций основного режима TQBR:
 тикер, имя, отрасль, размер лота.
 Пишет data/tickers.json.
 
@@ -8,8 +8,11 @@
 2. Что не размечено — из словаря SECTORS_OVERRIDE.
 3. Что осталось — в группу «Прочее».
 
-Все запросы к MOEX ISS — с retry (15 сек timeout, 2 попытки, пауза 3 сек).
-Если индекс не отдался — пропускаем его, разметка не ломается.
+Из списка TQBR выбрасываются ETF, паи и прочие не-акции —
+оставляем только обыкновенные (SECTYPE=1) и привилегированные (SECTYPE=2).
+
+Все запросы — с retry (10 сек connect + 20 сек read, 2 попытки, пауза 2 сек).
+Каждый запрос логируется ДО и ПОСЛЕ — чтобы сразу видеть, где тормозит.
 """
 
 import json
@@ -30,12 +33,17 @@ ISS_BASE = "https://iss.moex.com/iss"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 ISS_ANALYTICS = f"{ISS_BASE}/statistics/engines/stock/markets/index/analytics"
 
-REQUEST_TIMEOUT = 15
+# (connect_timeout, read_timeout) — разделяем, так надёжнее
+REQUEST_TIMEOUT = (10, 20)
 RETRY_ATTEMPTS = 2
-RETRY_DELAY = 3
+RETRY_DELAY = 2
+
+# Типы бумаг, которые оставляем (из MOEX ISS).
+# 1 = Акция обыкновенная, 2 = Акция привилегированная.
+# 3 = ETF, 4 = Пай, 5 = Депозитарная расписка... — отбрасываем.
+KEPT_SECTYPES = {1, 2}
 
 # Отраслевые индексы MOEX → название группы в шторке.
-# Если какого-то кода нет в ISS — он просто пропустится с предупреждением.
 SECTOR_INDICES = {
     "MOEXOG": "Нефть и газ",
     "MOEXFN": "Финансы",
@@ -48,49 +56,54 @@ SECTOR_INDICES = {
     "MOEXIT": "IT",
 }
 
-# Ручная разметка — что не покрыто индексами или требует уточнения.
-# Перебивает автоматику. Заполняется по мере необходимости.
+# Ручная разметка — перебивает автоматику. Заполняется по мере необходимости.
 SECTORS_OVERRIDE = {
     # "SBER": "Финансы",
-    # "GAZP": "Нефть и газ",
 }
 
 DEFAULT_SECTOR = "Прочее"
 
 
+def log(msg: str) -> None:
+    """Единая точка вывода — всегда с flush, чтобы лог был живой."""
+    print(msg, flush=True)
+
+
+def log_err(msg: str) -> None:
+    print(msg, file=sys.stderr, flush=True)
+
+
 def _get_with_retry(session, url, params, label):
-    """GET с retry. Возвращает Response или None."""
-    last_err = None
+    """GET с retry и подробным логированием."""
     for attempt in range(1, RETRY_ATTEMPTS + 1):
+        log(f"    [{label}] → GET (попытка {attempt})")
+        t0 = time.time()
         try:
             resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            dt = time.time() - t0
+            log(f"    [{label}] ← HTTP {resp.status_code} за {dt:.1f}с")
             resp.raise_for_status()
             return resp
         except Exception as e:
-            last_err = e
+            dt = time.time() - t0
+            log_err(f"    [{label}] ✗ {type(e).__name__} за {dt:.1f}с: {e}")
             if attempt < RETRY_ATTEMPTS:
-                print(
-                    f"    [{label}] попытка {attempt} не удалась ({type(e).__name__}), "
-                    f"повтор через {RETRY_DELAY}с",
-                    file=sys.stderr,
-                )
+                log(f"    [{label}] повтор через {RETRY_DELAY}с...")
                 time.sleep(RETRY_DELAY)
-    print(
-        f"    [{label}] все {RETRY_ATTEMPTS} попытки провалились: {last_err}",
-        file=sys.stderr,
-    )
+    log_err(f"    [{label}] все попытки провалились")
     return None
 
 
 def fetch_all_securities(session):
     """
-    Возвращает список dict {ticker, name, lotSize} по всем бумагам TQBR.
-    Пагинация — по 100 строк, но обычно всё приходит одной страницей.
+    Возвращает список dict {ticker, name, lotSize, sectype} по всем бумагам TQBR.
+    Отбрасывает ETF и паи (оставляет только акции).
     """
     url = f"{ISS_SECURITIES}/{BOARD}/securities.json"
     params = {
         "iss.meta": "off",
-        "securities.columns": "SECID,SHORTNAME,LOTSIZE",
+        "iss.only": "securities",
+        "securities.columns": "SECID,SHORTNAME,LOTSIZE,SECTYPE",
     }
 
     all_rows = []
@@ -108,7 +121,7 @@ def fetch_all_securities(session):
         try:
             data = resp.json()
         except Exception as e:
-            print(f"  список бумаг: битый JSON ({e})", file=sys.stderr)
+            log_err(f"  список бумаг: битый JSON ({e})")
             break
 
         block = data.get("securities", {})
@@ -117,14 +130,21 @@ def fetch_all_securities(session):
 
         if columns is None:
             columns = page_cols
+            log(f"  Колонки в ответе: {columns}")
 
         if not page_rows or columns is None:
             break
 
+        log(f"  Получено строк на странице: {len(page_rows)}")
         all_rows.extend(page_rows)
-        start += len(page_rows)
 
+        # Пагинация: обычно ISS отдаёт по 100. Если пришло меньше — это последняя страница.
+        # Но на всякий случай ограничим 10 страницами (1000 бумаг максимум).
+        start += len(page_rows)
         if len(page_rows) < 100:
+            break
+        if start >= 1000:
+            log_err(f"  Достигнут лимит в 1000 строк — прерываем пагинацию")
             break
 
         time.sleep(0.2)
@@ -132,30 +152,47 @@ def fetch_all_securities(session):
     if not all_rows or columns is None:
         return None
 
+    log(f"  Всего строк от ISS: {len(all_rows)}")
+
     result = []
+    dropped = 0
     for row in all_rows:
         d = dict(zip(columns, row))
         ticker = d.get("SECID")
         if not ticker:
             continue
+
+        sectype = d.get("SECTYPE")
+        try:
+            sectype = int(sectype) if sectype is not None else None
+        except (TypeError, ValueError):
+            sectype = None
+
+        # Если SECTYPE есть и это не акция — пропускаем.
+        # Если SECTYPE нет вовсе (эндпоинт не вернул колонку) — оставляем,
+        # чтобы не потерять данные; отфильтруем позже.
+        if sectype is not None and sectype not in KEPT_SECTYPES:
+            dropped += 1
+            continue
+
         try:
             lot = int(d.get("LOTSIZE") or 1)
         except (TypeError, ValueError):
             lot = 1
+
         result.append({
             "ticker": ticker,
             "name": d.get("SHORTNAME") or ticker,
             "lotSize": lot,
+            "sectype": sectype,
         })
+
+    log(f"  Оставлено акций: {len(result)} (отброшено ETF/паёв: {dropped})")
     return result
 
 
 def fetch_index_constituents(session, index_code):
-    """
-    Возвращает set(ticker) — состав индекса.
-    Пустой set при любой ошибке (это не критично).
-    Ограничение max_pages защищает от бесконечной пагинации.
-    """
+    """Возвращает set(ticker) — состав индекса. Пустой set при ошибке."""
     url = f"{ISS_ANALYTICS}/{index_code}.json"
     params = {
         "iss.meta": "off",
@@ -165,7 +202,7 @@ def fetch_index_constituents(session, index_code):
     tickers = set()
     columns = None
     start = 0
-    max_pages = 5  # достаточно, чтобы захватить текущие составы
+    max_pages = 2
 
     pages = 0
     while pages < max_pages:
@@ -195,6 +232,7 @@ def fetch_index_constituents(session, index_code):
             if secid:
                 tickers.add(secid)
 
+        log(f"    [{index_code}] страница {pages + 1}: {len(page_rows)} строк")
         start += len(page_rows)
         pages += 1
 
@@ -207,19 +245,16 @@ def fetch_index_constituents(session, index_code):
 
 
 def assign_sectors(securities, session):
-    """
-    Возвращает dict {ticker: sector_name}.
-    Сначала все в «Прочее», потом индексы, потом override.
-    """
+    """dict {ticker: sector_name}."""
     sectors = {s["ticker"]: DEFAULT_SECTOR for s in securities}
     valid_tickers = set(sectors.keys())
 
     for index_code, sector_name in SECTOR_INDICES.items():
-        print(f"  [{index_code}] тянем состав индекса...", flush=True)
+        log(f"  [{index_code}] тянем состав индекса...")
         constituents = fetch_index_constituents(session, index_code)
 
         if not constituents:
-            print(f"    → пусто (индекс недоступен или нет данных)", flush=True)
+            log(f"    → пусто (индекс недоступен или нет данных)")
             continue
 
         assigned = 0
@@ -228,20 +263,15 @@ def assign_sectors(securities, session):
                 sectors[ticker] = sector_name
                 assigned += 1
 
-        print(
-            f"    → {len(constituents)} бумаг в индексе, "
-            f"{assigned} размечено как «{sector_name}»",
-            flush=True,
-        )
+        log(f"    → {len(constituents)} бумаг в индексе, {assigned} размечено как «{sector_name}»")
 
-    # Ручные переопределения (перебивают автоматику)
     override_applied = 0
     for ticker, sector in SECTORS_OVERRIDE.items():
         if ticker in valid_tickers:
             sectors[ticker] = sector
             override_applied += 1
     if override_applied:
-        print(f"  Override: применено {override_applied} правил", flush=True)
+        log(f"  Override: применено {override_applied} правил")
 
     return sectors
 
@@ -250,26 +280,27 @@ def main() -> int:
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     with requests.Session() as session:
-        session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
+        session.headers.update({
+            "User-Agent": "trading-signals-mvp/1.0",
+            "Accept": "application/json",
+        })
 
-        print("=== Загрузка списка бумаг TQBR ===", flush=True)
+        log("=== Загрузка списка бумаг TQBR ===")
         securities = fetch_all_securities(session)
         if not securities:
-            print("Не удалось получить список бумаг TQBR", file=sys.stderr)
+            log_err("Не удалось получить список бумаг TQBR")
             return 1
 
-        print(f"  Найдено бумаг: {len(securities)}", flush=True)
+        log(f"  Итого акций: {len(securities)}")
 
-        print("\n=== Разметка отраслей ===", flush=True)
+        log("\n=== Разметка отраслей ===")
         sectors = assign_sectors(securities, session)
 
-        # Итоговое распределение
         counter = Counter(sectors.values())
-        print("\n=== Распределение по отраслям ===", flush=True)
+        log("\n=== Распределение по отраслям ===")
         for sector, count in counter.most_common():
-            print(f"  {sector}: {count}", flush=True)
+            log(f"  {sector}: {count}")
 
-        # Собираем финальный payload
         tickers_sorted = sorted(securities, key=lambda x: x["ticker"])
         payload = {
             "updatedAt": date.today().isoformat(),
@@ -292,11 +323,7 @@ def main() -> int:
     )
 
     size_kb = OUTPUT_FILE.stat().st_size / 1024
-    print(
-        f"\nГотово. Записано: {OUTPUT_FILE} "
-        f"({len(payload['tickers'])} бумаг, ~{size_kb:.1f} КБ)",
-        flush=True,
-    )
+    log(f"\nГотово. Записано: {OUTPUT_FILE} ({len(payload['tickers'])} бумаг, ~{size_kb:.1f} КБ)")
     return 0
 
 
