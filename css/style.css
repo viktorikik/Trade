@@ -1529,3 +1529,75 @@ body.has-tabbar .tab-content-wrap {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+
+/* ============================================================
+   22. СВОРАЧИВАЕМЫЕ СЕКЦИИ (таб «Анализ»)
+   ============================================================ */
+
+/* Контейнер details — сохраняет внешний вид «карточки» */
+.collapsible {
+  /* Не меняем существующие стили .fundamental-section и т.д. */
+}
+
+/* Summary — кликабельная «шапка» секции */
+.collapsible-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  padding-left: 22px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+/* Убираем стандартный треугольник Safari/Chrome */
+.collapsible-summary::-webkit-details-marker { display: none; }
+.collapsible-summary::marker { content: ""; }
+
+/* Наш треугольник */
+.collapsible-summary::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.collapsible[open] > .collapsible-summary::before {
+  content: "▾";
+}
+
+/* Название секции */
+.collapsible-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  transition: color 0.15s;
+}
+.collapsible-summary:hover .collapsible-title {
+  color: var(--accent);
+}
+
+/* Вторичная подпись (статус: «Данные на:», «Обновлено:» и т.п.) */
+.collapsible-summary .fundamental-asof,
+.collapsible-summary .macro-updated,
+.collapsible-summary .correlation-subtitle,
+.collapsible-summary .risk-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Тело секции — отступ от заголовка */
+.collapsible-body {
+  margin-top: var(--space-md);
+}
+
