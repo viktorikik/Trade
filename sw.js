@@ -1,6 +1,6 @@
 // sw.js — Service Worker для офлайн-режима и PWA
 // Версия кэша: меняй при обновлении, чтобы старые файлы сбросились
-const CACHE_NAME = 'trading-signals-v1';
+const CACHE_NAME = 'trading-signals-v2';
 
 // Файлы, которые кэшируем сразу при установке
 const PRECACHE = [
