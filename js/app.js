@@ -76,6 +76,7 @@ resizeCharts();
 
 const dataCache = new Map();
 let macroCache = null;
+let correlationCache = null;
 
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
@@ -124,6 +125,41 @@ async function loadMacroData() {
     console.warn(`[macro] ошибка загрузки: ${err.message}`);
     macroCache = null;
     return null;
+  }
+}
+
+// ===== Корреляция: загрузка данных по всем 6 тикерам =====
+// Грузим параллельно, каждый тикер кэшируется в dataCache.
+async function loadCorrelationData() {
+  if (correlationCache) return correlationCache;
+  const tickers = ['SBER', 'GAZP', 'LKOH', 'GMKN', 'ROSN', 'NVTK'];
+  const results = await Promise.allSettled(tickers.map(t => loadRealData(t)));
+  const payloads = {};
+  tickers.forEach((t, i) => {
+    const r = results[i];
+    if (r.status === 'fulfilled') {
+      payloads[t] = r.value;
+    } else {
+      console.warn(`[correlation] ${t}: ${r.reason && r.reason.message}`);
+    }
+  });
+  correlationCache = payloads;
+  return payloads;
+}
+
+async function renderCorrelation() {
+  const section = document.getElementById('correlationSection');
+  if (!section) return;
+
+  try {
+    const payloads = await loadCorrelationData();
+    const useSplits = document.getElementById('useCorpSplits').checked;
+    const useDividends = document.getElementById('useCorpDividends').checked;
+    const result = computeCorrelations(payloads, { useSplits, useDividends });
+    renderCorrelationSection(result);
+  } catch (err) {
+    console.warn('[correlation] ошибка:', err);
+    section.style.display = 'none';
   }
 }
 
@@ -639,6 +675,7 @@ async function render() {
     document.getElementById('fundamentalSection').style.display = 'none';
     document.getElementById('riskSection').style.display = 'none';
     document.getElementById('macroSection').style.display = 'none';
+    document.getElementById('correlationSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -659,6 +696,7 @@ async function render() {
     document.getElementById('fundamentalSection').style.display = 'none';
     document.getElementById('riskSection').style.display = 'none';
     document.getElementById('macroSection').style.display = 'none';
+    document.getElementById('correlationSection').style.display = 'none';
     currentState = null;
     currentLastResult = null;
     updateAddButton();
@@ -787,6 +825,9 @@ async function render() {
     console.warn('[macro] не удалось отрисовать:', err);
     document.getElementById('macroSection').style.display = 'none';
   }
+
+  // Корреляция (не зависит от выбранного тикера, но зависит от корректировок)
+  await renderCorrelation();
 
   currentState = {
     ticker,
