@@ -1,6 +1,6 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 9.8 · + легенда графика · обзор «для новичка»
+   Версия 9.9 · + шторка выбора бумаг (Шаг 21, Итерация 3)
    ============================================================ */
 
 /* ============================================================
@@ -1702,4 +1702,297 @@ body.has-tabbar .tab-content-wrap {
 /* Тело секции — отступ от заголовка */
 .collapsible-body {
   margin-top: var(--space-md);
+}
+
+/* ============================================================
+   24. ШТОРКА ВЫБОРА БУМАГ (Шаг 21, Итерация 3)
+   ============================================================ */
+
+/* ---------- Затемнение фона ---------- */
+
+.ticker-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.ticker-drawer-backdrop.show { display: flex; }
+
+/* ---------- Сама шторка ---------- */
+
+.ticker-drawer {
+  background: var(--card);
+  width: 100%;
+  max-width: 600px;
+  height: 85vh;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  animation: drawerSlideUp 0.25s ease;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@keyframes drawerSlideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------- Шапка: табы + закрыть ---------- */
+
+.ticker-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ticker-drawer-tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ticker-tab {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-badge);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ticker-tab:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.ticker-tab.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.ticker-tab-disabled,
+.ticker-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-dim);
+}
+
+.ticker-drawer-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.ticker-drawer-close:hover {
+  color: var(--text);
+  background: var(--card-hover);
+}
+
+/* ---------- Поиск ---------- */
+
+.ticker-drawer-search-wrap {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ticker-drawer-search {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+.ticker-drawer-search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.ticker-drawer-search::placeholder {
+  color: var(--text-dim);
+}
+
+/* ---------- Прокручиваемое тело ---------- */
+
+.ticker-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-sm) 0 var(--space-lg);
+}
+
+.ticker-drawer-loading,
+.ticker-empty {
+  padding: 40px var(--space-lg);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ---------- Секции (группы отраслей) ---------- */
+
+.ticker-section {
+  margin-bottom: 2px;
+}
+
+.ticker-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 12px var(--space-lg);
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ticker-section-header:hover {
+  background: var(--card-hover);
+}
+
+.ticker-section-arrow {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 11px;
+  width: 12px;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.ticker-section.open .ticker-section-arrow {
+  transform: rotate(90deg);
+}
+
+.ticker-section-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  background: var(--card-hover);
+  border-radius: var(--radius-badge);
+  padding: 2px 8px;
+}
+
+.ticker-section-body {
+  display: none;
+  padding-bottom: var(--space-sm);
+}
+.ticker-section.open .ticker-section-body {
+  display: block;
+}
+
+/* ---------- Строки тикеров ---------- */
+
+.ticker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 10px var(--space-lg) 10px calc(var(--space-lg) + 16px);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  border-left: 2px solid transparent;
+}
+.ticker-row:hover {
+  background: var(--card-hover);
+}
+.ticker-row.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
+.ticker-row-ticker {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.ticker-row-name {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticker-row-lot {
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- Блок «Недавние» ---------- */
+
+.ticker-recent-title {
+  padding: 10px var(--space-lg) 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ---------- Кнопка «Показать все» ---------- */
+
+.ticker-show-all {
+  display: block;
+  width: calc(100% - 2 * var(--space-lg));
+  margin: var(--space-md) var(--space-lg);
+  padding: 12px;
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-input);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.ticker-show-all:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+/* ---------- Подсветка совпадения в поиске ---------- */
+
+.ticker-row mark {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0 2px;
+  border-radius: 3px;
 }
