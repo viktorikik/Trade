@@ -1,6 +1,6 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 10.2 · + управление набором корреляции
+   Версия 10.3 · + оценка диверсификации
    ============================================================ */
 
 /* ============================================================
@@ -2199,4 +2199,115 @@ body.has-tabbar .tab-content-wrap {
   color: var(--text-muted);
   opacity: 1;
   cursor: not-allowed;
+}
+
+/* ============================================================
+   27. ОЦЕНКА ДИВЕРСИФИКАЦИИ (Шаг 21, Итерация 6)
+   ============================================================ */
+
+.diversification-block {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  transition: border-color 0.15s;
+}
+
+/* Заголовок: иконка, название, балл, уровень */
+.div-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
+}
+
+.div-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.div-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.div-score {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-left: 4px;
+}
+.div-score-good    { color: var(--accent); }
+.div-score-neutral { color: var(--warn); }
+.div-score-bad     { color: var(--danger); }
+
+.div-level {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.div-level-good    { color: var(--accent); background: var(--accent-soft); }
+.div-level-neutral { color: var(--warn);   background: var(--warn-soft); }
+.div-level-bad     { color: var(--danger); background: var(--danger-soft); }
+
+/* Полоса-индикатор */
+.div-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--card-hover);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.div-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.div-bar-good    { background: var(--accent); }
+.div-bar-neutral { background: var(--warn); }
+.div-bar-bad     { background: var(--danger); }
+
+/* Строка со статистикой */
+.div-stats {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.div-stats b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Список предупреждений */
+.div-warnings {
+  margin: var(--space-sm) 0 0;
+  padding-left: 20px;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.55;
+}
+.div-warnings li {
+  margin-bottom: 4px;
+}
+.div-warnings li:last-child {
+  margin-bottom: 0;
+}
+
+/* Состояние «мало бумаг» */
+.diversification-insufficient {
+  border-left: 3px solid var(--warn);
+}
+
+.div-text {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
 }
