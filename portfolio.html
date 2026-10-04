@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Портфель — Trading Signals</title>
+  <!-- ↑↑ ВНИМАНИЕ: при каждом изменении css/js — поднимай версию в URL ниже ↓↓ -->
+  <link rel="stylesheet" href="css/style.css?v=10.0" />
+
+  <!-- PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trading Signals">
+  <meta name="theme-color" content="#0a0d12">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    .tab-content-wrap {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 16px);
+    }
+
+    /* ---------- Подтабы «Мой портфель» / «Избранное» ---------- */
+
+    .portfolio-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: var(--space-lg);
+      padding: 4px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+    }
+
+    .portfolio-tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: calc(var(--radius-input) - 2px);
+      cursor: pointer;
+      transition: background-color 0.15s, color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+    .portfolio-tab:hover {
+      color: var(--text);
+    }
+    .portfolio-tab.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .portfolio-pane { display: none; }
+    .portfolio-pane.active { display: block; }
+
+    /* ---------- Заглушка «Мой портфель» ---------- */
+
+    .portfolio-stub {
+      padding: var(--space-xl) var(--space-lg);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      line-height: 1.65;
+    }
+
+    .portfolio-stub-icon {
+      font-size: 42px;
+      line-height: 1;
+      margin-bottom: var(--space-md);
+    }
+
+    .portfolio-stub-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 var(--space-sm);
+    }
+
+    .portfolio-stub-text {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin: 0 0 var(--space-lg);
+    }
+
+    .portfolio-stub-features {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .portfolio-stub-features-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin: 0 0 var(--space-sm);
+    }
+
+    .portfolio-stub-features ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .portfolio-stub-features li {
+      margin-bottom: 6px;
+    }
+
+    .portfolio-stub-features li:last-child {
+      margin-bottom: 0;
+    }
+
+    .portfolio-stub-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ---------- Кнопки-действия в «Избранном» ---------- */
+
+    .notes-actions {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-lg);
+    }
+  </style>
+</head>
+<body class="has-tabbar">
+
+  <!-- ===== ШАПКА ===== -->
+  <header>
+    <div class="app-header">
+      <div class="app-title">
+        <span class="app-title-icon">💼</span>
+        <span>Портфель</span>
+      </div>
+      <div class="app-header-actions">
+        <button id="themeToggle" class="header-icon-btn" title="Переключить тему">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== КОНТЕНТ ===== -->
+  <div class="tab-content-wrap">
+
+    <!-- Подтабы: Мой портфель / Избранное -->
+    <div class="portfolio-tabs" role="tablist">
+      <button class="portfolio-tab" data-pane="my-portfolio" role="tab">💼 Мой портфель</button>
+      <button class="portfolio-tab active" data-pane="favorites" role="tab">⭐ Избранное</button>
+    </div>
+
+    <!-- ============ ПОДТАБ: МОЙ ПОРТФЕЛЬ (заглушка) ============ -->
+    <div class="portfolio-pane" data-pane="my-portfolio">
+      <div class="portfolio-stub">
+        <div class="portfolio-stub-icon">💼</div>
+        <h2 class="portfolio-stub-title">Мой портфель — скоро</h2>
+        <p class="portfolio-stub-text">
+          Здесь появится полноценный учёт твоих позиций: сколько акций каждой компании
+          ты «держишь», по какой цене покупала, когда. И главное — расчёт реальной
+          прибыли или убытка (P&amp;L) по каждой позиции и по портфелю в целом.
+        </p>
+
+        <div class="portfolio-stub-features">
+          <p class="portfolio-stub-features-title">Что будет внутри</p>
+          <ul>
+            <li>Список позиций: тикер, количество, средняя цена покупки</li>
+            <li>Текущая стоимость каждой позиции и всего портфеля</li>
+            <li>Прибыль / убыток в рублях и процентах (P&amp;L)</li>
+            <li>Распределение по отраслям — для оценки диверсификации</li>
+            <li>Экспорт портфеля в CSV</li>
+          </ul>
+        </div>
+
+        <p class="portfolio-stub-note">
+          Шаг 21.5 дорожной карты. Пока — заглушка. Пользуйся вкладкой «Избранное» —
+          там всё работает как раньше.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ ПОДТАБ: ИЗБРАННОЕ (бывшие заметки) ============ -->
+    <div class="portfolio-pane active" data-pane="favorites">
+
+      <div class="notes-actions">
+        <button id="exportNotes" class="secondary">📄 Экспорт избранного CSV</button>
+        <button id="clearNotes" class="danger">🗑 Очистить всё</button>
+      </div>
+
+      <div id="notesGrid" class="notes-grid"></div>
+
+      <div id="emptyState" class="empty-state" style="display:none;">
+        Пока пусто.<br>
+        Открой <a href="index.html">главную страницу</a>, выбери акцию и нажми <b>«📝 В заметки»</b>.
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ===== ТАБ-БАР ===== -->
+  <nav class="tab-bar">
+    <a class="tab-button" href="index.html?tab=overview">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">Обзор</span>
+    </a>
+    <a class="tab-button" href="index.html?tab=analysis">
+      <span class="tab-icon">🔍</span>
+      <span class="tab-label">Анализ</span>
+    </a>
+    <a class="tab-button" href="index.html?tab=strategy">
+      <span class="tab-icon">🎯</span>
+      <span class="tab-label">Стратегия</span>
+    </a>
+    <a class="tab-button active" href="portfolio.html">
+      <span class="tab-icon">💼</span>
+      <span class="tab-label">Портфель</span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ---------- Тема ----------
+    (function () {
+      const THEME_KEY = 'trading-signals-theme';
+      const themeToggle = document.getElementById('themeToggle');
+      const rootEl = document.documentElement;
+
+      function applyTheme(theme) {
+        rootEl.setAttribute('data-theme', theme);
+        themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        // Обновим theme-color в meta для iOS
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', theme === 'light' ? '#f5f7fa' : '#0a0d12');
+        }
+      }
+
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'light' || saved === 'dark') {
+        applyTheme(saved);
+      } else {
+        const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        themeToggle.textContent = isLight ? '☀️' : '🌙';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const current = rootEl.getAttribute('data-theme') || 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+      });
+
+      // Регистрация service worker (только в браузере, не в file://)
+      if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((err) => {
+            console.warn('SW registration failed:', err);
+          });
+        });
+      }
+    })();
+
+    // ---------- Переключение подтабов «Мой портфель» / «Избранное» ----------
+    (function () {
+      const STORAGE_KEY = 'trading-signals-portfolio-tab';
+      const VALID = ['my-portfolio', 'favorites'];
+
+      const tabs = document.querySelectorAll('.portfolio-tab');
+      const panes = document.querySelectorAll('.portfolio-pane');
+      if (tabs.length === 0) return;
+
+      function activate(name) {
+        if (!VALID.includes(name)) name = 'favorites';
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.pane === name));
+        panes.forEach(p => p.classList.toggle('active', p.dataset.pane === name));
+        try {
+          localStorage.setItem(STORAGE_KEY, name);
+        } catch (e) { /* приватный режим */ }
+      }
+
+      // Восстанавливаем сохранённый подтаб
+      let saved = null;
+      try {
+        saved = localStorage.getItem(STORAGE_KEY);
+      } catch (e) { saved = null; }
+      if (saved && VALID.includes(saved)) {
+        activate(saved);
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => activate(tab.dataset.pane));
+      });
+    })();
+  </script>
+
+  <!-- ===== СКРИПТЫ =====
+       Все src — с ?v=10.0. При изменениях в JS — поднимай версию. -->
+  <script src="js/storage.js?v=10.0"></script>
+  <script src="js/indicators.js?v=10.0"></script>
+  <script src="js/portfolio.js?v=10.0"></script>
+</body>
+</html>
