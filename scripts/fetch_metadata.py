@@ -33,14 +33,13 @@ ISS_BASE = "https://iss.moex.com/iss"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 ISS_ANALYTICS = f"{ISS_BASE}/statistics/engines/stock/markets/index/analytics"
 
-# (connect_timeout, read_timeout) — разделяем, так надёжнее
 REQUEST_TIMEOUT = (10, 20)
 RETRY_ATTEMPTS = 2
 RETRY_DELAY = 2
 
 # Типы бумаг, которые оставляем (из MOEX ISS).
 # 1 = Акция обыкновенная, 2 = Акция привилегированная.
-# 3 = ETF, 4 = Пай, 5 = Депозитарная расписка... — отбрасываем.
+# 3 = ETF, 4 = Пай, ... — отбрасываем.
 KEPT_SECTYPES = {1, 2}
 
 # Отраслевые индексы MOEX → название группы в шторке.
@@ -98,6 +97,7 @@ def fetch_all_securities(session):
     """
     Возвращает список dict {ticker, name, lotSize, sectype} по всем бумагам TQBR.
     Отбрасывает ETF и паи (оставляет только акции).
+    Пагинация — до пустой страницы.
     """
     url = f"{ISS_SECURITIES}/{BOARD}/securities.json"
     params = {
@@ -109,6 +109,7 @@ def fetch_all_securities(session):
     all_rows = []
     columns = None
     start = 0
+    page_num = 0
 
     while True:
         params["start"] = start
@@ -132,19 +133,19 @@ def fetch_all_securities(session):
             columns = page_cols
             log(f"  Колонки в ответе: {columns}")
 
+        # Пустая страница = конец пагинации
         if not page_rows or columns is None:
+            log(f"  Страница {page_num + 1}: пусто — конец пагинации")
             break
 
-        log(f"  Получено строк на странице: {len(page_rows)}")
+        page_num += 1
+        log(f"  Страница {page_num}: получено {len(page_rows)} строк")
         all_rows.extend(page_rows)
-
-        # Пагинация: обычно ISS отдаёт по 100. Если пришло меньше — это последняя страница.
-        # Но на всякий случай ограничим 10 страницами (1000 бумаг максимум).
         start += len(page_rows)
-        if len(page_rows) < 100:
-            break
-        if start >= 1000:
-            log_err(f"  Достигнут лимит в 1000 строк — прерываем пагинацию")
+
+        # Предохранитель от бесконечного цикла: 20 страниц — это уже 10 000+ бумаг
+        if page_num >= 20:
+            log_err(f"  Достигнут предохранитель в 20 страниц — прерываем")
             break
 
         time.sleep(0.2)
@@ -168,9 +169,6 @@ def fetch_all_securities(session):
         except (TypeError, ValueError):
             sectype = None
 
-        # Если SECTYPE есть и это не акция — пропускаем.
-        # Если SECTYPE нет вовсе (эндпоинт не вернул колонку) — оставляем,
-        # чтобы не потерять данные; отфильтруем позже.
         if sectype is not None and sectype not in KEPT_SECTYPES:
             dropped += 1
             continue
@@ -192,17 +190,18 @@ def fetch_all_securities(session):
 
 
 def fetch_index_constituents(session, index_code):
-    """Возвращает set(ticker) — состав индекса. Пустой set при ошибке."""
+    """
+    Возвращает set(ticker) — актуальный состав индекса (последняя дата).
+    Блок analytics, колонка ticker. Останавливается, когда дата уходит в прошлое.
+    """
     url = f"{ISS_ANALYTICS}/{index_code}.json"
-    params = {
-        "iss.meta": "off",
-        "analytics.columns": "SECID",
-    }
+    params = {"iss.meta": "off"}  # все колонки
 
     tickers = set()
     columns = None
     start = 0
-    max_pages = 2
+    max_pages = 5
+    latest_date = None
 
     pages = 0
     while pages < max_pages:
@@ -222,25 +221,40 @@ def fetch_index_constituents(session, index_code):
 
         if columns is None:
             columns = page_cols
+            log(f"    [{index_code}] колонки: {columns}")
 
         if not page_rows or columns is None:
             break
 
         for row in page_rows:
             d = dict(zip(columns, row))
-            secid = d.get("SECID")
-            if secid:
-                tickers.add(secid)
+            row_date = d.get("tradedate")
+            ticker = d.get("ticker")
+            if not ticker:
+                continue
 
-        log(f"    [{index_code}] страница {pages + 1}: {len(page_rows)} строк")
-        start += len(page_rows)
+            if latest_date is None:
+                latest_date = row_date
+
+            # Как только дата уехала в прошлое — состав актуальный закончился
+            if row_date != latest_date:
+                log(f"    [{index_code}] дошли до {row_date} — стоп")
+                log(f"    [{index_code}] итог: {len(tickers)} бумаг на {latest_date}")
+                return tickers
+
+            tickers.add(ticker)
+
         pages += 1
+        log(f"    [{index_code}] страница {pages}: {len(page_rows)} строк")
+        start += len(page_rows)
 
-        if len(page_rows) < 100:
+        # Предохранитель
+        if pages >= max_pages:
             break
 
         time.sleep(0.2)
 
+    log(f"    [{index_code}] итог: {len(tickers)} бумаг")
     return tickers
 
 
