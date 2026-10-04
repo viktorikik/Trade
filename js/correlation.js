@@ -7,9 +7,11 @@
 // Считаем по дневным доходностям, а не по ценам: у цен есть общий тренд,
 // из-за которого все акции покажутся связанными.
 //
-// Список тикеров для матрицы теперь НЕ хардкодится. Он передаётся
+// Список тикеров для матрицы НЕ хардкодится. Он передаётся
 // в computeCorrelations() третьим аргументом — приходит из app.js
 // (дефолт / «Избранное» / ручной выбор пользователя).
+//
+// Плюс: оценка диверсификации набора — функция scoreDiversification().
 
 // Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
@@ -221,6 +223,145 @@ function computeCorrelations(payloads, options, tickers) {
     sampleSize: aligned.length,
     periodStart: aligned[0].time,
     periodEnd: aligned[aligned.length - 1].time,
+  };
+}
+
+// ===== Оценка диверсификации (0..10) =====
+//
+// Composite-скор из трёх компонент с весами 50/30/20:
+//
+//  1. Эффективное число бумаг (вес 0.5).
+//     N_eff = N / (1 + (N − 1) × avgCorr).
+//     Если все корреляции 0 — N_eff = N. Если все 1 — N_eff = 1.
+//     Компонента = N_eff / N (0..1).
+//
+//  2. Штраф за максимальную корреляцию (вес 0.3).
+//     Если max(r) ≤ 0.7 — штрафа нет, компонента = 1.
+//     Если max(r) = 1.0 — штраф 1.0, компонента = 0.
+//     Линейно между 0.7 и 1.0.
+//
+//  3. Разнообразие секторов (вес 0.2).
+//     Компонента = min(1, число уникальных секторов / 5).
+//     5+ разных секторов → 1.0. Меньше — пропорционально.
+//     Если sectorLookup не передан — компонента = 0.5 (нейтрально).
+//
+// Возвращает { insufficient } если бумаг меньше 5 — оценка ненадёжна.
+function scoreDiversification(result, sectorLookup) {
+  if (!result) return null;
+
+  const { tickers, matrix } = result;
+  const n = tickers.length;
+
+  // Для 2–4 бумаг оценка малоинформативна: всего 1–6 пар.
+  if (n < 5) {
+    return { insufficient: true, count: n };
+  }
+
+  // ---- Все пары ----
+  const pairs = [];
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const r = matrix[i][j];
+      if (r != null && isFinite(r)) {
+        pairs.push({ i, j, r });
+      }
+    }
+  }
+  if (pairs.length === 0) return null;
+
+  // ---- 1. Средняя корреляция и N_eff ----
+  const avgCorr = pairs.reduce((s, p) => s + p.r, 0) / pairs.length;
+
+  // Ограничим снизу: при отрицательной средней N_eff могло бы превысить N.
+  const effectiveAvg = Math.max(0, avgCorr);
+  const nEff = n / (1 + (n - 1) * effectiveAvg);
+  const nEffScore = Math.max(0, Math.min(1, nEff / n));
+
+  // ---- 2. Максимальная корреляция ----
+  let maxPair = pairs[0];
+  for (const p of pairs) {
+    if (p.r > maxPair.r) maxPair = p;
+  }
+  // Штраф линейно от 0.7 (нет штрафа) до 1.0 (полный штраф).
+  let maxPenalty = 0;
+  if (maxPair.r > 0.7) {
+    maxPenalty = Math.min(1, (maxPair.r - 0.7) / 0.3);
+  }
+  const maxScore = 1 - maxPenalty;
+
+  // ---- 3. Разнообразие секторов ----
+  let uniqueSectors = 0;
+  let sectorCounts = {};
+  let sectorScore = 0.5; // нейтральное значение, если sectorLookup не передан
+
+  if (typeof sectorLookup === 'function') {
+    const set = new Set();
+    for (const t of tickers) {
+      const s = sectorLookup(t) || 'Прочее';
+      set.add(s);
+      sectorCounts[s] = (sectorCounts[s] || 0) + 1;
+    }
+    uniqueSectors = set.size;
+    // 5+ разных секторов = 1.0
+    sectorScore = Math.min(1, uniqueSectors / 5);
+  }
+
+  // ---- Composite ----
+  const composite = 0.5 * nEffScore + 0.3 * maxScore + 0.2 * sectorScore;
+  // Округляем до 1..10 (минимум 1, чтобы 0 не выглядел «сломанным»)
+  const score = Math.max(1, Math.min(10, Math.round(composite * 10)));
+
+  // ---- Уровень ----
+  let level, levelCls;
+  if (score >= 8)      { level = 'Отлично'; levelCls = 'good'; }
+  else if (score >= 6) { level = 'Хорошо';  levelCls = 'good'; }
+  else if (score >= 4) { level = 'Средне';  levelCls = 'neutral'; }
+  else if (score >= 2) { level = 'Слабо';   levelCls = 'bad'; }
+  else                 { level = 'Плохо';   levelCls = 'bad'; }
+
+  // ---- Рекомендации ----
+  const warnings = [];
+
+  // Если есть пара с очень высокой корреляцией
+  if (maxPair.r >= 0.7) {
+    const a = tickers[maxPair.i];
+    const b = tickers[maxPair.j];
+    warnings.push(
+      `Сильная связь ${a} ↔ ${b} (${maxPair.r.toFixed(2)}). ` +
+      `Одна из пары — кандидат на замену.`
+    );
+  }
+
+  // Если в одном секторе ≥3 бумаг
+  if (typeof sectorLookup === 'function') {
+    const sorted = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
+    if (sorted.length > 0) {
+      const [topSector, topCount] = sorted[0];
+      if (topCount >= 3 && uniqueSectors < 5) {
+        warnings.push(
+          `В наборе ${topCount} бумаг из сектора «${topSector}». ` +
+          `Попробуй заменить одну на бумагу из другого сектора.`
+        );
+      }
+    }
+  }
+
+  return {
+    insufficient: false,
+    score,
+    level,
+    levelCls,
+    avgCorr,
+    nEff,
+    nEffScore,
+    maxPair: {
+      a: tickers[maxPair.i],
+      b: tickers[maxPair.j],
+      r: maxPair.r,
+    },
+    uniqueSectors,
+    warnings,
+    paperCount: n,
   };
 }
 
