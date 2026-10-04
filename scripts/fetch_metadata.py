@@ -11,6 +11,10 @@
 Из списка TQBR выбрасываются ETF, паи и прочие не-акции —
 оставляем только обыкновенные (SECTYPE=1) и привилегированные (SECTYPE=2).
 
+ВАЖНО: endpoint TQBR/securities.json игнорирует параметр start и всегда
+возвращает один и тот же набор ~500 бумаг. Поэтому пагинация останавливается,
+как только страница не приносит НОВЫХ тикеров, а итоговый список дедуплицируется.
+
 Все запросы — с retry (10 сек connect + 20 сек read, 2 попытки, пауза 2 сек).
 Каждый запрос логируется ДО и ПОСЛЕ — чтобы сразу видеть, где тормозит.
 """
@@ -39,7 +43,6 @@ RETRY_DELAY = 2
 
 # Типы бумаг, которые оставляем (из MOEX ISS).
 # 1 = Акция обыкновенная, 2 = Акция привилегированная.
-# 3 = ETF, 4 = Пай, ... — отбрасываем.
 KEPT_SECTYPES = {1, 2}
 
 # Отраслевые индексы MOEX → название группы в шторке.
@@ -55,7 +58,7 @@ SECTOR_INDICES = {
     "MOEXIT": "IT",
 }
 
-# Ручная разметка — перебивает автоматику. Заполняется по мере необходимости.
+# Ручная разметка — перебивает автоматику.
 SECTORS_OVERRIDE = {
     # "SBER": "Финансы",
 }
@@ -64,7 +67,6 @@ DEFAULT_SECTOR = "Прочее"
 
 
 def log(msg: str) -> None:
-    """Единая точка вывода — всегда с flush, чтобы лог был живой."""
     print(msg, flush=True)
 
 
@@ -73,7 +75,6 @@ def log_err(msg: str) -> None:
 
 
 def _get_with_retry(session, url, params, label):
-    """GET с retry и подробным логированием."""
     for attempt in range(1, RETRY_ATTEMPTS + 1):
         log(f"    [{label}] → GET (попытка {attempt})")
         t0 = time.time()
@@ -95,9 +96,9 @@ def _get_with_retry(session, url, params, label):
 
 def fetch_all_securities(session):
     """
-    Возвращает список dict {ticker, name, lotSize, sectype} по всем бумагам TQBR.
-    Отбрасывает ETF и паи (оставляет только акции).
-    Пагинация — до пустой страницы.
+    Возвращает список dict {ticker, name, lotSize, sectype} по акциям TQBR.
+    Пагинация с защитой от дублей: останавливаемся, когда страница
+    не приносит новых тикеров. Финальный список дедуплицируется.
     """
     url = f"{ISS_SECURITIES}/{BOARD}/securities.json"
     params = {
@@ -110,6 +111,7 @@ def fetch_all_securities(session):
     columns = None
     start = 0
     page_num = 0
+    seen_tickers = set()
 
     while True:
         params["start"] = start
@@ -133,17 +135,35 @@ def fetch_all_securities(session):
             columns = page_cols
             log(f"  Колонки в ответе: {columns}")
 
-        # Пустая страница = конец пагинации
         if not page_rows or columns is None:
             log(f"  Страница {page_num + 1}: пусто — конец пагинации")
             break
 
         page_num += 1
-        log(f"  Страница {page_num}: получено {len(page_rows)} строк")
+
+        # Смотрим, сколько НОВЫХ тикеров принесла страница
+        page_tickers = set()
+        for row in page_rows:
+            d = dict(zip(columns, row))
+            t = d.get("SECID")
+            if t:
+                page_tickers.add(t)
+
+        new_tickers = page_tickers - seen_tickers
+        log(
+            f"  Страница {page_num}: {len(page_rows)} строк, "
+            f"новых тикеров: {len(new_tickers)}"
+        )
+
+        # Если страница не добавила ничего нового — дальше идти смысла нет
+        if page_num > 1 and not new_tickers:
+            log(f"  → новых тикеров нет, пагинация исчерпана")
+            break
+
+        seen_tickers |= page_tickers
         all_rows.extend(page_rows)
         start += len(page_rows)
 
-        # Предохранитель от бесконечного цикла: 20 страниц — это уже 10 000+ бумаг
         if page_num >= 20:
             log_err(f"  Достигнут предохранитель в 20 страниц — прерываем")
             break
@@ -154,14 +174,23 @@ def fetch_all_securities(session):
         return None
 
     log(f"  Всего строк от ISS: {len(all_rows)}")
+    log(f"  Уникальных тикеров: {len(seen_tickers)}")
 
+    # Дедупликация + фильтр по SECTYPE
     result = []
     dropped = 0
+    deduped = 0
+    seen = set()
+
     for row in all_rows:
         d = dict(zip(columns, row))
         ticker = d.get("SECID")
         if not ticker:
             continue
+        if ticker in seen:
+            deduped += 1
+            continue
+        seen.add(ticker)
 
         sectype = d.get("SECTYPE")
         try:
@@ -185,17 +214,18 @@ def fetch_all_securities(session):
             "sectype": sectype,
         })
 
-    log(f"  Оставлено акций: {len(result)} (отброшено ETF/паёв: {dropped})")
+    log(
+        f"  Уникальных тикеров: {len(seen)}, "
+        f"отдублировано: {deduped}, "
+        f"оставлено акций: {len(result)} (отброшено ETF/паёв: {dropped})"
+    )
     return result
 
 
 def fetch_index_constituents(session, index_code):
-    """
-    Возвращает set(ticker) — актуальный состав индекса (последняя дата).
-    Блок analytics, колонка ticker. Останавливается, когда дата уходит в прошлое.
-    """
+    """Возвращает set(ticker) — актуальный состав индекса."""
     url = f"{ISS_ANALYTICS}/{index_code}.json"
-    params = {"iss.meta": "off"}  # все колонки
+    params = {"iss.meta": "off"}
 
     tickers = set()
     columns = None
@@ -221,7 +251,6 @@ def fetch_index_constituents(session, index_code):
 
         if columns is None:
             columns = page_cols
-            log(f"    [{index_code}] колонки: {columns}")
 
         if not page_rows or columns is None:
             break
@@ -236,7 +265,6 @@ def fetch_index_constituents(session, index_code):
             if latest_date is None:
                 latest_date = row_date
 
-            # Как только дата уехала в прошлое — состав актуальный закончился
             if row_date != latest_date:
                 log(f"    [{index_code}] дошли до {row_date} — стоп")
                 log(f"    [{index_code}] итог: {len(tickers)} бумаг на {latest_date}")
@@ -248,7 +276,8 @@ def fetch_index_constituents(session, index_code):
         log(f"    [{index_code}] страница {pages}: {len(page_rows)} строк")
         start += len(page_rows)
 
-        # Предохранитель
+        if len(page_rows) < 100:
+            break
         if pages >= max_pages:
             break
 
