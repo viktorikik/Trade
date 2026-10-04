@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Trading Signals MVP</title>
-  <link rel="stylesheet" href="css/style.css?v=9.8" />
+  <link rel="stylesheet" href="css/style.css?v=9.9" />
 
   <!-- ===== PWA ===== -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,21 +20,36 @@
        Всё остальное — в css/style.css.
        ============================================================ */
 
-    .ticker-select {
+    /* Кнопка «Все бумаги» в шапке. Заменяет старый селект.
+       Показывает иконку и текущий тикер. */
+    .ticker-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: var(--card);
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      padding: 6px 10px;
+      padding: 0 12px;
+      height: 38px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .ticker-select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-soft);
+    .ticker-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--border-strong);
     }
+    .ticker-btn:active { transform: scale(0.97); }
+
+    .ticker-btn-icon { font-size: 14px; line-height: 1; }
+    .ticker-btn-label { letter-spacing: 0.3px; }
+
+    /* Скрытый select — источник правды для остального кода.
+       Никогда не удалять: от него зависят app.js и CSV-экспорт. */
+    .ticker-select-hidden { display: none; }
 
     .tab-content-wrap {
       max-width: var(--content-max);
@@ -100,7 +115,16 @@
         <span>Trading Signals</span>
       </div>
       <div class="app-header-actions">
-        <select id="ticker" class="ticker-select" title="Выбор акции">
+        <!-- Кнопка «Все бумаги» — открывает шторку выбора -->
+        <button id="openTickerDrawer" class="ticker-btn" title="Выбрать бумагу">
+          <span class="ticker-btn-icon">📋</span>
+          <span id="currentTickerLabel" class="ticker-btn-label">SBER</span>
+        </button>
+
+        <!-- Скрытый select: хранит текущий тикер для остального кода.
+             Список опций наполняется динамически из data/tickers.json
+             (см. app.js). До загрузки доступны 6 стартовых опций. -->
+        <select id="ticker" class="ticker-select-hidden" title="Текущий тикер">
           <option value="SBER">SBER</option>
           <option value="GAZP">GAZP</option>
           <option value="LKOH">LKOH</option>
@@ -108,6 +132,7 @@
           <option value="ROSN">ROSN</option>
           <option value="NVTK">NVTK</option>
         </select>
+
         <button id="themeToggle" class="header-icon-btn" title="Переключить тему">🌙</button>
         <button id="settingsBtn" class="header-icon-btn" title="Настройки">⚙️</button>
       </div>
@@ -314,6 +339,37 @@
 
   </div>
 
+  <!-- ===== ШТОРКА ВЫБОРА БУМАГ ===== -->
+  <div class="ticker-drawer-backdrop" id="tickerDrawer">
+    <div class="ticker-drawer">
+      <div class="ticker-drawer-header">
+        <div class="ticker-drawer-tabs">
+          <button class="ticker-tab active" data-market="stocks">📈 Акции</button>
+          <button class="ticker-tab ticker-tab-disabled" data-market="funds" disabled title="Скоро">🧺 Фонды</button>
+          <button class="ticker-tab ticker-tab-disabled" data-market="bonds" disabled title="Скоро">💰 Облигации</button>
+        </div>
+        <button class="ticker-drawer-close" id="closeTickerDrawer" title="Закрыть">✕</button>
+      </div>
+
+      <div class="ticker-drawer-search-wrap">
+        <input
+          type="search"
+          id="tickerSearch"
+          class="ticker-drawer-search"
+          placeholder="Поиск по тикеру или названию…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="ticker-drawer-body" id="tickerDrawerBody">
+        <div class="ticker-drawer-loading">Загрузка списка бумаг…</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== МОДАЛКА НАСТРОЕК ===== -->
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal">
@@ -497,11 +553,11 @@
 
   <!-- ===== СКРИПТЫ ПРИЛОЖЕНИЯ ===== -->
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-  <script src="js/storage.js?v=9.8"></script>
-  <script src="js/indicators.js?v=9.8"></script>
-  <script src="js/correlation.js?v=9.8"></script>
-  <script src="js/backtest.js?v=9.8"></script>
-  <script src="js/optimizer.js?v=9.8"></script>
-  <script src="js/app.js?v=9.8"></script>
+  <script src="js/storage.js?v=9.9"></script>
+  <script src="js/indicators.js?v=9.9"></script>
+  <script src="js/correlation.js?v=9.9"></script>
+  <script src="js/backtest.js?v=9.9"></script>
+  <script src="js/optimizer.js?v=9.9"></script>
+  <script src="js/app.js?v=9.9"></script>
 </body>
 </html>
