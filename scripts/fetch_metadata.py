@@ -5,18 +5,18 @@
 
 Отрасли размечиваются гибридно:
 1. Автоматически — через отраслевые индексы MOEX (MOEXOG, MOEXFN, ...).
-2. Что не размечено — из словаря SECTORS_OVERRIDE.
+2. Что не размечено — из словаря SECTORS_OVERRIDE (вручную).
 3. Что осталось — в группу «Прочее».
 
 Из списка TQBR выбрасываются ETF, паи и прочие не-акции —
 оставляем только обыкновенные (SECTYPE=1) и привилегированные (SECTYPE=2).
 
 ВАЖНО: endpoint TQBR/securities.json игнорирует параметр start и всегда
-возвращает один и тот же набор ~500 бумаг. Поэтому пагинация останавливается,
-как только страница не приносит НОВЫХ тикеров, а итоговый список дедуплицируется.
+возвращает один и тот же набор ~500 бумаг. Пагинация останавливается,
+как только страница не приносит НОВЫХ тикеров.
 
-Все запросы — с retry (10 сек connect + 20 сек read, 2 попытки, пауза 2 сек).
-Каждый запрос логируется ДО и ПОСЛЕ — чтобы сразу видеть, где тормозит.
+Индекс MOEXTR (Транспорт) в ISS пустой — убран из SECTOR_INDICES.
+Транспортные бумаги размечены вручную.
 """
 
 import json
@@ -41,11 +41,12 @@ REQUEST_TIMEOUT = (10, 20)
 RETRY_ATTEMPTS = 2
 RETRY_DELAY = 2
 
-# Типы бумаг, которые оставляем (из MOEX ISS).
+# Типы бумаг, которые оставляем.
 # 1 = Акция обыкновенная, 2 = Акция привилегированная.
 KEPT_SECTYPES = {1, 2}
 
-# Отраслевые индексы MOEX → название группы в шторке.
+# Отраслевые индексы MOEX → название группы.
+# MOEXTR (Транспорт) убран — в ISS пустой.
 SECTOR_INDICES = {
     "MOEXOG": "Нефть и газ",
     "MOEXFN": "Финансы",
@@ -54,13 +55,122 @@ SECTOR_INDICES = {
     "MOEXCN": "Ритейл",
     "MOEXEU": "Энергетика",
     "MOEXCH": "Химия",
-    "MOEXTR": "Транспорт",
     "MOEXIT": "IT",
 }
 
-# Ручная разметка — перебивает автоматику.
+# Ручная разметка популярных тикеров. Перебивает автоматику.
 SECTORS_OVERRIDE = {
-    # "SBER": "Финансы",
+    # ----- Нефть и газ -----
+    "GAZP": "Нефть и газ",
+    "LKOH": "Нефть и газ",
+    "ROSN": "Нефть и газ",
+    "NVTK": "Нефть и газ",
+    "SNGS": "Нефть и газ",
+    "SNGSP": "Нефть и газ",
+    "TATN": "Нефть и газ",
+    "TATNP": "Нефть и газ",
+    "TRNFP": "Нефть и газ",
+    "BANEP": "Нефть и газ",
+    "SIBN": "Нефть и газ",
+    "RNFT": "Нефть и газ",
+
+    # ----- Финансы -----
+    "SBER": "Финансы",
+    "SBERP": "Финансы",
+    "VTBR": "Финансы",
+    "TCSG": "Финансы",
+    "MOEX": "Финансы",
+    "AFKS": "Финансы",
+    "BSPB": "Финансы",
+    "BSPBP": "Финансы",
+    "CBOM": "Финансы",
+    "SFIN": "Финансы",
+    "RENI": "Финансы",
+    "SVCB": "Финансы",
+    "SPBE": "Финансы",
+
+    # ----- Металлургия -----
+    "GMKN": "Металлургия",
+    "NLMK": "Металлургия",
+    "MAGN": "Металлургия",
+    "CHMF": "Металлургия",
+    "PLZL": "Металлургия",
+    "RUAL": "Металлургия",
+    "MTLR": "Металлургия",
+    "MTLRP": "Металлургия",
+    "VSMO": "Металлургия",
+    "POLY": "Металлургия",
+    "SELG": "Металлургия",
+    "UGLD": "Металлургия",
+    "ALRS": "Металлургия",
+    "TRMK": "Металлургия",
+    "URKZ": "Металлургия",
+    "ENPG": "Металлургия",
+
+    # ----- Телеком -----
+    "MTSS": "Телеком",
+    "RTKM": "Телеком",
+    "RTKMP": "Телеком",
+
+    # ----- Ритейл -----
+    "MGNT": "Ритейл",
+    "FIVE": "Ритейл",
+    "FIXP": "Ритейл",
+    "OZON": "Ритейл",
+    "MVID": "Ритейл",
+    "LENT": "Ритейл",
+    "DSKY": "Ритейл",
+    "BELU": "Ритейл",
+    "ABRD": "Ритейл",
+
+    # ----- Энергетика -----
+    "FEES": "Энергетика",
+    "HYDR": "Энергетика",
+    "IRAO": "Энергетика",
+    "UPRO": "Энергетика",
+    "MSNG": "Энергетика",
+    "OGKB": "Энергетика",
+    "TGC1": "Энергетика",
+    "TGKB": "Энергетика",
+    "MRKC": "Энергетика",
+    "MRKP": "Энергетика",
+    "MRKU": "Энергетика",
+    "MRKV": "Энергетика",
+    "MRKS": "Энергетика",
+    "MRKK": "Энергетика",
+    "MRKZ": "Энергетика",
+    "MRKY": "Энергетика",
+    "LSNG": "Энергетика",
+    "LSNGP": "Энергетика",
+    "MSRS": "Энергетика",
+    "DVEC": "Энергетика",
+    "ELFV": "Энергетика",
+
+    # ----- Химия -----
+    "AKRN": "Химия",
+    "PHOR": "Химия",
+    "NKNC": "Химия",
+    "NKNCP": "Химия",
+    "KZOS": "Химия",
+    "KZOSP": "Химия",
+
+    # ----- Транспорт (индекса нет в MOEX — заполняем вручную) -----
+    "AFLT": "Транспорт",
+    "FLOT": "Транспорт",
+    "NMTP": "Транспорт",
+    "FESH": "Транспорт",
+    "UTAR": "Транспорт",
+
+    # ----- IT -----
+    "YDEX": "IT",
+    "VKCO": "IT",
+    "POSI": "IT",
+    "ASTR": "IT",
+    "DIAS": "IT",
+    "SOFL": "IT",
+    "CIAN": "IT",
+    "HEAD": "IT",
+    "WUSH": "IT",
 }
 
 DEFAULT_SECTOR = "Прочее"
@@ -95,11 +205,7 @@ def _get_with_retry(session, url, params, label):
 
 
 def fetch_all_securities(session):
-    """
-    Возвращает список dict {ticker, name, lotSize, sectype} по акциям TQBR.
-    Пагинация с защитой от дублей: останавливаемся, когда страница
-    не приносит новых тикеров. Финальный список дедуплицируется.
-    """
+    """Список dict {ticker, name, lotSize, sectype} по акциям TQBR."""
     url = f"{ISS_SECURITIES}/{BOARD}/securities.json"
     params = {
         "iss.meta": "off",
@@ -141,7 +247,6 @@ def fetch_all_securities(session):
 
         page_num += 1
 
-        # Смотрим, сколько НОВЫХ тикеров принесла страница
         page_tickers = set()
         for row in page_rows:
             d = dict(zip(columns, row))
@@ -155,7 +260,6 @@ def fetch_all_securities(session):
             f"новых тикеров: {len(new_tickers)}"
         )
 
-        # Если страница не добавила ничего нового — дальше идти смысла нет
         if page_num > 1 and not new_tickers:
             log(f"  → новых тикеров нет, пагинация исчерпана")
             break
@@ -176,7 +280,6 @@ def fetch_all_securities(session):
     log(f"  Всего строк от ISS: {len(all_rows)}")
     log(f"  Уникальных тикеров: {len(seen_tickers)}")
 
-    # Дедупликация + фильтр по SECTYPE
     result = []
     dropped = 0
     deduped = 0
@@ -288,10 +391,15 @@ def fetch_index_constituents(session, index_code):
 
 
 def assign_sectors(securities, session):
-    """dict {ticker: sector_name}."""
+    """
+    1) Все → «Прочее»
+    2) Индексы MOEX размечают, что могут
+    3) SECTORS_OVERRIDE перебивает / доразмечает
+    """
     sectors = {s["ticker"]: DEFAULT_SECTOR for s in securities}
     valid_tickers = set(sectors.keys())
 
+    # Шаг 2: индексы
     for index_code, sector_name in SECTOR_INDICES.items():
         log(f"  [{index_code}] тянем состав индекса...")
         constituents = fetch_index_constituents(session, index_code)
@@ -308,13 +416,19 @@ def assign_sectors(securities, session):
 
         log(f"    → {len(constituents)} бумаг в индексе, {assigned} размечено как «{sector_name}»")
 
-    override_applied = 0
+    # Шаг 3: override (перебивает всё, что было)
+    applied = 0
+    missing = []
     for ticker, sector in SECTORS_OVERRIDE.items():
         if ticker in valid_tickers:
             sectors[ticker] = sector
-            override_applied += 1
-    if override_applied:
-        log(f"  Override: применено {override_applied} правил")
+            applied += 1
+        else:
+            missing.append(ticker)
+
+    log(f"  Override: применено {applied} правил")
+    if missing:
+        log(f"  Override: НЕ найдено в TQBR ({len(missing)}): {', '.join(missing)}")
 
     return sectors
 
