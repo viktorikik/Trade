@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Trading Signals MVP</title>
-  <link rel="stylesheet" href="css/style.css?v=10.1" />
+  <link rel="stylesheet" href="css/style.css?v=10.2" />
 
   <!-- ===== PWA ===== -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -241,6 +241,17 @@
           <span id="correlationSubtitle" class="correlation-subtitle"></span>
         </summary>
         <div class="collapsible-body">
+
+          <!-- Управление набором: источник + три кнопки -->
+          <div class="correlation-controls">
+            <span id="correlationSourceHint" class="correlation-hint"></span>
+            <div class="correlation-btn-row">
+              <button id="corrFromWatchlist" class="corr-btn" type="button">⭐ Из Избранного</button>
+              <button id="corrPick" class="corr-btn" type="button">✏️ Выбрать вручную</button>
+              <button id="corrReset" class="corr-btn" type="button">↺ Сбросить</button>
+            </div>
+          </div>
+
           <div id="correlationMatrix" class="correlation-matrix"></div>
           <div id="correlationPairs" class="correlation-pairs"></div>
           <p class="correlation-note">
@@ -265,6 +276,10 @@
             при смене режима рынка, под действием новостей. Значения за 2023–2026 —
             это <b>историческая</b> корреляция, она не гарантирует такое же
             поведение в будущем.
+            <br><br>
+            <b>Свой набор:</b> по умолчанию матрица считается по 10 популярным
+            бумагам из разных секторов. Можно взять список из «Избранного»
+            или выбрать вручную — до 12 бумаг.
           </p>
         </div>
       </details>
@@ -366,6 +381,41 @@
 
       <div class="ticker-drawer-body" id="tickerDrawerBody">
         <div class="ticker-drawer-loading">Загрузка списка бумаг…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ШТОРКА ВЫБОРА НАБОРА КОРРЕЛЯЦИИ ===== -->
+  <div class="ticker-drawer-backdrop" id="correlationDrawer">
+    <div class="ticker-drawer">
+      <div class="ticker-drawer-header">
+        <div class="ticker-drawer-title-wrap">
+          <span class="ticker-drawer-title-icon">🔗</span>
+          <span class="ticker-drawer-title-text">Корреляция · выбрать бумаги</span>
+        </div>
+        <button class="ticker-drawer-close" id="closeCorrelationDrawer" title="Закрыть">✕</button>
+      </div>
+
+      <div class="ticker-drawer-search-wrap">
+        <input
+          type="search"
+          id="correlationSearch"
+          class="ticker-drawer-search"
+          placeholder="Поиск по тикеру или названию…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="ticker-drawer-body" id="correlationDrawerBody">
+        <div class="ticker-drawer-loading">Загрузка списка бумаг…</div>
+      </div>
+
+      <div class="correlation-drawer-footer">
+        <span id="correlationCounter" class="correlation-counter"></span>
+        <button id="correlationDone" class="btn" type="button">Готово</button>
       </div>
     </div>
   </div>
@@ -553,11 +603,11 @@
 
   <!-- ===== СКРИПТЫ ПРИЛОЖЕНИЯ ===== -->
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-  <script src="js/storage.js?v=10.1"></script>
-  <script src="js/indicators.js?v=10.1"></script>
-  <script src="js/correlation.js?v=10.1"></script>
-  <script src="js/backtest.js?v=10.1"></script>
-  <script src="js/optimizer.js?v=10.1"></script>
-  <script src="js/app.js?v=10.1"></script>
+  <script src="js/storage.js?v=10.2"></script>
+  <script src="js/indicators.js?v=10.2"></script>
+  <script src="js/correlation.js?v=10.2"></script>
+  <script src="js/backtest.js?v=10.2"></script>
+  <script src="js/optimizer.js?v=10.2"></script>
+  <script src="js/app.js?v=10.2"></script>
 </body>
 </html>
