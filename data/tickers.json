@@ -12,19 +12,19 @@
     {
       "ticker": "ABRD",
       "name": "АбрауДюрсо",
-      "sector": "Прочее",
+      "sector": "Ритейл",
       "lotSize": 10
     },
     {
       "ticker": "AFKS",
       "name": "Система ао",
-      "sector": "Прочее",
+      "sector": "Финансы",
       "lotSize": 100
     },
     {
       "ticker": "AFLT",
       "name": "Аэрофлот",
-      "sector": "Прочее",
+      "sector": "Транспорт",
       "lotSize": 10
     },
     {
@@ -360,7 +360,7 @@
     {
       "ticker": "BSPBP",
       "name": "БСП ап",
-      "sector": "Прочее",
+      "sector": "Финансы",
       "lotSize": 100
     },
     {
@@ -480,7 +480,7 @@
     {
       "ticker": "DVEC",
       "name": "ДЭК ао",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 1000
     },
     {
@@ -564,7 +564,7 @@
     {
       "ticker": "FESH",
       "name": "ДВМП ао",
-      "sector": "Прочее",
+      "sector": "Транспорт",
       "lotSize": 1
     },
     {
@@ -582,7 +582,7 @@
     {
       "ticker": "FLOT",
       "name": "Совкомфлот",
-      "sector": "Прочее",
+      "sector": "Транспорт",
       "lotSize": 10
     },
     {
@@ -918,13 +918,13 @@
     {
       "ticker": "KZOS",
       "name": "ОргСинт ао",
-      "sector": "Прочее",
+      "sector": "Химия",
       "lotSize": 10
     },
     {
       "ticker": "KZOSP",
       "name": "ОргСинт ап",
-      "sector": "Прочее",
+      "sector": "Химия",
       "lotSize": 10
     },
     {
@@ -984,7 +984,7 @@
     {
       "ticker": "LSNG",
       "name": "РСетиЛЭ",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 100
     },
     {
@@ -1116,7 +1116,7 @@
     {
       "ticker": "MRKK",
       "name": "Россети СК",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 10
     },
     {
@@ -1128,7 +1128,7 @@
     {
       "ticker": "MRKS",
       "name": "РсетСиб ао",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 1000
     },
     {
@@ -1146,7 +1146,7 @@
     {
       "ticker": "MRKY",
       "name": "РоссЮг ао",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 10000
     },
     {
@@ -1200,7 +1200,7 @@
     {
       "ticker": "MVID",
       "name": "М.видео",
-      "sector": "Прочее",
+      "sector": "Ритейл",
       "lotSize": 1
     },
     {
@@ -1230,7 +1230,7 @@
     {
       "ticker": "NKNC",
       "name": "НКНХ ао",
-      "sector": "Прочее",
+      "sector": "Химия",
       "lotSize": 10
     },
     {
@@ -1254,7 +1254,7 @@
     {
       "ticker": "NMTP",
       "name": "НМТП ао",
-      "sector": "Прочее",
+      "sector": "Транспорт",
       "lotSize": 100
     },
     {
@@ -1320,7 +1320,7 @@
     {
       "ticker": "OZON",
       "name": "Озон",
-      "sector": "IT",
+      "sector": "Ритейл",
       "lotSize": 1
     },
     {
@@ -1464,7 +1464,7 @@
     {
       "ticker": "RNFT",
       "name": "РуссНфт ао",
-      "sector": "Прочее",
+      "sector": "Нефть и газ",
       "lotSize": 1
     },
     {
@@ -2190,7 +2190,7 @@
     {
       "ticker": "SIBN",
       "name": "Газпрнефть",
-      "sector": "Прочее",
+      "sector": "Нефть и газ",
       "lotSize": 1
     },
     {
@@ -2364,7 +2364,7 @@
     {
       "ticker": "TGKB",
       "name": "ТГК-2",
-      "sector": "Прочее",
+      "sector": "Энергетика",
       "lotSize": 1000000
     },
     {
@@ -2526,7 +2526,7 @@
     {
       "ticker": "URKZ",
       "name": "УрКузница",
-      "sector": "Прочее",
+      "sector": "Металлургия",
       "lotSize": 1
     },
     {
@@ -2538,7 +2538,7 @@
     {
       "ticker": "UTAR",
       "name": "ЮТэйр ао",
-      "sector": "Прочее",
+      "sector": "Транспорт",
       "lotSize": 100
     },
     {
@@ -2658,7 +2658,7 @@
     {
       "ticker": "WUSH",
       "name": "iВУШХолднг",
-      "sector": "Ритейл",
+      "sector": "IT",
       "lotSize": 1
     },
     {
