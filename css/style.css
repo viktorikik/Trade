@@ -1,6 +1,6 @@
 /* ============================================================
    Trading Signals MVP — стили
-   Версия 10.1 · + заглушка «фундаментал не загружен»
+   Версия 10.2 · + управление набором корреляции
    ============================================================ */
 
 /* ============================================================
@@ -2030,4 +2030,173 @@ body.has-tabbar .tab-content-wrap {
   line-height: 1.55;
   max-width: 480px;
   margin: 0 auto;
+}
+
+/* ============================================================
+   26. УПРАВЛЕНИЕ НАБОРОМ КОРРЕЛЯЦИИ (Шаг 21, Итерация 5)
+   ============================================================ */
+
+/* ---------- Блок над матрицей: подсказка + три кнопки ---------- */
+
+.correlation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+}
+
+.correlation-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.correlation-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.corr-btn {
+  flex: 1 1 auto;
+  min-width: 130px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-badge);
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.corr-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+}
+.corr-btn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Заголовок шторки корреляции ---------- */
+
+.ticker-drawer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.ticker-drawer-title-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ticker-drawer-title-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Строки-чекбоксы в шторке ---------- */
+
+.corr-check-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 10px var(--space-lg) 10px calc(var(--space-lg) + 16px);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  border-left: 2px solid transparent;
+  user-select: none;
+}
+.corr-check-row:hover {
+  background: var(--card-hover);
+}
+.corr-check-row.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
+.corr-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+  margin: 0;
+}
+
+.corr-check-ticker {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.corr-check-name {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.corr-check-lot {
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Подсветка совпадения в поиске внутри шторки корреляции */
+.corr-check-row mark {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* ---------- Футер шторки: счётчик + кнопка «Готово» ---------- */
+
+.correlation-drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  flex-shrink: 0;
+}
+
+.correlation-counter {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.correlation-drawer-footer .btn {
+  min-width: 120px;
+  flex-shrink: 0;
+}
+.correlation-drawer-footer .btn:disabled {
+  background: var(--card-hover);
+  color: var(--text-muted);
+  opacity: 1;
+  cursor: not-allowed;
 }
