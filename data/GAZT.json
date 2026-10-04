@@ -1,0 +1,18 @@
+{
+  "ticker": "GAZT",
+  "name": "ГАЗ-Тек ао",
+  "lotSize": 10,
+  "candles": [
+    {
+      "time": "2023-11-30",
+      "open": 1739.0,
+      "high": 1739.0,
+      "low": 1739.0,
+      "close": 1739.0,
+      "volume": 10
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

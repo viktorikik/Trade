@@ -1,0 +1,50 @@
+{
+  "ticker": "RU000A1079J5",
+  "name": "ХеджФондД1",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-07-31",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 10
+    },
+    {
+      "time": "2026-08-12",
+      "open": 1080.0,
+      "high": 1080.0,
+      "low": 1080.0,
+      "close": 1080.0,
+      "volume": 1
+    },
+    {
+      "time": "2026-08-26",
+      "open": 1056.0,
+      "high": 1056.0,
+      "low": 1056.0,
+      "close": 1056.0,
+      "volume": 250
+    },
+    {
+      "time": "2026-09-28",
+      "open": 1070.0,
+      "high": 1103.0,
+      "low": 1070.0,
+      "close": 1103.0,
+      "volume": 11
+    },
+    {
+      "time": "2026-10-01",
+      "open": 1049.0,
+      "high": 1049.0,
+      "low": 1049.0,
+      "close": 1049.0,
+      "volume": 1
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

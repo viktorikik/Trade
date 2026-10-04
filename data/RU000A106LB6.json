@@ -1,0 +1,42 @@
+{
+  "ticker": "RU000A106LB6",
+  "name": "ВсеСзПортф",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-06-22",
+      "open": 1330.0,
+      "high": 1330.0,
+      "low": 1330.0,
+      "close": 1330.0,
+      "volume": 55
+    },
+    {
+      "time": "2026-07-02",
+      "open": 1270.0,
+      "high": 1270.0,
+      "low": 1270.0,
+      "close": 1270.0,
+      "volume": 1
+    },
+    {
+      "time": "2026-07-22",
+      "open": 1335.0,
+      "high": 1335.0,
+      "low": 1335.0,
+      "close": 1335.0,
+      "volume": 2
+    },
+    {
+      "time": "2026-07-30",
+      "open": 1275.0,
+      "high": 1275.0,
+      "low": 1275.0,
+      "close": 1275.0,
+      "volume": 1
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

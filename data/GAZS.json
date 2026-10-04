@@ -1,0 +1,18 @@
+{
+  "ticker": "GAZS",
+  "name": "ГАЗ-сервис",
+  "lotSize": 10,
+  "candles": [
+    {
+      "time": "2023-11-30",
+      "open": 839.0,
+      "high": 839.0,
+      "low": 839.0,
+      "close": 839.0,
+      "volume": 10
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

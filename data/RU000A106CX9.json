@@ -1,0 +1,34 @@
+{
+  "ticker": "RU000A106CX9",
+  "name": "ЗПИФА-ЮМ",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-08-27",
+      "open": 142760.0,
+      "high": 142760.0,
+      "low": 142760.0,
+      "close": 142760.0,
+      "volume": 2
+    },
+    {
+      "time": "2026-08-28",
+      "open": 142760.0,
+      "high": 142760.0,
+      "low": 142760.0,
+      "close": 142760.0,
+      "volume": 4
+    },
+    {
+      "time": "2026-08-31",
+      "open": 142760.0,
+      "high": 142760.0,
+      "low": 142760.0,
+      "close": 142760.0,
+      "volume": 4
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

@@ -1,0 +1,26 @@
+{
+  "ticker": "RU000A106SA3",
+  "name": "Телескоп А",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-06-29",
+      "open": 7160.0,
+      "high": 7160.0,
+      "low": 7160.0,
+      "close": 7160.0,
+      "volume": 10
+    },
+    {
+      "time": "2026-07-27",
+      "open": 7273.0,
+      "high": 7273.0,
+      "low": 7273.0,
+      "close": 7273.0,
+      "volume": 3
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

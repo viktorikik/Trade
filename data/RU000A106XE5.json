@@ -1,0 +1,18 @@
+{
+  "ticker": "RU000A106XE5",
+  "name": "Саммит",
+  "lotSize": 10000,
+  "candles": [
+    {
+      "time": "2026-08-13",
+      "open": 120.1,
+      "high": 120.1,
+      "low": 120.1,
+      "close": 120.1,
+      "volume": 10000
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

@@ -1,0 +1,34 @@
+{
+  "ticker": "RU000A105R70",
+  "name": "Аннапурна",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-07-14",
+      "open": 20400.0,
+      "high": 20400.0,
+      "low": 20400.0,
+      "close": 20400.0,
+      "volume": 7
+    },
+    {
+      "time": "2026-07-27",
+      "open": 20800.0,
+      "high": 20800.0,
+      "low": 20800.0,
+      "close": 20800.0,
+      "volume": 1
+    },
+    {
+      "time": "2026-08-28",
+      "open": 22900.0,
+      "high": 22900.0,
+      "low": 22900.0,
+      "close": 22900.0,
+      "volume": 1
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

@@ -1,0 +1,18 @@
+{
+  "ticker": "GAZC",
+  "name": "ГАЗКОН-ао",
+  "lotSize": 10,
+  "candles": [
+    {
+      "time": "2023-11-30",
+      "open": 659.0,
+      "high": 659.0,
+      "low": 659.0,
+      "close": 659.0,
+      "volume": 10
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

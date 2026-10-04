@@ -1,0 +1,26 @@
+{
+  "ticker": "RU000A106MG3",
+  "name": "ХеджФондД5",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-07-24",
+      "open": 1192.0,
+      "high": 1192.0,
+      "low": 1192.0,
+      "close": 1192.0,
+      "volume": 1
+    },
+    {
+      "time": "2026-08-12",
+      "open": 1302.0,
+      "high": 1302.0,
+      "low": 1302.0,
+      "close": 1302.0,
+      "volume": 4
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

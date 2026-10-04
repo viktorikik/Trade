@@ -1,0 +1,18 @@
+{
+  "ticker": "XFMAGR",
+  "name": "ФАлгоритм",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-06-29",
+      "open": 191000.0,
+      "high": 191000.0,
+      "low": 191000.0,
+      "close": 191000.0,
+      "volume": 21
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}
