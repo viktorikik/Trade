@@ -1,14 +1,25 @@
 """
 Скачивает дневные свечи с MOEX ISS для всех тикеров из data/tickers.json,
-дивиденды и фундаментал со Smart-Lab (пока только для SMARTLAB_TICKERS),
-макро-контекст (IMOEX, USD/RUB, ключевая ставка).
+дивиденды и фундаментал со Smart-Lab (умная ротация: 6 приоритетных + 25 из
+дневной группы), макро-контекст (IMOEX, USD/RUB, ключевая ставка).
 Сохраняет в data/{ticker}.json и data/macro.json.
 
 Список тикеров берётся из data/tickers.json (генерится fetch_metadata.py).
 Если файла нет — используем FALLBACK_TICKERS (6 бумаг).
 
-Дивиденды и фундаментал качаем только для SMARTLAB_TICKERS — Smart-Lab хрупкий,
-950 запросов подряд могут его забанить. Расширим позже.
+ДИВИДЕНДЫ И ФУНДАМЕНТАЛ — ПО УМНОЙ РОТАЦИИ:
+  — 6 приоритетных (SBER, GAZP, LKOH, GMKN, ROSN, NVTK) обновляются КАЖДЫЙ день.
+  — Остальные 469 бумаг разбиты на группы по 25 (~19 групп).
+  — Каждый прогон обрабатывается ОДНА группа.
+  — Порядок: сначала популярные (из SECTORS_OVERRIDE в fetch_metadata.py),
+    потом — все остальные по алфавиту.
+  — Указатель «где мы сейчас» хранится в data/smartlab-rotation.json.
+  — Полный цикл — ~19 дней. Потом начинается заново.
+
+ЗАЩИТА ОТ РЕГРЕССИИ:
+  Если тикер НЕ в текущей дневной группе — его dividends и fundamentals
+  берутся из старого JSON-файла, а не перезаписываются пустыми.
+  Так данные для тикеров, которые уже прошли ротацию, не теряются.
 
 Все запросы к MOEX ISS — с retry и уменьшенным timeout (15 сек).
 Если тикер не загрузился после 2 попыток — пропускаем его,
@@ -28,19 +39,23 @@ sys.path.insert(0, str(Path(__file__).parent))
 from fetch_dividends_smartlab import fetch_all as fetch_dividends_smartlab
 from fetch_fundamentals_smartlab import fetch_all as fetch_fundamentals_smartlab
 from fetch_macro import main as fetch_macro_main
+from fetch_metadata import SECTORS_OVERRIDE
 
 # ===== Конфигурация =====
 BOARD = "TQBR"
 START_DATE = "2023-01-01"
 OUTPUT_DIR = Path("data")
 TICKERS_FILE = OUTPUT_DIR / "tickers.json"
+ROTATION_STATE_FILE = OUTPUT_DIR / "smartlab-rotation.json"
 
 # Если tickers.json не найден или битый — берём эти тикеры.
 FALLBACK_TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
 
-# Дивиденды и фундаментал качаем только для этих тикеров.
-# Smart-Lab хрупкий — расширим, когда убедимся, что свечи работают стабильно.
-SMARTLAB_TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
+# Приоритетные бумаги — обновляем КАЖДЫЙ прогон.
+PRIORITY_TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
+
+# Размер дневной группы ротации (без приоритетных).
+ROTATION_GROUP_SIZE = 25
 
 COLUMNS = "TRADEDATE,OPEN,HIGH,LOW,CLOSE,VOLUME"
 
@@ -103,6 +118,99 @@ def load_tickers() -> list[str]:
     print(f"  Загружено {len(tickers)} тикеров из {TICKERS_FILE}", flush=True)
     return tickers
 
+
+# ============================================================
+# РОТАЦИЯ SMART-LAB
+# ============================================================
+
+def load_rotation_state() -> dict:
+    """Читает состояние ротации. Если файла нет — начальное состояние."""
+    if not ROTATION_STATE_FILE.exists():
+        return {"lastGroupIndex": -1, "totalGroups": 0}
+    try:
+        return json.loads(ROTATION_STATE_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"  rotation state error ({e}) — начинаем с нуля", file=sys.stderr, flush=True)
+        return {"lastGroupIndex": -1, "totalGroups": 0}
+
+
+def save_rotation_state(state: dict) -> None:
+    """Записывает состояние ротации в файл."""
+    ROTATION_STATE_FILE.write_text(
+        json.dumps(state, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def build_rotation_order(all_tickers: list[str]) -> list[str]:
+    """
+    Список тикеров в порядке обхода ротации.
+    Сначала — популярные (в порядке SECTORS_OVERRIDE), потом — остальные по алфавиту.
+    Приоритетные (PRIORITY_TICKERS) исключаются — они обновляются отдельно.
+    """
+    all_set = set(all_tickers)
+    priority_set = set(PRIORITY_TICKERS)
+    popular_set = set(SECTORS_OVERRIDE.keys())
+
+    # Популярные — в порядке, в котором они перечислены в SECTORS_OVERRIDE
+    popular_ordered = [
+        t for t in SECTORS_OVERRIDE.keys()
+        if t in all_set and t not in priority_set
+    ]
+
+    # Остальные — по алфавиту
+    rest = sorted([
+        t for t in all_tickers
+        if t not in popular_set and t not in priority_set
+    ])
+
+    return popular_ordered + rest
+
+
+def get_today_smartlab_batch(all_tickers: list[str]) -> tuple[list[str], dict]:
+    """
+    Определяет, какие тикеры качать сегодня.
+    Возвращает (batch, new_state) — batch без дублей, state для сохранения.
+    """
+    order = build_rotation_order(all_tickers)
+
+    if not order:
+        # Некуда ротировать — только приоритетные
+        return list(PRIORITY_TICKERS), {
+            "lastGroupIndex": -1,
+            "totalGroups": 0,
+            "groupSize": ROTATION_GROUP_SIZE,
+            "lastRunAt": date.today().isoformat(),
+            "totalTickersInRotation": 0,
+        }
+
+    total_groups = (len(order) + ROTATION_GROUP_SIZE - 1) // ROTATION_GROUP_SIZE
+    state = load_rotation_state()
+    last = state.get("lastGroupIndex", -1)
+
+    next_group = last + 1
+    if next_group >= total_groups:
+        # Цикл завершён — начинаем сначала
+        next_group = 0
+
+    start = next_group * ROTATION_GROUP_SIZE
+    end = start + ROTATION_GROUP_SIZE
+    batch = order[start:end]
+
+    new_state = {
+        "lastGroupIndex": next_group,
+        "totalGroups": total_groups,
+        "groupSize": ROTATION_GROUP_SIZE,
+        "lastRunAt": date.today().isoformat(),
+        "totalTickersInRotation": len(order),
+    }
+
+    return list(PRIORITY_TICKERS) + batch, new_state
+
+
+# ============================================================
+# MOEX ISS
+# ============================================================
 
 def _get_with_retry(session, url, params, label):
     """GET с retry. Возвращает Response или None."""
@@ -244,6 +352,10 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
     return df.to_dict(orient="records")
 
 
+# ============================================================
+# ГЛАВНОЕ
+# ============================================================
+
 def main() -> int:
     today = date.today()
     if not is_trading_day(today):
@@ -256,33 +368,55 @@ def main() -> int:
     tickers = load_tickers()
     total = len(tickers)
 
+    # ---------- Определение дневной группы Smart-Lab ----------
+    print("\n=== Определение дневной группы Smart-Lab ===", flush=True)
+    smartlab_batch, new_rotation_state = get_today_smartlab_batch(tickers)
+    rotation_tickers = [t for t in smartlab_batch if t not in PRIORITY_TICKERS]
+    print(
+        f"  Приоритетные: {len(PRIORITY_TICKERS)} ({', '.join(PRIORITY_TICKERS)})",
+        flush=True,
+    )
+    print(f"  Из ротации: {len(rotation_tickers)}", flush=True)
+    print(f"  Всего на сегодня: {len(smartlab_batch)}", flush=True)
+    if new_rotation_state["totalGroups"] > 0:
+        print(
+            f"  Группа {new_rotation_state['lastGroupIndex'] + 1} "
+            f"из {new_rotation_state['totalGroups']} "
+            f"(всего в ротации: {new_rotation_state['totalTickersInRotation']} бумаг)",
+            flush=True,
+        )
+
+    # ---------- Дивиденды ----------
     print("\n=== Загрузка дивидендов со Smart-Lab ===", flush=True)
-    print(f"  (только для {len(SMARTLAB_TICKERS)} тикеров: {', '.join(SMARTLAB_TICKERS)})", flush=True)
     try:
-        dividends_map = fetch_dividends_smartlab(SMARTLAB_TICKERS, START_DATE)
+        dividends_map = fetch_dividends_smartlab(smartlab_batch, START_DATE)
     except Exception as e:
         print(f"  [dividends] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
         dividends_map = {}
 
+    # ---------- Фундаментал ----------
     print("\n=== Загрузка фундаментала со Smart-Lab ===", flush=True)
     try:
-        fundamentals_map = fetch_fundamentals_smartlab(SMARTLAB_TICKERS)
+        fundamentals_map = fetch_fundamentals_smartlab(smartlab_batch)
     except Exception as e:
         print(f"  [fundamentals] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
         fundamentals_map = {}
 
+    # ---------- Макро ----------
     print("\n=== Загрузка макро-контекста ===", flush=True)
     try:
         fetch_macro_main()
     except Exception as e:
         print(f"  [macro] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
 
+    # ---------- Свечи ----------
     print(f"\n=== Загрузка свечей для {total} тикеров ===", flush=True)
-    print(f"  Оценка времени: ~15-30 минут\n", flush=True)
+    print(f"  Оценка времени: ~13-15 минут (включая ротацию)\n", flush=True)
 
     written = 0
     skipped = 0
     t_start = time.time()
+    batch_set = set(smartlab_batch)  # быстрый lookup
 
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
@@ -302,9 +436,33 @@ def main() -> int:
                 skipped += 1
                 continue
 
-            dividends = dividends_map.get(ticker, [])
+            out_path = OUTPUT_DIR / f"{ticker}.json"
+
+            # ---------- Загружаем СТАРЫЙ JSON для сохранения данных ----------
+            existing = {}
+            if out_path.exists():
+                try:
+                    existing = json.loads(out_path.read_text(encoding="utf-8"))
+                except Exception:
+                    existing = {}
+
+            # ---------- Дивиденды / фундаментал ----------
+            if ticker in batch_set:
+                # Этот тикер сегодня в дневной группе — обновляем
+                dividends = dividends_map.get(ticker, [])
+                fundamentals = fundamentals_map.get(ticker)
+
+                # Если парсер не отдал данные, но в старом JSON они были — сохраняем старые
+                if not dividends and existing.get("dividends"):
+                    dividends = existing["dividends"]
+                if fundamentals is None and existing.get("fundamentals"):
+                    fundamentals = existing["fundamentals"]
+            else:
+                # Не в дневной группе — сохраняем из старого JSON
+                dividends = existing.get("dividends", [])
+                fundamentals = existing.get("fundamentals")
+
             splits = SPLITS.get(ticker, [])
-            fundamentals = fundamentals_map.get(ticker)
 
             if not info.get("ok", True):
                 info = {"lotSize": 1, "name": ticker, "ok": False}
@@ -319,7 +477,6 @@ def main() -> int:
                 "fundamentals": fundamentals,
             }
 
-            out_path = OUTPUT_DIR / f"{ticker}.json"
             out_path.write_text(
                 json.dumps(payload, ensure_ascii=False, indent=2),
                 encoding="utf-8",
@@ -328,15 +485,21 @@ def main() -> int:
             written += 1
             dt_ticker = time.time() - t_ticker
 
-            fund_info = (
-                f"фундаментал: {len(fundamentals['metrics'])} метрик"
-                if fundamentals
-                else ""
-            )
-            tail = f" · {fund_info}" if fund_info else ""
+            # Короткий тег — что обновилось именно сегодня
+            tags = []
+            if ticker in PRIORITY_TICKERS:
+                tags.append("приоритет")
+            elif ticker in batch_set:
+                tags.append("ротация")
+            if fundamentals:
+                tags.append(f"фунд:{len(fundamentals.get('metrics', {}))}")
+            if dividends:
+                tags.append(f"див:{len(dividends)}")
+            tag_str = f" [{' · '.join(tags)}]" if tags else ""
+
             print(
                 f"[{i}/{total}] [{ticker}] ✓ {info['name']} · "
-                f"{len(candles)} баров · {dt_ticker:.1f}с{tail}",
+                f"{len(candles)} баров · {dt_ticker:.1f}с{tag_str}",
                 flush=True,
             )
 
@@ -351,6 +514,18 @@ def main() -> int:
                     f"прошло: {elapsed/60:.1f} мин, осталось ~{remaining/60:.1f} мин)\n",
                     flush=True,
                 )
+
+    # ---------- Сохраняем состояние ротации ----------
+    try:
+        save_rotation_state(new_rotation_state)
+        print(
+            f"\n=== Ротация сохранена: "
+            f"группа {new_rotation_state['lastGroupIndex'] + 1} "
+            f"из {new_rotation_state['totalGroups']} → {ROTATION_STATE_FILE}",
+            flush=True,
+        )
+    except Exception as e:
+        print(f"  [rotation] ошибка сохранения: {e}", file=sys.stderr, flush=True)
 
     elapsed_total = time.time() - t_start
     print(
