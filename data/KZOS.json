@@ -7644,7 +7644,106 @@
       "volume": 16920
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-07-07",
+      "amount": 9.1
+    },
+    {
+      "date": "2023-07-07",
+      "amount": 0.25
+    },
+    {
+      "date": "2024-07-08",
+      "amount": 6.22
+    },
+    {
+      "date": "2024-07-08",
+      "amount": 0.25
+    },
+    {
+      "date": "2025-07-09",
+      "amount": 4.15
+    },
+    {
+      "date": "2025-07-09",
+      "amount": 0.25
+    },
+    {
+      "date": "2026-06-26",
+      "amount": 2.85
+    },
+    {
+      "date": "2026-06-26",
+      "amount": 0.25
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 32.7,
+      "roe": 1.8,
+      "roa": 1.1,
+      "eps": 1.43,
+      "divYield": 6.2,
+      "netProfitBln": 2.55,
+      "capitalizationBln": 83.6
+    },
+    "history": [
+      {
+        "year": "2021",
+        "eps": 0.0,
+        "divYield": 10.1,
+        "capitalizationBln": 175.6
+      },
+      {
+        "year": "2022",
+        "eps": 0.0,
+        "divYield": 10.9,
+        "capitalizationBln": 151.1
+      },
+      {
+        "year": "2023",
+        "pe": 12.1,
+        "roe": 11.0,
+        "roa": 9.5,
+        "eps": 8.9,
+        "divYield": 5.9,
+        "netProfitBln": 15.9,
+        "capitalizationBln": 192.9
+      },
+      {
+        "year": "2024",
+        "pe": 13.6,
+        "roe": 7.5,
+        "roa": 5.8,
+        "eps": 5.94,
+        "divYield": 5.2,
+        "netProfitBln": 10.6,
+        "capitalizationBln": 144.4
+      },
+      {
+        "year": "2025",
+        "pe": 16.5,
+        "roe": 5.1,
+        "roa": 3.4,
+        "eps": 4.09,
+        "divYield": 4.3,
+        "netProfitBln": 7.3,
+        "capitalizationBln": 120.8
+      },
+      {
+        "year": "LTM",
+        "pe": 32.7,
+        "roe": 1.8,
+        "roa": 1.1,
+        "eps": 1.43,
+        "divYield": 6.2,
+        "netProfitBln": 2.55,
+        "capitalizationBln": 83.6
+      }
+    ]
+  }
 }

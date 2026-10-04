@@ -4484,7 +4484,102 @@
       "volume": 272489
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2024-09-19",
+      "amount": 80.0
+    },
+    {
+      "date": "2025-04-25",
+      "amount": 80.0
+    },
+    {
+      "date": "2025-09-26",
+      "amount": 80.0
+    },
+    {
+      "date": "2026-04-24",
+      "amount": 110.0
+    },
+    {
+      "date": "2026-09-18",
+      "amount": 110.0
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 7.89,
+      "roe": 44.4,
+      "roa": 12.1,
+      "eps": 457.0,
+      "divYield": 6.1,
+      "netProfitBln": 180.5,
+      "capitalizationBln": 1424.0
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 204.3,
+        "roe": 3.1,
+        "roa": 1.6,
+        "eps": 22.0,
+        "divYield": 0.0,
+        "netProfitBln": 8.01,
+        "capitalizationBln": 1636.0
+      },
+      {
+        "year": "2022",
+        "pe": 60.9,
+        "roe": 3.4,
+        "roa": 1.7,
+        "eps": 29.8,
+        "divYield": 0.0,
+        "netProfitBln": 10.8,
+        "capitalizationBln": 655.7
+      },
+      {
+        "year": "2023",
+        "pe": 17.6,
+        "roe": 17.6,
+        "roa": 7.0,
+        "eps": 144.1,
+        "divYield": 0.0,
+        "netProfitBln": 52.1,
+        "capitalizationBln": 918.9
+      },
+      {
+        "year": "2024",
+        "pe": 15.4,
+        "roe": 34.3,
+        "roa": 9.2,
+        "eps": 258.4,
+        "divYield": 4.0,
+        "netProfitBln": 100.9,
+        "capitalizationBln": 1554.0
+      },
+      {
+        "year": "2025",
+        "pe": 12.8,
+        "roe": 40.3,
+        "roa": 10.3,
+        "eps": 358.0,
+        "divYield": 4.1,
+        "netProfitBln": 141.4,
+        "capitalizationBln": 1810.0
+      },
+      {
+        "year": "LTM",
+        "pe": 7.89,
+        "roe": 44.4,
+        "roa": 12.1,
+        "eps": 457.0,
+        "divYield": 6.1,
+        "netProfitBln": 180.5,
+        "capitalizationBln": 1424.0
+      }
+    ]
+  }
 }

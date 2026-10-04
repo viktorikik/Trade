@@ -1,7 +1,7 @@
 {
   "ticker": "GAZS",
-  "name": "GAZS",
-  "lotSize": 1,
+  "name": "ГАЗ-сервис",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-11-30",
