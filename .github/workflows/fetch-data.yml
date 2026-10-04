@@ -2,13 +2,9 @@ name: Fetch MOEX data
 
 on:
   schedule:
-    # Будни: утренняя (06:50–09:00), основная (09:00–19:00)
-    # и вечерняя (19:00–23:50) сессии МСК = 03:50–20:50 UTC
-    - cron: '*/15 3-20 * * 1-5'
-
-    # Выходные: дополнительная сессия выходного дня (ДСВД)
-    # 09:50–19:00 МСК = 06:50–16:00 UTC
-    - cron: '*/15 6-15 * * 6,0'
+    # Раз в сутки: 23:00 UTC = 06:00 Новосибирск (UTC+7)
+    # До открытия основной сессии МСК
+    - cron: '0 23 * * *'
 
   # Ручной запуск из вкладки Actions
   workflow_dispatch:
@@ -16,6 +12,7 @@ on:
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     permissions:
       contents: write
@@ -38,7 +35,7 @@ jobs:
       - name: Fetch metadata (tickers.json)
         run: python scripts/fetch_metadata.py
 
-      - name: Fetch MOEX data
+      - name: Fetch MOEX data (all tickers)
         run: python scripts/fetch_moex.py
 
       - name: Commit and push if changed
