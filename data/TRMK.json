@@ -7644,7 +7644,20 @@
       "volume": 222670
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-01-27",
+      "amount": 6.78
+    },
+    {
+      "date": "2023-09-04",
+      "amount": 13.45
+    },
+    {
+      "date": "2024-06-03",
+      "amount": 9.51
+    }
+  ],
   "splits": [],
   "fundamentals": null
 }

@@ -7644,7 +7644,98 @@
       "volume": 93190500
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-05-26",
+      "amount": 0.2837
+    },
+    {
+      "date": "2024-05-31",
+      "amount": 0.326
+    },
+    {
+      "date": "2025-06-06",
+      "amount": 0.3538
+    },
+    {
+      "date": "2026-06-08",
+      "amount": 0.3214
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 2.12,
+      "roe": 9.9,
+      "roa": 7.4,
+      "eps": 1.11,
+      "divYield": 13.7,
+      "netProfitBln": 115.9,
+      "capitalizationBln": 245.2
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 4.55,
+        "roe": 14.5,
+        "roa": 10.4,
+        "eps": 0.94,
+        "divYield": 5.5,
+        "netProfitBln": 98.2,
+        "capitalizationBln": 446.9
+      },
+      {
+        "year": "2022",
+        "pe": 3.02,
+        "roe": 14.8,
+        "roa": 10.5,
+        "eps": 1.13,
+        "divYield": 8.3,
+        "netProfitBln": 117.5,
+        "capitalizationBln": 355.0
+      },
+      {
+        "year": "2023",
+        "pe": 3.03,
+        "roe": 14.9,
+        "roa": 10.5,
+        "eps": 1.3,
+        "divYield": 8.3,
+        "netProfitBln": 135.9,
+        "capitalizationBln": 412.1
+      },
+      {
+        "year": "2024",
+        "pe": 2.69,
+        "roe": 14.1,
+        "roa": 9.9,
+        "eps": 1.38,
+        "divYield": 9.5,
+        "netProfitBln": 144.2,
+        "capitalizationBln": 388.3
+      },
+      {
+        "year": "2025",
+        "pe": 2.48,
+        "roe": 11.7,
+        "roa": 8.3,
+        "eps": 1.25,
+        "divYield": 10.3,
+        "netProfitBln": 131.0,
+        "capitalizationBln": 324.9
+      },
+      {
+        "year": "LTM",
+        "pe": 2.12,
+        "roe": 9.9,
+        "roa": 7.4,
+        "eps": 1.11,
+        "divYield": 13.7,
+        "netProfitBln": 115.9,
+        "capitalizationBln": 245.2
+      }
+    ]
+  }
 }

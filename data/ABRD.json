@@ -7644,7 +7644,102 @@
       "volume": 8810
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-07-13",
+      "amount": 0.19
+    },
+    {
+      "date": "2023-07-13",
+      "amount": 6.14
+    },
+    {
+      "date": "2024-07-16",
+      "amount": 3.27
+    },
+    {
+      "date": "2025-07-04",
+      "amount": 5.01
+    },
+    {
+      "date": "2026-07-06",
+      "amount": 5.24
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 8.71,
+      "roe": 9.6,
+      "roa": 4.6,
+      "eps": 13.1,
+      "divYield": 4.6,
+      "netProfitBln": 1.28,
+      "capitalizationBln": 11.2
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 14.0,
+        "roe": 12.0,
+        "roa": 6.2,
+        "eps": 13.8,
+        "divYield": 1.8,
+        "netProfitBln": 1.35,
+        "capitalizationBln": 18.9
+      },
+      {
+        "year": "2022",
+        "pe": 10.7,
+        "roe": 13.9,
+        "roa": 7.1,
+        "eps": 17.9,
+        "divYield": 0.1,
+        "netProfitBln": 1.75,
+        "capitalizationBln": 18.7
+      },
+      {
+        "year": "2023",
+        "pe": 20.2,
+        "roe": 9.6,
+        "roa": 4.6,
+        "eps": 13.1,
+        "divYield": 3.6,
+        "netProfitBln": 1.28,
+        "capitalizationBln": 25.9
+      },
+      {
+        "year": "2024",
+        "pe": 10.1,
+        "roe": 10.5,
+        "roa": 5.5,
+        "eps": 17.3,
+        "divYield": 2.9,
+        "netProfitBln": 1.88,
+        "capitalizationBln": 18.9
+      },
+      {
+        "year": "2025",
+        "pe": 9.16,
+        "roe": 10.1,
+        "roa": 5.5,
+        "eps": 18.0,
+        "divYield": 3.2,
+        "netProfitBln": 1.96,
+        "capitalizationBln": 17.9
+      },
+      {
+        "year": "LTM",
+        "pe": 8.71,
+        "roe": 9.6,
+        "roa": 4.6,
+        "eps": 13.1,
+        "divYield": 4.6,
+        "netProfitBln": 1.28,
+        "capitalizationBln": 11.2
+      }
+    ]
+  }
 }
