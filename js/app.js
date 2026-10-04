@@ -493,7 +493,38 @@ function renderFundamentalSection(payload) {
 
   const analysis = analyzeFundamentals(payload);
   if (!analysis) {
-    section.style.display = 'none';
+    // Фундаментал ещё не загружен (идёт умная ротация Smart-Lab).
+    // Не скрываем секцию, а показываем понятную заглушку — иначе кажется,
+    // что что-то сломалось.
+    const ticker = payload.ticker || 'этой бумаги';
+
+    const asOfEl = document.getElementById('fundamentalAsOf');
+    if (asOfEl) asOfEl.textContent = '';
+
+    const vEl = document.getElementById('fundamentalVerdict');
+    if (vEl) {
+      vEl.className = 'fundamental-verdict-box';
+      vEl.innerHTML = '';
+    }
+
+    const metricsEl = document.getElementById('fundamentalMetrics');
+    if (metricsEl) {
+      metricsEl.innerHTML = `
+        <div class="fundamental-stub">
+          <div class="fundamental-stub-icon">📊</div>
+          <div class="fundamental-stub-title">Фундаментал для ${ticker} пока не загружен</div>
+          <div class="fundamental-stub-text">
+            Он появится в ближайшее время — по мере обновления данных со Smart-Lab.
+            Мы тянем показатели постепенно, чтобы не перегружать источник.
+          </div>
+        </div>
+      `;
+    }
+
+    const histWrap = document.querySelector('.fundamental-history-wrap');
+    if (histWrap) histWrap.style.display = 'none';
+
+    section.style.display = 'block';
     return;
   }
 
