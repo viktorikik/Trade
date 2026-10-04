@@ -402,10 +402,19 @@ async function renderCorrelation() {
 
     __debug.start('corr.render');
     renderCorrelationSection(result);
+
+    // Оценка диверсификации — считаем после отрисовки матрицы
+    const sectorLookup = (t) => {
+      const info = tickerByCode.get(t);
+      return info ? info.sector : null;
+    };
+    const diversification = scoreDiversification(result, sectorLookup);
+    renderDiversification(diversification);
     __debug.end('corr.render');
   } catch (err) {
     console.warn('[correlation] ошибка:', err);
     section.style.display = 'none';
+    renderDiversification(null);
   }
 }
 
@@ -2192,3 +2201,68 @@ function applyCorrelationDrawer() {
   // Подсказка над матрицей — при первой загрузке
   updateCorrelationSourceHint();
 })();
+
+// ============================================================
+// 17. ОЦЕНКА ДИВЕРСИФИКАЦИИ (Шаг 21, Итерация 6)
+// ============================================================
+// Рисует блок с баллом 0..10 и подсказками. Саму оценку считает
+// функция scoreDiversification() в js/correlation.js — здесь только
+// отрисовка.
+
+function renderDiversification(diversification) {
+  const el = document.getElementById('diversificationBlock');
+  if (!el) return;
+
+  // Оценки нет — скрываем блок
+  if (!diversification) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    return;
+  }
+
+  // Недостаточно бумаг (меньше 5) — показываем подсказку
+  if (diversification.insufficient) {
+    el.style.display = 'block';
+    el.className = 'diversification-block diversification-insufficient';
+    el.innerHTML = `
+      <div class="div-header">
+        <span class="div-icon">🎯</span>
+        <span class="div-title">Оценка диверсификации</span>
+      </div>
+      <div class="div-text">
+        Возьми минимум 5 бумаг, чтобы оценить диверсификацию.
+        Сейчас в наборе ${diversification.count}.
+      </div>
+    `;
+    return;
+  }
+
+  const d = diversification;
+  const scoreCls = d.levelCls; // good / neutral / bad
+  // Заполненность полосы-индикатора в процентах
+  const barPct = Math.max(0, Math.min(100, d.score * 10));
+
+  const warningsHtml = (d.warnings && d.warnings.length > 0)
+    ? `<ul class="div-warnings">${d.warnings.map(w => `<li>${w}</li>`).join('')}</ul>`
+    : '';
+
+  el.style.display = 'block';
+  el.className = 'diversification-block';
+  el.innerHTML = `
+    <div class="div-header">
+      <span class="div-icon">🎯</span>
+      <span class="div-title">Диверсификация:</span>
+      <span class="div-score div-score-${scoreCls}">${d.score} / 10</span>
+      <span class="div-level div-level-${scoreCls}">${d.level}</span>
+    </div>
+    <div class="div-bar">
+      <div class="div-bar-fill div-bar-${scoreCls}" style="width: ${barPct}%"></div>
+    </div>
+    <div class="div-stats">
+      Средняя корреляция <b>${d.avgCorr.toFixed(2)}</b>
+      · эффективных бумаг <b>${d.nEff.toFixed(1)}</b> из ${d.paperCount}
+      · секторов <b>${d.uniqueSectors}</b>
+    </div>
+    ${warningsHtml}
+  `;
+}
