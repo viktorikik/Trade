@@ -1,14 +1,14 @@
 // sw.js — Service Worker для офлайн-режима и PWA
 // Версия кэша: меняй при каждом деплое фронтенда, чтобы старые файлы сбросились.
 // Стратегия: сеть в первую очередь, кэш как fallback (для офлайна).
-const CACHE_NAME = 'trading-signals-v10';
+const CACHE_NAME = 'trading-signals-v11';
 
 // Файлы, которые кэшируем сразу при установке (для офлайн-режима).
 // Если что-то не скачается — установка не сломается из-за catch ниже.
 const PRECACHE = [
   './',
   './index.html',
-  './notes.html',
+  './portfolio.html',
   './manifest.json',
   './css/style.css',
   './js/storage.js',
@@ -17,6 +17,7 @@ const PRECACHE = [
   './js/backtest.js',
   './js/optimizer.js',
   './js/app.js',
+  './js/portfolio.js',
 ];
 
 self.addEventListener('install', (event) => {
