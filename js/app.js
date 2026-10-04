@@ -1354,7 +1354,10 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
 // ============================================================
 
 document.getElementById('reload').addEventListener('click', render);
-document.getElementById('ticker').addEventListener('change', render);
+document.getElementById('ticker').addEventListener('change', () => {
+  updateTickerLabel();
+  render();
+});
 document.getElementById('strategy').addEventListener('change', () => {
   renderStrategyParams();
   document.getElementById('optimizerSection').style.display = 'none';
@@ -1365,10 +1368,14 @@ document.getElementById('useCorpSplits').addEventListener('change', render);
 document.getElementById('useCorpDividends').addEventListener('change', render);
 document.getElementById('riskPct').addEventListener('change', render);
 
+// Запоминаем тикер из URL — понадобится после populateSelectOptions()
+let _pendingTickerFromUrl = null;
+
 (function initFromUrl() {
   const p = new URLSearchParams(window.location.search);
   const t = p.get('ticker');
   if (!t) return;
+  _pendingTickerFromUrl = t;
   const select = document.getElementById('ticker');
   const exists = Array.from(select.options).some(o => o.value === t);
   if (exists) select.value = t;
@@ -1377,6 +1384,7 @@ document.getElementById('riskPct').addEventListener('change', render);
 renderStrategyParams();
 updateNotesBadge();
 resizeCharts();
+updateTickerLabel();
 render();
 
 // ============================================================
@@ -1433,4 +1441,354 @@ render();
       }
     });
   });
+})();
+
+// ============================================================
+// 15. ШТОРКА ВЫБОРА БУМАГ (Шаг 21, Итерация 3)
+// ============================================================
+// Загружает data/tickers.json (475 акций), показывает шторку снизу
+// с поиском, «Недавними» и группами по отраслям. При выборе бумаги
+// обновляет скрытый <select id="ticker"> и вызывает render().
+
+const TICKERS_INDEX_URL = './data/tickers.json';
+const RECENT_KEY = 'trading-signals-recent-tickers';
+const DRAWER_SECTIONS_KEY = 'trading-signals-drawer-sections';
+const RECENT_MAX = 8;
+
+let tickersIndex = null;               // { updatedAt, board, count, tickers: [...] }
+const tickerByCode = new Map();        // ticker -> { ticker, name, sector, lotSize }
+const sectionsBySector = new Map();    // sector -> [{ ticker, name, lotSize }]
+let recentTickers = [];                // ["SBER", "GAZP", ...]
+
+// Порядок отраслей в шторке: сверху — самые популярные.
+const SECTOR_ORDER = [
+  'Нефть и газ',
+  'Финансы',
+  'Металлургия',
+  'Ритейл',
+  'IT',
+  'Энергетика',
+  'Телеком',
+  'Химия',
+  'Транспорт',
+  'Прочее',
+];
+
+// ---------- Загрузка индекса ----------
+
+async function loadTickersIndex() {
+  if (tickersIndex) return tickersIndex;
+  const resp = await fetch(TICKERS_INDEX_URL);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const data = await resp.json();
+  if (!Array.isArray(data.tickers)) throw new Error('Нет поля tickers');
+
+  tickersIndex = data;
+  tickerByCode.clear();
+  sectionsBySector.clear();
+
+  for (const t of data.tickers) {
+    tickerByCode.set(t.ticker, t);
+    if (!sectionsBySector.has(t.sector)) sectionsBySector.set(t.sector, []);
+    sectionsBySector.get(t.sector).push(t);
+  }
+
+  // Сортируем бумаги внутри каждой секции по алфавиту тикера
+  for (const list of sectionsBySector.values()) {
+    list.sort((a, b) => a.ticker.localeCompare(b.ticker));
+  }
+
+  return tickersIndex;
+}
+
+function populateSelectOptions() {
+  const select = document.getElementById('ticker');
+  if (!select || !tickersIndex) return;
+
+  const current = select.value;
+  select.innerHTML = '';
+  for (const t of tickersIndex.tickers) {
+    const opt = document.createElement('option');
+    opt.value = t.ticker;
+    opt.textContent = t.ticker;
+    select.appendChild(opt);
+  }
+
+  // Приоритет: URL-параметр → текущее значение → первая бумага
+  if (_pendingTickerFromUrl && tickerByCode.has(_pendingTickerFromUrl)) {
+    select.value = _pendingTickerFromUrl;
+    _pendingTickerFromUrl = null;
+  } else if (current && tickerByCode.has(current)) {
+    select.value = current;
+  } else if (tickersIndex.tickers.length > 0) {
+    select.value = tickersIndex.tickers[0].ticker;
+  }
+}
+
+function updateTickerLabel() {
+  const el = document.getElementById('currentTickerLabel');
+  const select = document.getElementById('ticker');
+  if (el && select) el.textContent = select.value || 'SBER';
+}
+
+// ---------- Недавние ----------
+
+function loadRecentTickers() {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter(t => typeof t === 'string') : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveRecentTickers() {
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recentTickers));
+  } catch (e) { /* приватный режим */ }
+}
+
+function addToRecent(ticker) {
+  recentTickers = [ticker, ...recentTickers.filter(t => t !== ticker)].slice(0, RECENT_MAX);
+  saveRecentTickers();
+}
+
+// ---------- HTML-эскейпинг ----------
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function highlight(text, query) {
+  if (!query) return escapeHtml(text);
+  const safeText = escapeHtml(text);
+  const safeQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(${safeQuery})`, 'gi');
+  return safeText.replace(re, '<mark>$1</mark>');
+}
+
+function tickerRowHtml(t, query) {
+  const select = document.getElementById('ticker');
+  const isActive = select && select.value === t.ticker;
+  return `
+    <div class="ticker-row${isActive ? ' active' : ''}" data-ticker="${escapeHtml(t.ticker)}">
+      <div class="ticker-row-ticker">${highlight(t.ticker, query)}</div>
+      <div class="ticker-row-name">${highlight(t.name || '', query)}</div>
+      <div class="ticker-row-lot">${t.lotSize} акц.</div>
+    </div>
+  `;
+}
+
+// ---------- Рендер шторки ----------
+
+function renderTickerDrawer(query = '') {
+  const body = document.getElementById('tickerDrawerBody');
+  if (!body) return;
+
+  if (!tickersIndex) {
+    body.innerHTML = '<div class="ticker-drawer-loading">Загрузка списка бумаг…</div>';
+    return;
+  }
+
+  const q = query.trim().toLowerCase();
+
+  // --- Режим поиска ---
+  if (q) {
+    const matches = tickersIndex.tickers.filter(t =>
+      t.ticker.toLowerCase().includes(q) ||
+      (t.name && t.name.toLowerCase().includes(q))
+    );
+
+    if (matches.length === 0) {
+      body.innerHTML = `<div class="ticker-empty">Ничего не найдено по запросу «${escapeHtml(query)}»</div>`;
+      return;
+    }
+
+    const rows = matches.slice(0, 100).map(t => tickerRowHtml(t, query)).join('');
+    body.innerHTML = `
+      <div class="ticker-recent-title">Найдено: ${matches.length}${matches.length > 100 ? ' (показаны первые 100)' : ''}</div>
+      ${rows}
+    `;
+    bindTickerDrawerEvents(body);
+    return;
+  }
+
+  // --- Обычный режим: недавние + секции ---
+  const parts = [];
+
+  // Недавние
+  const recentValid = recentTickers.filter(t => tickerByCode.has(t));
+  if (recentValid.length > 0) {
+    parts.push('<div class="ticker-recent-title">Недавние</div>');
+    for (const tick of recentValid) {
+      parts.push(tickerRowHtml(tickerByCode.get(tick), ''));
+    }
+  }
+
+  // Секции по отраслям
+  const savedSections = loadDrawerSections();
+  const sectors = SECTOR_ORDER.filter(s => sectionsBySector.has(s));
+  for (const s of sectionsBySector.keys()) {
+    if (!sectors.includes(s)) sectors.push(s);
+  }
+
+  for (const sector of sectors) {
+    const list = sectionsBySector.get(sector) || [];
+    if (list.length === 0) continue;
+    const isOpen = savedSections[sector] === true;
+    const rows = list.map(t => tickerRowHtml(t, '')).join('');
+    parts.push(`
+      <div class="ticker-section${isOpen ? ' open' : ''}" data-sector="${escapeHtml(sector)}">
+        <button class="ticker-section-header" type="button">
+          <span class="ticker-section-arrow">▸</span>
+          <span>${escapeHtml(sector)}</span>
+          <span class="ticker-section-count">${list.length}</span>
+        </button>
+        <div class="ticker-section-body">${rows}</div>
+      </div>
+    `);
+  }
+
+  body.innerHTML = parts.join('');
+  bindTickerDrawerEvents(body);
+}
+
+function bindTickerDrawerEvents(body) {
+  body.querySelectorAll('.ticker-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectTicker(row.dataset.ticker);
+    });
+  });
+
+  body.querySelectorAll('.ticker-section-header').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const section = btn.closest('.ticker-section');
+      if (!section) return;
+      section.classList.toggle('open');
+      const saved = loadDrawerSections();
+      saved[section.dataset.sector] = section.classList.contains('open');
+      saveDrawerSections(saved);
+    });
+  });
+}
+
+// ---------- Сохранение открытых секций ----------
+
+function loadDrawerSections() {
+  try {
+    const raw = localStorage.getItem(DRAWER_SECTIONS_KEY);
+    if (!raw) return {};
+    const obj = JSON.parse(raw);
+    return (obj && typeof obj === 'object') ? obj : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveDrawerSections(obj) {
+  try {
+    localStorage.setItem(DRAWER_SECTIONS_KEY, JSON.stringify(obj));
+  } catch (e) { /* приватный режим */ }
+}
+
+// ---------- Открытие / закрытие ----------
+
+async function openTickerDrawer() {
+  const drawer = document.getElementById('tickerDrawer');
+  const body = document.getElementById('tickerDrawerBody');
+  if (!drawer) return;
+
+  drawer.classList.add('show');
+
+  // Ленивая загрузка индекса при первом открытии
+  if (!tickersIndex) {
+    if (body) body.innerHTML = '<div class="ticker-drawer-loading">Загрузка списка бумаг…</div>';
+    try {
+      await loadTickersIndex();
+      populateSelectOptions();
+      updateTickerLabel();
+    } catch (err) {
+      console.error('[drawer] не удалось загрузить tickers.json:', err);
+      if (body) {
+        body.innerHTML = `<div class="ticker-empty">Не удалось загрузить список бумаг.<br>${escapeHtml(err.message)}</div>`;
+      }
+      return;
+    }
+  }
+
+  const search = document.getElementById('tickerSearch');
+  if (search) search.value = '';
+  renderTickerDrawer('');
+}
+
+function closeTickerDrawer() {
+  const drawer = document.getElementById('tickerDrawer');
+  if (drawer) drawer.classList.remove('show');
+}
+
+// ---------- Выбор тикера ----------
+
+function selectTicker(ticker) {
+  if (!ticker) return;
+  const select = document.getElementById('ticker');
+  if (!select) return;
+
+  if (!tickerByCode.has(ticker)) {
+    console.warn('[drawer] неизвестный тикер:', ticker);
+    return;
+  }
+
+  select.value = ticker;
+  updateTickerLabel();
+  addToRecent(ticker);
+  closeTickerDrawer();
+  render();
+}
+
+// ---------- Обработчики ----------
+
+(function initTickerDrawer() {
+  const drawer = document.getElementById('tickerDrawer');
+  const openBtn = document.getElementById('openTickerDrawer');
+  const closeBtn = document.getElementById('closeTickerDrawer');
+  const searchInput = document.getElementById('tickerSearch');
+  if (!drawer || !openBtn) return;
+
+  recentTickers = loadRecentTickers();
+
+  openBtn.addEventListener('click', () => {
+    openTickerDrawer();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => closeTickerDrawer());
+  }
+
+  // Клик по затемнению (не по самой шторке) — закрыть
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer) closeTickerDrawer();
+  });
+
+  // Escape — закрыть
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('show')) {
+      closeTickerDrawer();
+    }
+  });
+
+  // Поиск
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      renderTickerDrawer(e.target.value);
+    });
+  }
 })();
