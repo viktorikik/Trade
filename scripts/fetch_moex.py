@@ -1,7 +1,14 @@
 """
-Скачивает дневные свечи с MOEX ISS, дивиденды и фундаментал со Smart-Lab,
+Скачивает дневные свечи с MOEX ISS для всех тикеров из data/tickers.json,
+дивиденды и фундаментал со Smart-Lab (пока только для SMARTLAB_TICKERS),
 макро-контекст (IMOEX, USD/RUB, ключевая ставка).
 Сохраняет в data/{ticker}.json и data/macro.json.
+
+Список тикеров берётся из data/tickers.json (генерится fetch_metadata.py).
+Если файла нет — используем FALLBACK_TICKERS (6 бумаг).
+
+Дивиденды и фундаментал качаем только для SMARTLAB_TICKERS — Smart-Lab хрупкий,
+950 запросов подряд могут его забанить. Расширим позже.
 
 Все запросы к MOEX ISS — с retry и уменьшенным timeout (15 сек).
 Если тикер не загрузился после 2 попыток — пропускаем его,
@@ -23,10 +30,17 @@ from fetch_fundamentals_smartlab import fetch_all as fetch_fundamentals_smartlab
 from fetch_macro import main as fetch_macro_main
 
 # ===== Конфигурация =====
-TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
 BOARD = "TQBR"
 START_DATE = "2023-01-01"
 OUTPUT_DIR = Path("data")
+TICKERS_FILE = OUTPUT_DIR / "tickers.json"
+
+# Если tickers.json не найден или битый — берём эти тикеры.
+FALLBACK_TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
+
+# Дивиденды и фундаментал качаем только для этих тикеров.
+# Smart-Lab хрупкий — расширим, когда убедимся, что свечи работают стабильно.
+SMARTLAB_TICKERS = ["SBER", "GAZP", "LKOH", "GMKN", "ROSN", "NVTK"]
 
 COLUMNS = "TRADEDATE,OPEN,HIGH,LOW,CLOSE,VOLUME"
 
@@ -39,11 +53,11 @@ ISS_HISTORY = f"{ISS_BASE}/history/engines/stock/markets/shares/boards"
 ISS_SECURITIES = f"{ISS_BASE}/engines/stock/markets/shares/boards"
 
 # Таймауты и retry
-REQUEST_TIMEOUT = 15          # секунд на один запрос
-RETRY_ATTEMPTS = 2            # всего попыток (1 изначальная + 1 повторная)
-RETRY_DELAY = 3               # пауза между попытками
+REQUEST_TIMEOUT = 15
+RETRY_ATTEMPTS = 2
+RETRY_DELAY = 3
 
-# ===== Сплиты (дробления акций) =====
+# Сплиты (дробления акций)
 SPLITS = {
     "GMKN": [
         {"date": "2024-04-04", "ratio": 100},
@@ -55,11 +69,43 @@ def is_trading_day(d: date) -> bool:
     return (d.month, d.day) not in MARKET_HOLIDAYS
 
 
+def load_tickers() -> list[str]:
+    """Читает тикеры из data/tickers.json. При отсутствии/ошибке — fallback."""
+    if not TICKERS_FILE.exists():
+        print(
+            f"  {TICKERS_FILE} не найден — используем fallback "
+            f"({len(FALLBACK_TICKERS)} бумаг)",
+            flush=True,
+        )
+        return list(FALLBACK_TICKERS)
+
+    try:
+        payload = json.loads(TICKERS_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(
+            f"  {TICKERS_FILE} битый ({e}) — используем fallback",
+            file=sys.stderr,
+            flush=True,
+        )
+        return list(FALLBACK_TICKERS)
+
+    raw = payload.get("tickers", [])
+    tickers = [t["ticker"] for t in raw if isinstance(t, dict) and t.get("ticker")]
+
+    if not tickers:
+        print(
+            f"  {TICKERS_FILE} пустой — используем fallback",
+            file=sys.stderr,
+            flush=True,
+        )
+        return list(FALLBACK_TICKERS)
+
+    print(f"  Загружено {len(tickers)} тикеров из {TICKERS_FILE}", flush=True)
+    return tickers
+
+
 def _get_with_retry(session, url, params, label):
-    """
-    Делает GET с retry. Возвращает Response или None.
-    Логирует каждую неудачную попытку.
-    """
+    """GET с retry. Возвращает Response или None."""
     last_err = None
     for attempt in range(1, RETRY_ATTEMPTS + 1):
         try:
@@ -73,9 +119,14 @@ def _get_with_retry(session, url, params, label):
                     f"    [{label}] попытка {attempt} не удалась ({type(e).__name__}), "
                     f"повтор через {RETRY_DELAY}с",
                     file=sys.stderr,
+                    flush=True,
                 )
                 time.sleep(RETRY_DELAY)
-    print(f"    [{label}] все {RETRY_ATTEMPTS} попытки провалились: {last_err}", file=sys.stderr)
+    print(
+        f"    [{label}] все {RETRY_ATTEMPTS} попытки провалились: {last_err}",
+        file=sys.stderr,
+        flush=True,
+    )
     return None
 
 
@@ -89,7 +140,11 @@ def fetch_security_info(session: requests.Session, ticker: str) -> dict:
     if resp is None:
         return {"lotSize": 1, "name": ticker, "ok": False}
 
-    block = resp.json().get("securities", {})
+    try:
+        block = resp.json().get("securities", {})
+    except Exception:
+        return {"lotSize": 1, "name": ticker, "ok": False}
+
     cols = block.get("columns", [])
     rows = block.get("data", [])
     if not rows:
@@ -110,8 +165,10 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
     all_rows: list[list] = []
     columns: list[str] | None = None
     start = 0
+    page_num = 0
+    max_pages = 20  # предохранитель: 20 страниц × 100 = 2000 баров, хватит с запасом
 
-    while True:
+    while page_num < max_pages:
         params = {
             "from": START_DATE,
             "iss.meta": "off",
@@ -120,18 +177,23 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
         }
         resp = _get_with_retry(session, url, params, f"{ticker} candles start={start}")
         if resp is None:
-            # Если не получили даже первую страницу — совсем плохо
             if start == 0:
                 return None
-            # Если не получили следующую — возвращаем то, что успели
             print(
                 f"    [{ticker}] оборвались на странице start={start}, "
                 f"уже собрано {len(all_rows)} строк",
                 file=sys.stderr,
+                flush=True,
             )
             break
 
-        block = resp.json().get("history", {})
+        try:
+            block = resp.json().get("history", {})
+        except Exception:
+            if start == 0:
+                return None
+            break
+
         page_cols = block.get("columns", [])
         page_rows = block.get("data", [])
 
@@ -142,15 +204,16 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
             break
 
         all_rows.extend(page_rows)
+        page_num += 1
         start += len(page_rows)
 
         if len(page_rows) < 100:
             break
 
-        time.sleep(0.2)
+        time.sleep(0.1)  # небольшая пауза между страницами
 
     if not all_rows or columns is None:
-        print(f"  [{ticker}] пустой ответ (нет торгов?)", file=sys.stderr)
+        print(f"  [{ticker}] пустой ответ (нет торгов?)", file=sys.stderr, flush=True)
         return None
 
     df = pd.DataFrame(all_rows, columns=columns)
@@ -158,8 +221,7 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
     required = ["TRADEDATE", "OPEN", "HIGH", "LOW", "CLOSE", "VOLUME"]
     missing = [c for c in required if c not in df.columns]
     if missing:
-        print(f"  [{ticker}] в ответе нет колонок: {missing}", file=sys.stderr)
-        print(f"  [{ticker}] фактические колонки: {list(df.columns)}", file=sys.stderr)
+        print(f"  [{ticker}] в ответе нет колонок: {missing}", file=sys.stderr, flush=True)
         return None
 
     df = df[required].copy()
@@ -185,38 +247,57 @@ def fetch_candles(session: requests.Session, ticker: str) -> list[dict] | None:
 def main() -> int:
     today = date.today()
     if not is_trading_day(today):
-        print(f"{today}: праздник, пропускаем")
+        print(f"{today}: праздник, пропускаем", flush=True)
         return 0
 
     OUTPUT_DIR.mkdir(exist_ok=True)
 
-    print("=== Загрузка дивидендов со Smart-Lab ===", flush=True)
-    dividends_map = fetch_dividends_smartlab(TICKERS, START_DATE)
+    print("=== Загрузка списка тикеров ===", flush=True)
+    tickers = load_tickers()
+    total = len(tickers)
+
+    print("\n=== Загрузка дивидендов со Smart-Lab ===", flush=True)
+    print(f"  (только для {len(SMARTLAB_TICKERS)} тикеров: {', '.join(SMARTLAB_TICKERS)})", flush=True)
+    try:
+        dividends_map = fetch_dividends_smartlab(SMARTLAB_TICKERS, START_DATE)
+    except Exception as e:
+        print(f"  [dividends] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
+        dividends_map = {}
 
     print("\n=== Загрузка фундаментала со Smart-Lab ===", flush=True)
-    fundamentals_map = fetch_fundamentals_smartlab(TICKERS)
+    try:
+        fundamentals_map = fetch_fundamentals_smartlab(SMARTLAB_TICKERS)
+    except Exception as e:
+        print(f"  [fundamentals] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
+        fundamentals_map = {}
 
     print("\n=== Загрузка макро-контекста ===", flush=True)
     try:
         fetch_macro_main()
     except Exception as e:
-        print(f"  [macro] непредвиденная ошибка: {e}", file=sys.stderr)
+        print(f"  [macro] непредвиденная ошибка: {e}", file=sys.stderr, flush=True)
+
+    print(f"\n=== Загрузка свечей для {total} тикеров ===", flush=True)
+    print(f"  Оценка времени: ~15-30 минут\n", flush=True)
 
     written = 0
     skipped = 0
+    t_start = time.time()
+
     with requests.Session() as session:
         session.headers.update({"User-Agent": "trading-signals-mvp/1.0"})
 
-        for ticker in TICKERS:
-            print(f"\n[{ticker}] тянем метаданные...", flush=True)
-            info = fetch_security_info(session, ticker)
+        for i, ticker in enumerate(tickers, start=1):
+            t_ticker = time.time()
 
-            print(f"[{ticker}] тянем свечи...", flush=True)
+            info = fetch_security_info(session, ticker)
             candles = fetch_candles(session, ticker)
+
             if candles is None:
                 print(
-                    f"  [{ticker}] свечи не получены — старый JSON не трогаем",
+                    f"[{i}/{total}] [{ticker}] ✗ свечи не получены — пропускаем",
                     file=sys.stderr,
+                    flush=True,
                 )
                 skipped += 1
                 continue
@@ -225,12 +306,7 @@ def main() -> int:
             splits = SPLITS.get(ticker, [])
             fundamentals = fundamentals_map.get(ticker)
 
-            # Если метаданные не получились, но свечи есть — берём имя как есть
-            if not info.get("ok", True) and len(candles) > 0:
-                print(
-                    f"  [{ticker}] метаданные не получены, используем имя={ticker}, лот=1",
-                    file=sys.stderr,
-                )
+            if not info.get("ok", True):
                 info = {"lotSize": 1, "name": ticker, "ok": False}
 
             payload = {
@@ -249,22 +325,39 @@ def main() -> int:
                 encoding="utf-8",
             )
 
+            written += 1
+            dt_ticker = time.time() - t_ticker
+
             fund_info = (
-                f"фундаментал: {len(fundamentals['metrics'])} метрик (asOf={fundamentals['asOf']})"
+                f"фундаментал: {len(fundamentals['metrics'])} метрик"
                 if fundamentals
-                else "фундаментал: не получен"
+                else ""
             )
+            tail = f" · {fund_info}" if fund_info else ""
             print(
-                f"  [{ticker}] {info['name']} · лот {info['lotSize']} · "
-                f"{len(candles)} баров · {len(dividends)} дивидендов · "
-                f"{len(splits)} сплитов · {fund_info} → {out_path}",
+                f"[{i}/{total}] [{ticker}] ✓ {info['name']} · "
+                f"{len(candles)} баров · {dt_ticker:.1f}с{tail}",
                 flush=True,
             )
-            written += 1
 
+            # Прогресс каждые 25 бумаг
+            if i % 25 == 0:
+                elapsed = time.time() - t_start
+                avg = elapsed / i
+                remaining = avg * (total - i)
+                print(
+                    f"\n>>> Прогресс: {i}/{total} "
+                    f"(обновлено: {written}, пропущено: {skipped}, "
+                    f"прошло: {elapsed/60:.1f} мин, осталось ~{remaining/60:.1f} мин)\n",
+                    flush=True,
+                )
+
+    elapsed_total = time.time() - t_start
     print(
-        f"\nГотово. Обновлено тикеров: {written}/{len(TICKERS)}"
-        + (f", пропущено: {skipped}" if skipped else ""),
+        f"\n=== Готово ==="
+        f"\n  Обновлено: {written}/{total}"
+        f"\n  Пропущено: {skipped}"
+        f"\n  Время: {elapsed_total/60:.1f} мин",
         flush=True,
     )
     return 0 if written > 0 else 1
