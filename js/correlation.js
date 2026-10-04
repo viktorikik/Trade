@@ -6,9 +6,12 @@
 // двигаются две акции. +1 — всегда вместе, 0 — связи нет, −1 — наоборот.
 // Считаем по дневным доходностям, а не по ценам: у цен есть общий тренд,
 // из-за которого все акции покажутся связанными.
+//
+// Список тикеров для матрицы теперь НЕ хардкодится. Он передаётся
+// в computeCorrelations() третьим аргументом — приходит из app.js
+// (дефолт / «Избранное» / ручной выбор пользователя).
 
-const CORRELATION_TICKERS = ['SBER', 'GAZP', 'LKOH', 'GMKN', 'ROSN', 'NVTK'];
-
+// Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
   SBER: 'Сбер',
   GAZP: 'Газпром',
@@ -16,6 +19,10 @@ const CORRELATION_NAMES = {
   GMKN: 'Норникель',
   ROSN: 'Роснефть',
   NVTK: 'НОВАТЭК',
+  MGNT: 'Магнит',
+  VTBR: 'ВТБ',
+  AFLT: 'Аэрофлот',
+  NLMK: 'НЛМК',
 };
 
 // ===== Дневные доходности =====
@@ -156,9 +163,18 @@ function correlationLabel(v) {
 
 // ===== Сборка всего расчёта =====
 // payloads: { SBER: payload, GAZP: payload, ... } — уже загруженные данные.
-// options: { useSplits, useDividends } — как корректировать историю.
-function computeCorrelations(payloads, options) {
-  const tickers = CORRELATION_TICKERS.filter(t => payloads[t]);
+// options:  { useSplits, useDividends } — как корректировать историю.
+// tickers:  массив тикеров, по которым строим матрицу (2..12 штук).
+//           Если не передан — берём все ключи payloads.
+function computeCorrelations(payloads, options, tickers) {
+  // Если список не передан — берём всё, что есть в payloads
+  if (!Array.isArray(tickers)) {
+    tickers = Object.keys(payloads);
+  }
+
+  // Отфильтровываем те, для которых нет payloads (не загрузились)
+  tickers = tickers.filter(t => payloads[t]);
+
   if (tickers.length < 2) {
     return null;
   }
@@ -190,9 +206,16 @@ function computeCorrelations(payloads, options) {
   const matrix = computeCorrelationMatrix(aligned, tickers);
   const { most, least } = findTopPairs(matrix, tickers);
 
+  // Красивые имена: из словаря, иначе — name из payload
+  const names = {};
+  for (const t of tickers) {
+    names[t] = CORRELATION_NAMES[t] || (payloads[t].name || t);
+  }
+
   return {
     tickers,
     matrix,
+    names,
     most,
     least,
     sampleSize: aligned.length,
@@ -211,12 +234,13 @@ function renderCorrelationSection(result) {
     return;
   }
 
-  // Подзаголовок: период и количество дней
+  // Подзаголовок: количество бумаг, период, дни
   const subtitleEl = document.getElementById('correlationSubtitle');
   if (subtitleEl) {
     subtitleEl.textContent =
-      `Период: ${result.periodStart} → ${result.periodEnd} · ` +
-      `Общих торговых дней: ${result.sampleSize}`;
+      `${result.tickers.length} бумаг · ` +
+      `${result.periodStart} → ${result.periodEnd} · ` +
+      `${result.sampleSize} общих дней`;
   }
 
   // Матрица
@@ -235,11 +259,11 @@ function renderCorrelationSection(result) {
 }
 
 function renderMatrixHtml(result) {
-  const { tickers, matrix } = result;
+  const { tickers, matrix, names } = result;
 
   const header =
     '<tr><th></th>' +
-    tickers.map(t => `<th title="${CORRELATION_NAMES[t] || t}">${t}</th>`).join('') +
+    tickers.map(t => `<th title="${names[t] || t}">${t}</th>`).join('') +
     '</tr>';
 
   const body = tickers.map((rowTicker, i) => {
@@ -253,7 +277,7 @@ function renderMatrixHtml(result) {
       const label = correlationLabel(v);
       return `<td class="corr-cell corr-${cls}" title="${rowTicker} ↔ ${colTicker}: ${label}">${txt}</td>`;
     }).join('');
-    return `<tr><th title="${CORRELATION_NAMES[rowTicker] || rowTicker}">${rowTicker}</th>${cells}</tr>`;
+    return `<tr><th title="${names[rowTicker] || rowTicker}">${rowTicker}</th>${cells}</tr>`;
   }).join('');
 
   return `<table class="corr-table"><thead>${header}</thead><tbody>${body}</tbody></table>`;
