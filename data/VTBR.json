@@ -7612,7 +7612,99 @@
       "volume": 42326571
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2025-07-10",
+      "amount": 25.58
+    },
+    {
+      "date": "2026-07-17",
+      "amount": 9.71
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 1.59,
+      "pb": 0.24,
+      "roe": 13.0,
+      "eps": 32.8,
+      "divYield": 18.7,
+      "netProfitBln": 423.8,
+      "capitalizationBln": 672.2,
+      "equityBln": 2770.0
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 11.2,
+        "pb": 1.67,
+        "roe": 16.5,
+        "roa": 1.6,
+        "eps": 25.2,
+        "divYield": 0.0,
+        "netProfitBln": 325.3,
+        "capitalizationBln": 3638.0,
+        "equityBln": 2184.0
+      },
+      {
+        "year": "2022",
+        "pe": -2.39,
+        "pb": 1.07,
+        "roe": -42.6,
+        "roa": -3.0,
+        "eps": -51.7,
+        "divYield": 0.0,
+        "netProfitBln": -668.0,
+        "capitalizationBln": 1595.0,
+        "equityBln": 1491.0
+      },
+      {
+        "year": "2023",
+        "pe": 4.6,
+        "pb": 0.96,
+        "roe": 22.3,
+        "eps": 33.4,
+        "divYield": 0.0,
+        "netProfitBln": 432.2,
+        "capitalizationBln": 1987.0,
+        "equityBln": 2078.0
+      },
+      {
+        "year": "2024",
+        "pe": 2.91,
+        "pb": 0.58,
+        "roe": 22.9,
+        "eps": 41.4,
+        "divYield": 32.0,
+        "netProfitBln": 535.3,
+        "capitalizationBln": 1556.0,
+        "equityBln": 2689.0
+      },
+      {
+        "year": "2025",
+        "pe": 3.01,
+        "pb": 0.54,
+        "roe": 18.3,
+        "eps": 37.4,
+        "divYield": 13.4,
+        "netProfitBln": 483.7,
+        "capitalizationBln": 1455.0,
+        "equityBln": 2683.0
+      },
+      {
+        "year": "LTM",
+        "pe": 1.59,
+        "pb": 0.24,
+        "roe": 13.0,
+        "eps": 32.8,
+        "divYield": 18.7,
+        "netProfitBln": 423.8,
+        "capitalizationBln": 672.2,
+        "equityBln": 2770.0
+      }
+    ]
+  }
 }
