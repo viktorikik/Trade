@@ -120,8 +120,10 @@ def classify_header_cell(v):
 def find_year_header_row(df):
     """
     Ищет строку, в которой >= 3 ячейки выглядят как годы или LTM.
+    Сканируем до 30 строк (расширено с 20 — у некоторых таблиц
+    перед заголовком есть навигационные строки).
     """
-    max_scan = min(20, len(df))
+    max_scan = min(30, len(df))
     for i in range(max_scan):
         row = df.iloc[i]
         count = 0
@@ -146,43 +148,73 @@ def collect_year_columns(df, header_row_idx):
     return cols
 
 
+def _match_metric_in_cell(cell_value, patterns):
+    """
+    Проверяет, матчится ли содержимое ячейки хотя бы с одним паттерном.
+    Возвращает True/False.
+    """
+    if pd.isna(cell_value):
+        return False
+    s = str(cell_value).strip()
+    # Убираем висячий '?' в конце
+    s = re.sub(r"\s*\?\s*$", "", s)
+    for pat in patterns:
+        if re.match(pat, s):
+            return True
+    return False
+
+
 def find_metric_row(df, patterns, start_idx):
     """
-    Ищет строку, первая колонка которой матчит хотя бы один из patterns.
+    Ищет строку, в которой хотя бы одна ячейка матчит один из patterns.
+    Ищем сначала в колонке 0 (основной случай), затем — в остальных колонках
+    (на случай, если первая колонка пустая или сдвинута).
+
+    Возвращает (row_idx, col_idx) или None.
     """
+    # Сначала пробуем колонку 0 — это типовой случай SmartLab
     for i in range(start_idx, len(df)):
-        v = df.iloc[i, 0]
-        if pd.isna(v):
-            continue
-        s = str(v).strip()
-        s = re.sub(r"\s*\?\s*$", "", s)
-        for pat in patterns:
-            if re.match(pat, s):
-                return i
+        if _match_metric_in_cell(df.iloc[i, 0], patterns):
+            return i, 0
+
+    # Fallback: ищем во всех колонках
+    for i in range(start_idx, len(df)):
+        for col_idx in range(df.shape[1]):
+            if col_idx == 0:
+                continue
+            if _match_metric_in_cell(df.iloc[i, col_idx], patterns):
+                return i, col_idx
+
     return None
 
 
 def is_fundamentals_table(df):
     """
     Проверка: это таблица с фундаменталом? Возвращает индекс строки-заголовка или None.
+
+    Убрали лимит 60 строк — теперь ищем по всей таблице. У некоторых бумаг
+    (AFKS, MAGN) метрики P/E и ROE идут в самом конце — после блоков
+    производственных и финансовых показателей.
     """
     header_row = find_year_header_row(df)
     if header_row is None:
         return None
-    for i in range(header_row + 1, min(header_row + 60, len(df))):
-        v = df.iloc[i, 0]
-        if pd.isna(v):
-            continue
-        s = str(v).strip()
-        if re.match(r"^P\s*/\s*E\b", s) or re.match(r"^ROE\b", s):
+
+    # Ищем P/E или ROE в ЛЮБОЙ строке после заголовка
+    for i in range(header_row + 1, len(df)):
+        if _match_metric_in_cell(df.iloc[i, 0], [r"^P\s*/\s*E\b"]):
             return header_row
+        if _match_metric_in_cell(df.iloc[i, 0], [r"^ROE\b"]):
+            return header_row
+
     return None
 
 
-def extract_fundamentals(df, header_row_idx):
+def extract_fundamentals(df, header_row_idx, ticker=""):
     """Извлекает метрики и историю из найденной таблицы."""
     year_cols = collect_year_columns(df, header_row_idx)
     if not year_cols:
+        print(f"  [{ticker}] годовых колонок не найдено", file=sys.stderr, flush=True)
         return None
 
     # Сортируем: обычные годы по возрастанию, LTM — в самом конце.
@@ -193,30 +225,40 @@ def extract_fundamentals(df, header_row_idx):
     last_col_idx, last_year_name = sorted_years[-1]
 
     # Находим все нужные строки метрик
-    metric_rows = {}
+    metric_rows = {}  # metric_name -> (row_idx, col_idx)
     for metric_name, patterns in METRIC_PATTERNS.items():
-        row_idx = find_metric_row(df, patterns, header_row_idx + 1)
-        if row_idx is not None:
-            metric_rows[metric_name] = row_idx
+        found = find_metric_row(df, patterns, header_row_idx + 1)
+        if found is not None:
+            metric_rows[metric_name] = found
+            print(
+                f"  [{ticker}] метрика '{metric_name}' → строка {found[0]}, колонка {found[1]}",
+                flush=True,
+            )
 
     if not metric_rows:
+        print(f"  [{ticker}] ни одной метрики не найдено", file=sys.stderr, flush=True)
         return None
 
     # Текущие значения (LTM или последний год)
     metrics = {}
-    for metric_name, row_idx in metric_rows.items():
+    for metric_name, (row_idx, col_idx) in metric_rows.items():
+        # Берём значение из LTM-колонки, но если её нет — из любой найденной колонки
         v = parse_number(df.iloc[row_idx, last_col_idx])
+        if v is None and col_idx != last_col_idx:
+            # Fallback: значение может быть в той колонке, где нашли метрику
+            v = parse_number(df.iloc[row_idx, col_idx])
         if v is not None:
             metrics[metric_name] = v
 
     if not metrics:
+        print(f"  [{ticker}] значения метрик пустые", file=sys.stderr, flush=True)
         return None
 
     # История по годам
     history = []
     for col_idx, year_name in sorted_years:
         entry = {"year": year_name}
-        for metric_name, row_idx in metric_rows.items():
+        for metric_name, (row_idx, _) in metric_rows.items():
             v = parse_number(df.iloc[row_idx, col_idx])
             if v is not None:
                 entry[metric_name] = v
@@ -258,25 +300,29 @@ def fetch_fundamentals_for_ticker(ticker):
 
     print(f"  [{ticker}] найдено таблиц: {len(tables)}", flush=True)
 
-    for df in tables:
+    for t_idx, df in enumerate(tables):
         if df.shape[1] < 4 or df.shape[0] < 5:
             continue
+        print(
+            f"  [{ticker}] таблица #{t_idx}: {df.shape[0]} строк × {df.shape[1]} колонок",
+            flush=True,
+        )
         header_row = is_fundamentals_table(df)
         if header_row is None:
             continue
 
+        print(f"  [{ticker}] таблица #{t_idx} — подходит, заголовок на строке {header_row}", flush=True)
+
         # === DEBUG: показываем, что именно увидел парсер в строке-заголовке ===
         print(f"  [{ticker}] строка-заголовок (строка {header_row}):", flush=True)
-        header_row_values = []
         for col_idx, v in enumerate(df.iloc[header_row]):
             if pd.isna(v):
                 continue
             classified = classify_header_cell(v)
             mark = f" -> {classified}" if classified else ""
             print(f"    col {col_idx}: {v!r}{mark}", flush=True)
-            header_row_values.append((col_idx, v, classified))
 
-        result = extract_fundamentals(df, header_row)
+        result = extract_fundamentals(df, header_row, ticker=ticker)
         if result is None:
             continue
 
