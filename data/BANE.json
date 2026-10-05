@@ -7644,7 +7644,94 @@
       "volume": 2925
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-07-05",
+      "amount": 199.89
+    },
+    {
+      "date": "2024-07-11",
+      "amount": 249.69
+    },
+    {
+      "date": "2025-07-11",
+      "amount": 147.31
+    },
+    {
+      "date": "2026-07-10",
+      "amount": 69.29
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 1.89,
+      "roe": 11.7,
+      "roa": 9.0,
+      "eps": 708.2,
+      "divYield": 5.8,
+      "netProfitBln": 104.7,
+      "capitalizationBln": 197.7
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 2.77,
+        "roe": 15.0,
+        "roa": 9.1,
+        "eps": 563.6,
+        "divYield": 8.6,
+        "netProfitBln": 83.3,
+        "capitalizationBln": 230.6
+      },
+      {
+        "year": "2022",
+        "eps": 0.0,
+        "divYield": 21.2,
+        "capitalizationBln": 159.5
+      },
+      {
+        "year": "2023",
+        "pe": 2.12,
+        "roe": 21.3,
+        "roa": 15.7,
+        "eps": 1200.0,
+        "divYield": 11.4,
+        "netProfitBln": 177.4,
+        "capitalizationBln": 376.5
+      },
+      {
+        "year": "2024",
+        "pe": 4.01,
+        "roe": 11.7,
+        "roa": 9.0,
+        "eps": 708.2,
+        "divYield": 5.7,
+        "netProfitBln": 104.7,
+        "capitalizationBln": 419.4
+      },
+      {
+        "year": "2025",
+        "pe": 4.9,
+        "roe": 5.4,
+        "roa": 4.4,
+        "eps": 333.0,
+        "divYield": 4.8,
+        "netProfitBln": 49.2,
+        "capitalizationBln": 241.1
+      },
+      {
+        "year": "LTM",
+        "pe": 1.89,
+        "roe": 11.7,
+        "roa": 9.0,
+        "eps": 708.2,
+        "divYield": 5.8,
+        "netProfitBln": 104.7,
+        "capitalizationBln": 197.7
+      }
+    ]
+  }
 }

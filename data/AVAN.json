@@ -7644,7 +7644,122 @@
       "volume": 494
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-02-10",
+      "amount": 31.66
+    },
+    {
+      "date": "2023-02-10",
+      "amount": 7.54
+    },
+    {
+      "date": "2023-05-18",
+      "amount": 26.02
+    },
+    {
+      "date": "2023-09-22",
+      "amount": 47.08
+    },
+    {
+      "date": "2023-11-22",
+      "amount": 57.0
+    },
+    {
+      "date": "2024-05-28",
+      "amount": 33.46
+    },
+    {
+      "date": "2024-10-01",
+      "amount": 34.7
+    },
+    {
+      "date": "2024-11-29",
+      "amount": 49.57
+    },
+    {
+      "date": "2025-04-25",
+      "amount": 28.5
+    },
+    {
+      "date": "2025-10-06",
+      "amount": 24.79
+    },
+    {
+      "date": "2025-12-22",
+      "amount": 16.1
+    },
+    {
+      "date": "2026-04-27",
+      "amount": 22.31
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 9.04,
+      "pb": 4.05,
+      "eps": 59.4,
+      "divYield": 7.2,
+      "netProfitBln": 4.79,
+      "capitalizationBln": 43.3,
+      "equityBln": 10.7
+    },
+    "history": [
+      {
+        "year": "2021",
+        "eps": 0.0,
+        "divYield": 4.2,
+        "capitalizationBln": 82.7
+      },
+      {
+        "year": "2022",
+        "eps": 0.0,
+        "divYield": 8.1,
+        "capitalizationBln": 82.7
+      },
+      {
+        "year": "2023",
+        "pe": 286.6,
+        "pb": 5.36,
+        "eps": 3.48,
+        "divYield": 10.4,
+        "netProfitBln": 0.281,
+        "capitalizationBln": 80.5,
+        "equityBln": 15.0
+      },
+      {
+        "year": "2024",
+        "pe": 10.7,
+        "pb": 5.07,
+        "eps": 62.5,
+        "divYield": 4.3,
+        "netProfitBln": 5.04,
+        "capitalizationBln": 53.7,
+        "equityBln": 10.6
+      },
+      {
+        "year": "2025",
+        "pe": 9.14,
+        "pb": 4.66,
+        "eps": 72.5,
+        "divYield": 9.5,
+        "netProfitBln": 5.85,
+        "capitalizationBln": 53.5,
+        "equityBln": 11.5
+      },
+      {
+        "year": "LTM",
+        "pe": 9.04,
+        "pb": 4.05,
+        "eps": 59.4,
+        "divYield": 7.2,
+        "netProfitBln": 4.79,
+        "capitalizationBln": 43.3,
+        "equityBln": 10.7
+      }
+    ]
+  }
 }
