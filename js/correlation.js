@@ -15,16 +15,15 @@
 //
 // Обновлено (Итерация 2):
 //   — тепловая матрица (цветовая подложка через inline-стили);
-//   — тап на тикер → шторка со списком всех бумаг из data/correlation.json,
-//     отсортированных по возрастанию |r| («независимые» наверху);
+//   — тап на тикер → шторка со списком всех бумаг из data/correlation.json;
 //   — фильтр по секторам в шторке;
-//   — кнопка «+ В набор» (пишет в localStorage и шлёт CustomEvent).
+//   — кнопка «+ В набор».
 //
 // Обновлено (шаг 3.3):
-//   — шторка переведена с flex на grid: grid-template-rows auto/auto/1fr
-//     надёжно фиксирует высоту шапки и полосы чипов, а список
-//     скроллится в оставшемся месте.
-//   — подсказка в index.html описывает тепловую карту (красный/синий/без цвета).
+//   — шторка: display:grid с grid-template-rows auto/auto/1fr.
+//   — цвета элементов шторки — через переменные проекта
+//     (--card, --text, --border, --accent), а не через --bg/--fg.
+//     Это гарантирует читаемость и в тёмной, и в светлой теме.
 
 // Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
@@ -41,9 +40,6 @@ const CORRELATION_NAMES = {
 };
 
 // ===== Дневные доходности =====
-// Считаем не по ценам, а по доходностям: (close[i] − close[i−1]) / close[i−1].
-// Если считать корреляцию по ценам — все акции покажутся связанными,
-// потому что у них общий тренд. Доходности этот тренд убирают.
 function computeDailyReturns(candles) {
   const out = [];
   for (let i = 1; i < candles.length; i++) {
@@ -57,9 +53,6 @@ function computeDailyReturns(candles) {
 }
 
 // ===== Выравнивание по общим датам =====
-// У разных бумаг могут быть разные торговые дни (приостановки, разные дни
-// дивидендных отсечек). Чтобы корреляция считалась честно, оставляем только
-// те даты, что есть у ВСЕХ бумаг одновременно.
 function alignReturns(returnsByTicker, tickers) {
   let commonDates = null;
   for (const t of tickers) {
@@ -87,8 +80,6 @@ function alignReturns(returnsByTicker, tickers) {
 }
 
 // ===== Коэффициент корреляции Пирсона =====
-// Формула: r = Σ((x − x̄)(y − ȳ)) / √(Σ(x − x̄)² × Σ(y − ȳ)²)
-// Всегда в диапазоне [−1, +1].
 function pearson(xs, ys) {
   const n = xs.length;
   if (n < 2) return null;
@@ -112,7 +103,6 @@ function pearson(xs, ys) {
 }
 
 // ===== Матрица корреляции =====
-// Симметричная матрица N×N. По диагонали — 1.00 (бумага сама с собой).
 function computeCorrelationMatrix(aligned, tickers) {
   const n = tickers.length;
   const matrix = Array.from({ length: n }, () => new Array(n).fill(null));
@@ -120,7 +110,6 @@ function computeCorrelationMatrix(aligned, tickers) {
   for (let i = 0; i < n; i++) {
     matrix[i][i] = 1;
     for (let j = i + 1; j < n; j++) {
-      // Берём только строки, где ОБЕ доходности не null
       const pairs = aligned.filter(a =>
         a.rets[i] != null && a.rets[j] != null &&
         isFinite(a.rets[i]) && isFinite(a.rets[j])
@@ -136,7 +125,6 @@ function computeCorrelationMatrix(aligned, tickers) {
 }
 
 // ===== Топ пар =====
-// Разбиваем все пары на «самые связанные» и «самые независимые».
 function findTopPairs(matrix, tickers) {
   const pairs = [];
   for (let i = 0; i < tickers.length; i++) {
@@ -155,7 +143,6 @@ function findTopPairs(matrix, tickers) {
 }
 
 // ===== Классификация значения =====
-// Пороги для текстовой подписи (и для старых классов).
 function correlationClass(v) {
   if (v == null) return 'na';
   if (v >= 0.7) return 'very-high';
@@ -177,17 +164,11 @@ function correlationLabel(v) {
 }
 
 // ===== Сборка всего расчёта =====
-// payloads: { SBER: payload, GAZP: payload, ... } — уже загруженные данные.
-// options:  { useSplits, useDividends } — как корректировать историю.
-// tickers:  массив тикеров, по которым строим матрицу (2..12 штук).
-//           Если не передан — берём все ключи payloads.
 function computeCorrelations(payloads, options, tickers) {
-  // Если список не передан — берём всё, что есть в payloads
   if (!Array.isArray(tickers)) {
     tickers = Object.keys(payloads);
   }
 
-  // Отфильтровываем те, для которых нет payloads (не загрузились)
   tickers = tickers.filter(t => payloads[t]);
 
   if (tickers.length < 2) {
@@ -197,8 +178,6 @@ function computeCorrelations(payloads, options, tickers) {
   const returnsByTicker = {};
   for (const t of tickers) {
     const payload = payloads[t];
-    // Применяем те же корректировки, что и для графика — иначе дивидендные
-    // гэпы и сплиты испортят корреляцию.
     let data = payload.candles;
     try {
       const res = applyCorporateActions(payload.candles, payload, {
@@ -214,14 +193,12 @@ function computeCorrelations(payloads, options, tickers) {
 
   const aligned = alignReturns(returnsByTicker, tickers);
   if (aligned.length < 30) {
-    // Слишком мало общих дней — статистика ненадёжна.
     return null;
   }
 
   const matrix = computeCorrelationMatrix(aligned, tickers);
   const { most, least } = findTopPairs(matrix, tickers);
 
-  // Красивые имена: из словаря, иначе — name из payload
   const names = {};
   for (const t of tickers) {
     names[t] = CORRELATION_NAMES[t] || (payloads[t].name || t);
@@ -240,37 +217,16 @@ function computeCorrelations(payloads, options, tickers) {
 }
 
 // ===== Оценка диверсификации (0..10) =====
-//
-// Composite-скор из трёх компонент с весами 50/30/20:
-//
-//  1. Эффективное число бумаг (вес 0.5).
-//     N_eff = N / (1 + (N − 1) × avgCorr).
-//     Если все корреляции 0 — N_eff = N. Если все 1 — N_eff = 1.
-//     Компонента = N_eff / N (0..1).
-//
-//  2. Штраф за максимальную корреляцию (вес 0.3).
-//     Если max(r) ≤ 0.7 — штрафа нет, компонента = 1.
-//     Если max(r) = 1.0 — штраф 1.0, компонента = 0.
-//     Линейно между 0.7 и 1.0.
-//
-//  3. Разнообразие секторов (вес 0.2).
-//     Компонента = min(1, число уникальных секторов / 5).
-//     5+ разных секторов → 1.0. Меньше — пропорционально.
-//     Если sectorLookup не передан — компонента = 0.5 (нейтрально).
-//
-// Возвращает { insufficient } если бумаг меньше 5 — оценка ненадёжна.
 function scoreDiversification(result, sectorLookup) {
   if (!result) return null;
 
   const { tickers, matrix } = result;
   const n = tickers.length;
 
-  // Для 2–4 бумаг оценка малоинформативна: всего 1–6 пар.
   if (n < 5) {
     return { insufficient: true, count: n };
   }
 
-  // ---- Все пары ----
   const pairs = [];
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
@@ -282,30 +238,24 @@ function scoreDiversification(result, sectorLookup) {
   }
   if (pairs.length === 0) return null;
 
-  // ---- 1. Средняя корреляция и N_eff ----
   const avgCorr = pairs.reduce((s, p) => s + p.r, 0) / pairs.length;
-
-  // Ограничим снизу: при отрицательной средней N_eff могло бы превысить N.
   const effectiveAvg = Math.max(0, avgCorr);
   const nEff = n / (1 + (n - 1) * effectiveAvg);
   const nEffScore = Math.max(0, Math.min(1, nEff / n));
 
-  // ---- 2. Максимальная корреляция ----
   let maxPair = pairs[0];
   for (const p of pairs) {
     if (p.r > maxPair.r) maxPair = p;
   }
-  // Штраф линейно от 0.7 (нет штрафа) до 1.0 (полный штраф).
   let maxPenalty = 0;
   if (maxPair.r > 0.7) {
     maxPenalty = Math.min(1, (maxPair.r - 0.7) / 0.3);
   }
   const maxScore = 1 - maxPenalty;
 
-  // ---- 3. Разнообразие секторов ----
   let uniqueSectors = 0;
   let sectorCounts = {};
-  let sectorScore = 0.5; // нейтральное значение, если sectorLookup не передан
+  let sectorScore = 0.5;
 
   if (typeof sectorLookup === 'function') {
     const set = new Set();
@@ -315,16 +265,12 @@ function scoreDiversification(result, sectorLookup) {
       sectorCounts[s] = (sectorCounts[s] || 0) + 1;
     }
     uniqueSectors = set.size;
-    // 5+ разных секторов = 1.0
     sectorScore = Math.min(1, uniqueSectors / 5);
   }
 
-  // ---- Composite ----
   const composite = 0.5 * nEffScore + 0.3 * maxScore + 0.2 * sectorScore;
-  // Округляем до 1..10 (минимум 1, чтобы 0 не выглядел «сломанным»)
   const score = Math.max(1, Math.min(10, Math.round(composite * 10)));
 
-  // ---- Уровень ----
   let level, levelCls;
   if (score >= 8)      { level = 'Отлично'; levelCls = 'good'; }
   else if (score >= 6) { level = 'Хорошо';  levelCls = 'good'; }
@@ -332,10 +278,8 @@ function scoreDiversification(result, sectorLookup) {
   else if (score >= 2) { level = 'Слабо';   levelCls = 'bad'; }
   else                 { level = 'Плохо';   levelCls = 'bad'; }
 
-  // ---- Рекомендации ----
   const warnings = [];
 
-  // Если есть пара с очень высокой корреляцией
   if (maxPair.r >= 0.7) {
     const a = tickers[maxPair.i];
     const b = tickers[maxPair.j];
@@ -345,7 +289,6 @@ function scoreDiversification(result, sectorLookup) {
     );
   }
 
-  // Если в одном секторе ≥3 бумаг
   if (typeof sectorLookup === 'function') {
     const sorted = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
     if (sorted.length > 0) {
@@ -378,24 +321,18 @@ function scoreDiversification(result, sectorLookup) {
   };
 }
 
-// ===== Тепловая карта: цвет по значению корреляции =====
-// Возвращает { bg, fg } — фон и цвет текста для ячейки.
-//   • сильный плюс (≈ +1)  → насыщенный красный (плохо для диверсификации)
-//   • около нуля           → прозрачный (нейтрально)
-//   • сильный минус (≈ −1) → насыщенный синий (обратная связь)
-// Используем rgba, чтобы работало и на светлой, и на тёмной теме.
+// ===== Тепловая карта =====
 function heatColor(r) {
   if (r == null || !isFinite(r)) {
     return { bg: 'transparent', fg: 'inherit' };
   }
   const v = Math.max(-1, Math.min(1, r));
-  // ±0.15 — «мёртвая зона», чтобы не рябило
   if (Math.abs(v) < 0.15) {
     return { bg: 'transparent', fg: 'inherit' };
   }
   if (v > 0) {
-    const a = Math.min(1, (v - 0.15) / 0.85);     // 0..1
-    const alpha = 0.12 + a * 0.68;                // 0.12..0.80
+    const a = Math.min(1, (v - 0.15) / 0.85);
+    const alpha = 0.12 + a * 0.68;
     return {
       bg: `rgba(220, 70, 70, ${alpha.toFixed(3)})`,
       fg: a > 0.55 ? '#fff' : 'inherit',
@@ -420,7 +357,6 @@ function renderCorrelationSection(result) {
     return;
   }
 
-  // Подзаголовок: количество бумаг, период, дни
   const subtitleEl = document.getElementById('correlationSubtitle');
   if (subtitleEl) {
     subtitleEl.textContent =
@@ -429,18 +365,15 @@ function renderCorrelationSection(result) {
       `${result.sampleSize} общих дней`;
   }
 
-  // Матрица
   const matrixEl = document.getElementById('correlationMatrix');
   if (matrixEl) {
     matrixEl.innerHTML = renderMatrixHtml(result);
-    // Делегирование клика вешаем один раз на контейнер
     if (!matrixEl.dataset.corrClickBound) {
       matrixEl.addEventListener('click', onMatrixClick);
       matrixEl.dataset.corrClickBound = '1';
     }
   }
 
-  // Топ пары
   const pairsEl = document.getElementById('correlationPairs');
   if (pairsEl) {
     pairsEl.innerHTML = renderPairsHtml(result);
@@ -508,14 +441,12 @@ function renderPairsHtml(result) {
 // ИТЕРАЦИЯ 2: шторка со списком всех бумаг + фильтр по секторам
 // ============================================================
 
-// ----- Состояние -----
-let _corrMatrixCache = null;      // данные из data/correlation.json
-let _corrMatrixPromise = null;    // дедупликация fetch
-let _currentPanelTicker = null;   // выбранный тикер
-let _currentSectorFilter = null;  // null или строка сектора
+let _corrMatrixCache = null;
+let _corrMatrixPromise = null;
+let _currentPanelTicker = null;
+let _currentSectorFilter = null;
 let _corrStylesInjected = false;
 
-// ----- Загрузка data/correlation.json (лениво, один раз) -----
 async function loadCorrelationMatrix() {
   if (_corrMatrixCache) return _corrMatrixCache;
   if (_corrMatrixPromise) return _corrMatrixPromise;
@@ -541,18 +472,13 @@ async function loadCorrelationMatrix() {
   return _corrMatrixPromise;
 }
 
-// ----- Позиция пары (i, j) в плоском верхнем треугольнике -----
-// Матрица в correlation.json хранится как: (0,1), (0,2), ..., (0,n-1),
-//                                            (1,2), (1,3), ..., (n-2,n-1)
 function pairIndex(i, j, n) {
   if (i === j) return -1;
   let a = i, b = j;
   if (a > b) { const t = a; a = b; b = t; }
-  // Сколько элементов в строках 0..a-1: a*(n-1) - a*(a-1)/2
   return a * (n - 1) - (a * (a - 1)) / 2 + (b - a - 1);
 }
 
-// ----- Корреляция пары (tickerA, tickerB) из correlation.json -----
 function getPairR(data, tickerA, tickerB) {
   if (tickerA === tickerB) return 1;
   const n = data.tickers.length;
@@ -565,7 +491,9 @@ function getPairR(data, tickerA, tickerB) {
   return (v == null || !isFinite(v)) ? null : v;
 }
 
-// ----- Стили шторки (вставляем один раз) -----
+// ----- Стили шторки -----
+// Используем переменные проекта: --card, --text, --border, --accent.
+// Если их вдруг нет — сработают разумные fallback'и.
 function injectPanelStyles() {
   if (_corrStylesInjected) return;
   _corrStylesInjected = true;
@@ -573,7 +501,7 @@ function injectPanelStyles() {
   const style = document.createElement('style');
   style.textContent = `
     .corr-th-click { cursor: pointer; }
-    .corr-th-click:hover { color: #4a9eff; }
+    .corr-th-click:hover { color: var(--accent, #4a9eff); }
 
     .ticker-corr-overlay {
       position: fixed; inset: 0;
@@ -588,16 +516,15 @@ function injectPanelStyles() {
       position: fixed; left: 0; right: 0; bottom: 0;
       z-index: 9999;
       max-height: 82vh;
-      background: var(--bg, #fff);
-      color: var(--fg, #111);
+      background: var(--card, #ffffff);
+      color: var(--text, #111111);
       border-top-left-radius: 16px;
       border-top-right-radius: 16px;
       box-shadow: 0 -6px 24px rgba(0,0,0,0.25);
       transform: translateY(105%);
       transition: transform 0.25s ease;
-      /* grid вместо flex: три строки — auto (шапка), auto (чипы),
-         minmax(0, 1fr) (список). Это надёжно фиксирует высоту первых
-         двух строк и не даёт им сжиматься, когда список длинный. */
+      /* grid вместо flex — три строки: шапка (auto), чипы (auto),
+         список (1fr). Первые две строки не сжимаются никогда. */
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
       padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -608,9 +535,9 @@ function injectPanelStyles() {
       display: flex; align-items: flex-start; justify-content: space-between;
       gap: 12px;
       padding: 14px 16px 10px 16px;
-      border-bottom: 1px solid rgba(128,128,128,0.18);
+      border-bottom: 1px solid var(--border, rgba(128,128,128,0.25));
     }
-    .ticker-corr-title { font-weight: 600; font-size: 16px; }
+    .ticker-corr-title { font-weight: 600; font-size: 16px; color: var(--text, inherit); }
     .ticker-corr-sub   { font-size: 12px; opacity: 0.7; margin-top: 2px; }
     .ticker-corr-close {
       background: transparent; border: 0; font-size: 22px; line-height: 1;
@@ -620,35 +547,40 @@ function injectPanelStyles() {
     .ticker-corr-filters {
       display: flex; gap: 6px; overflow-x: auto;
       padding: 10px 16px;
-      border-bottom: 1px solid rgba(128,128,128,0.18);
-      -webkit-overflow-scrolling: touch;
-      /* полоса чипов должна быть ровно такой, как её содержимое */
-      align-items: center;
       min-height: 52px;
+      align-items: center;
+      border-bottom: 1px solid var(--border, rgba(128,128,128,0.25));
+      -webkit-overflow-scrolling: touch;
     }
+    .ticker-corr-filters::-webkit-scrollbar { display: none; }
+
     .ticker-corr-chip {
       flex: 0 0 auto;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 30px;
-      padding: 0 12px;
+      height: 32px;
+      padding: 0 14px;
       border-radius: 999px;
-      border: 1px solid rgba(128,128,128,0.35);
-      background: transparent; color: inherit;
+      /* цвета — через переменные проекта, чтобы и в светлой, и в тёмной
+         теме текст был читаемым */
+      border: 1px solid var(--border, rgba(128,128,128,0.4));
+      background: var(--bg, transparent);
+      color: var(--text, inherit);
       font-size: 12px; line-height: 1;
+      font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
     }
     .ticker-corr-chip.is-active {
-      background: #4a9eff; border-color: #4a9eff; color: #fff;
+      background: var(--accent, #4a9eff);
+      border-color: var(--accent, #4a9eff);
+      color: #ffffff;
+      font-weight: 600;
     }
 
     .ticker-corr-list {
-      /* В grid-контейнере строку minmax(0, 1fr) скроллим внутри неё.
-         min-height: 0 критично — иначе грид-строка не сожмётся ниже
-         своего содержимого и не появится scroll. */
       min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -661,27 +593,31 @@ function injectPanelStyles() {
       align-items: center;
       gap: 10px;
       padding: 9px 10px;
-      border-bottom: 1px solid rgba(128,128,128,0.10);
+      border-bottom: 1px solid var(--border, rgba(128,128,128,0.15));
       font-size: 14px;
+      color: var(--text, inherit);
     }
     .ticker-corr-row:last-child { border-bottom: 0; }
     .ticker-corr-name { display: flex; flex-direction: column; min-width: 0; }
-    .ticker-corr-ticker { font-weight: 600; }
-    .ticker-corr-sector { font-size: 11px; opacity: 0.6; }
+    .ticker-corr-ticker { font-weight: 600; color: var(--text, inherit); }
+    .ticker-corr-sector { font-size: 11px; color: var(--text-muted, currentColor); opacity: 0.7; }
 
     .ticker-corr-r {
       font-variant-numeric: tabular-nums;
-      font-weight: 600; padding: 2px 8px;
+      font-weight: 600; padding: 4px 8px;
       border-radius: 6px; min-width: 56px; text-align: center;
+      font-size: 13px;
     }
     .ticker-corr-add {
-      border: 1px solid rgba(128,128,128,0.4);
-      background: transparent; color: inherit;
-      padding: 5px 10px; border-radius: 8px;
+      border: 1px solid var(--border, rgba(128,128,128,0.4));
+      background: transparent;
+      color: var(--text, inherit);
+      padding: 6px 10px; border-radius: 8px;
       font-size: 12px; cursor: pointer; white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
     .ticker-corr-add:disabled {
-      opacity: 0.5; cursor: default;
+      opacity: 0.55; cursor: default;
     }
 
     .corr-toast {
@@ -701,7 +637,6 @@ function injectPanelStyles() {
   document.head.appendChild(style);
 }
 
-// ----- Создание DOM шторки (один раз) -----
 function ensurePanel() {
   let root = document.getElementById('tickerCorrPanel');
   if (root) return root;
@@ -729,23 +664,19 @@ function ensurePanel() {
   document.getElementById('tickerCorrOverlay').addEventListener('click', closeTickerPanel);
   document.getElementById('tickerCorrClose').addEventListener('click', closeTickerPanel);
 
-  // Делегирование клика по списку — для кнопок «+ В набор»
   document.getElementById('tickerCorrList').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-add-ticker]');
     if (!btn) return;
     addTickerToSet(btn.dataset.addTicker);
   });
 
-  // Делегирование клика по чипам фильтра
   document.getElementById('tickerCorrFilters').addEventListener('click', (e) => {
     const chip = e.target.closest('button[data-sector]');
     if (!chip) return;
     const val = chip.dataset.sector || '';
     _currentSectorFilter = val === '' ? null : val;
-    // Перерисовать чипы (активный класс)
     document.querySelectorAll('#tickerCorrFilters .ticker-corr-chip')
       .forEach(c => c.classList.toggle('is-active', c.dataset.sector === (val || '')));
-    // Перерисовать список
     if (_currentPanelTicker && _corrMatrixCache) {
       renderTickerList(_corrMatrixCache, _currentPanelTicker);
     }
@@ -754,7 +685,6 @@ function ensurePanel() {
   return root;
 }
 
-// ----- Обработчик клика по матрице -----
 async function onMatrixClick(e) {
   const td = e.target.closest('td[data-ticker-row]');
   if (td) {
@@ -768,7 +698,6 @@ async function onMatrixClick(e) {
   }
 }
 
-// ----- Открыть шторку для тикера -----
 async function openTickerPanel(ticker) {
   const data = await loadCorrelationMatrix();
   if (!data) {
@@ -787,18 +716,13 @@ async function openTickerPanel(ticker) {
   const overlay = root.querySelector('#tickerCorrOverlay');
   const sheet = root.querySelector('#tickerCorrSheet');
 
-  // Заголовок и подпись
   root.querySelector('#tickerCorrTitle').textContent = `${ticker} — корреляция с другими`;
   root.querySelector('#tickerCorrSub').textContent =
     `${data.tickers.length - 1} бумаг · ${data.period_start} → ${data.period_end}`;
 
-  // Чипы секторов
   renderSectorFilters(data);
-
-  // Список
   renderTickerList(data, ticker);
 
-  // Открыть
   overlay.classList.add('is-open');
   sheet.classList.add('is-open');
 }
@@ -812,7 +736,6 @@ function closeTickerPanel() {
   _currentSectorFilter = null;
 }
 
-// ----- Рендер чипов фильтра -----
 function renderSectorFilters(data) {
   const wrap = document.getElementById('tickerCorrFilters');
   if (!wrap) return;
@@ -829,7 +752,6 @@ function renderSectorFilters(data) {
     `<button class="ticker-corr-chip is-active" data-sector="">Все (${total})</button>`,
   ];
   for (const [sec, cnt] of sorted) {
-    // прячем «Прочее», если оно занимает меньше 5% — не засоряем ленту
     if (sec === 'Прочее' && cnt / total < 0.05 && sorted.length > 6) continue;
     chips.push(
       `<button class="ticker-corr-chip" data-sector="${escapeHtml(sec)}">${escapeHtml(sec)} (${cnt})</button>`
@@ -838,14 +760,12 @@ function renderSectorFilters(data) {
   wrap.innerHTML = chips.join('');
 }
 
-// ----- Рендер списка бумаг -----
 function renderTickerList(data, ticker) {
   const list = document.getElementById('tickerCorrList');
   if (!list) return;
 
   const filter = _currentSectorFilter;
 
-  // Собираем строки: { ticker, r, sector }
   const rows = [];
   for (const other of data.tickers) {
     if (other === ticker) continue;
@@ -856,8 +776,6 @@ function renderTickerList(data, ticker) {
     rows.push({ ticker: other, r, sector });
   }
 
-  // Сортировка: по возрастанию |r| — самые независимые сверху.
-  // При равных |r| — по возрастанию r.
   rows.sort((a, b) => {
     const aa = Math.abs(a.r), bb = Math.abs(b.r);
     if (aa !== bb) return aa - bb;
@@ -869,14 +787,12 @@ function renderTickerList(data, ticker) {
     return;
   }
 
-  // Кто уже в текущем наборе (для подсветки кнопки)
   const currentSet = getCurrentSet();
 
   const html = rows.map((row, idx) => {
     const c = heatColor(row.r);
     const inSet = currentSet.includes(row.ticker);
     const rLabel = correlationLabel(row.r);
-    // Метки для топ-5
     let badge = '';
     if (idx < 5 && Math.abs(row.r) < 0.35) {
       badge = ' 🟢';
@@ -900,7 +816,6 @@ function renderTickerList(data, ticker) {
   list.innerHTML = html;
 }
 
-// ----- Простая HTML-экранизация -----
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -910,7 +825,6 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
-// ----- Текущий набор из localStorage -----
 function getCurrentSet() {
   try {
     const raw = localStorage.getItem('trading-signals-correlation-set');
@@ -922,7 +836,6 @@ function getCurrentSet() {
   }
 }
 
-// ----- Добавить тикер в набор -----
 function addTickerToSet(ticker) {
   const set = getCurrentSet();
   if (set.includes(ticker)) {
@@ -943,7 +856,6 @@ function addTickerToSet(ticker) {
     return;
   }
 
-  // Сообщаем остальному приложению (app.js может слушать)
   try {
     window.dispatchEvent(new CustomEvent('correlation-set-changed', {
       detail: { ticker, set: set.slice() },
@@ -952,13 +864,11 @@ function addTickerToSet(ticker) {
 
   showCorrToast(`${ticker} добавлен (${set.length}/12). Обнови вкладку корреляции, чтобы увидеть в матрице.`);
 
-  // Обновляем кнопку в текущем списке
   if (_currentPanelTicker && _corrMatrixCache) {
     renderTickerList(_corrMatrixCache, _currentPanelTicker);
   }
 }
 
-// ----- Тост -----
 let _corrToastTimer = null;
 function showCorrToast(text) {
   let el = document.getElementById('corrToast');
@@ -967,11 +877,9 @@ function showCorrToast(text) {
     el.id = 'corrToast';
     el.className = 'corr-toast';
     document.body.appendChild(el);
-    // на случай, если стили ещё не вставлены
     injectPanelStyles();
   }
   el.textContent = text;
-  // перезапустить анимацию
   el.classList.remove('is-open');
   void el.offsetWidth;
   el.classList.add('is-open');
@@ -979,7 +887,6 @@ function showCorrToast(text) {
   _corrToastTimer = setTimeout(() => el.classList.remove('is-open'), 2600);
 }
 
-// Закрытие по Escape (для десктопа)
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeTickerPanel();
 });
