@@ -19,6 +19,11 @@
 //     отсортированных по возрастанию |r| («независимые» наверху);
 //   — фильтр по секторам в шторке;
 //   — кнопка «+ В набор» (пишет в localStorage и шлёт CustomEvent).
+//
+// Обновлено (шаг 3.3):
+//   — в шторке заголовок и чипы фильтров получили flex-shrink: 0,
+//     а список — min-height: 0. Без этого флексбокс сжимал чипы
+//     «по вертикали», когда контента становилось много.
 
 // Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
@@ -595,6 +600,8 @@ function injectPanelStyles() {
     .ticker-corr-sheet.is-open { transform: translateY(0); }
 
     .ticker-corr-header {
+      /* не даём флексбоксу сжимать шапку по вертикали */
+      flex-shrink: 0;
       display: flex; align-items: flex-start; justify-content: space-between;
       gap: 12px;
       padding: 14px 16px 10px 16px;
@@ -608,6 +615,8 @@ function injectPanelStyles() {
     }
 
     .ticker-corr-filters {
+      /* не даём флексбоксу сжимать полосу чипов по вертикали */
+      flex-shrink: 0;
       display: flex; gap: 6px; overflow-x: auto;
       padding: 10px 16px;
       border-bottom: 1px solid rgba(128,128,128,0.18);
@@ -627,10 +636,13 @@ function injectPanelStyles() {
     }
 
     .ticker-corr-list {
+      /* flex: 1 1 0 + min-height: 0 — чтобы список скроллился сам,
+         а не растягивал весь flex-контейнер и не сжимал соседей */
+      flex: 1 1 0;
+      min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       padding: 6px 8px 16px 8px;
-      flex: 1;
     }
 
     .ticker-corr-row {
