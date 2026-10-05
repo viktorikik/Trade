@@ -21,9 +21,10 @@
 //   — кнопка «+ В набор» (пишет в localStorage и шлёт CustomEvent).
 //
 // Обновлено (шаг 3.3):
-//   — в шторке заголовок и чипы фильтров получили flex-shrink: 0,
-//     а список — min-height: 0. Без этого флексбокс сжимал чипы
-//     «по вертикали», когда контента становилось много.
+//   — шторка переведена с flex на grid: grid-template-rows auto/auto/1fr
+//     надёжно фиксирует высоту шапки и полосы чипов, а список
+//     скроллится в оставшемся месте.
+//   — подсказка в index.html описывает тепловую карту (красный/синий/без цвета).
 
 // Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
@@ -154,7 +155,7 @@ function findTopPairs(matrix, tickers) {
 }
 
 // ===== Классификация значения =====
-// Пороги для цветовой заливки и текстовой подписи.
+// Пороги для текстовой подписи (и для старых классов).
 function correlationClass(v) {
   if (v == null) return 'na';
   if (v >= 0.7) return 'very-high';
@@ -594,14 +595,16 @@ function injectPanelStyles() {
       box-shadow: 0 -6px 24px rgba(0,0,0,0.25);
       transform: translateY(105%);
       transition: transform 0.25s ease;
-      display: flex; flex-direction: column;
+      /* grid вместо flex: три строки — auto (шапка), auto (чипы),
+         minmax(0, 1fr) (список). Это надёжно фиксирует высоту первых
+         двух строк и не даёт им сжиматься, когда список длинный. */
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
     .ticker-corr-sheet.is-open { transform: translateY(0); }
 
     .ticker-corr-header {
-      /* не даём флексбоксу сжимать шапку по вертикали */
-      flex-shrink: 0;
       display: flex; align-items: flex-start; justify-content: space-between;
       gap: 12px;
       padding: 14px 16px 10px 16px;
@@ -615,30 +618,37 @@ function injectPanelStyles() {
     }
 
     .ticker-corr-filters {
-      /* не даём флексбоксу сжимать полосу чипов по вертикали */
-      flex-shrink: 0;
       display: flex; gap: 6px; overflow-x: auto;
       padding: 10px 16px;
       border-bottom: 1px solid rgba(128,128,128,0.18);
       -webkit-overflow-scrolling: touch;
+      /* полоса чипов должна быть ровно такой, как её содержимое */
+      align-items: center;
+      min-height: 52px;
     }
     .ticker-corr-chip {
       flex: 0 0 auto;
-      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      padding: 0 12px;
       border-radius: 999px;
       border: 1px solid rgba(128,128,128,0.35);
       background: transparent; color: inherit;
-      font-size: 12px; cursor: pointer;
+      font-size: 12px; line-height: 1;
+      cursor: pointer;
       white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
     .ticker-corr-chip.is-active {
       background: #4a9eff; border-color: #4a9eff; color: #fff;
     }
 
     .ticker-corr-list {
-      /* flex: 1 1 0 + min-height: 0 — чтобы список скроллился сам,
-         а не растягивал весь flex-контейнер и не сжимал соседей */
-      flex: 1 1 0;
+      /* В grid-контейнере строку minmax(0, 1fr) скроллим внутри неё.
+         min-height: 0 критично — иначе грид-строка не сожмётся ниже
+         своего содержимого и не появится scroll. */
       min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
