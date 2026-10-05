@@ -1438,14 +1438,40 @@ document.getElementById('riskPct').addEventListener('change', render);
 // Запоминаем тикер из URL — понадобится после populateSelectOptions()
 let _pendingTickerFromUrl = null;
 
+// Применяем тикер при старте: сначала URL-параметр, потом сохранённый.
+// Делаем это ДО первого render(), иначе страница стартует с дефолтной
+// первой опцией из <select> (SBER).
 (function initFromUrl() {
+  const select = document.getElementById('ticker');
+  if (!select) return;
+
   const p = new URLSearchParams(window.location.search);
   const t = p.get('ticker');
-  if (!t) return;
-  _pendingTickerFromUrl = t;
-  const select = document.getElementById('ticker');
-  const exists = Array.from(select.options).some(o => o.value === t);
-  if (exists) select.value = t;
+
+  // 1. URL-параметр — высший приоритет
+  if (t) {
+    _pendingTickerFromUrl = t;
+    const exists = Array.from(select.options).some(o => o.value === t);
+    if (exists) select.value = t;
+    return;
+  }
+
+  // 2. Сохранённый тикер (после последнего выбора пользователя).
+  //    В <select> пока только 6 дефолтных опций, поэтому если сохранённого
+  //    тикера там нет — добавим опцию, чтобы select.value применился.
+  try {
+    const saved = localStorage.getItem('trading-signals-current-ticker');
+    if (saved) {
+      const hasOpt = Array.from(select.options).some(o => o.value === saved);
+      if (!hasOpt) {
+        const opt = document.createElement('option');
+        opt.value = saved;
+        opt.textContent = saved;
+        select.appendChild(opt);
+      }
+      select.value = saved;
+    }
+  } catch (e) { /* приватный режим — игнорируем */ }
 })();
 
 renderStrategyParams();
