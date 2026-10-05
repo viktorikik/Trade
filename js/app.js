@@ -1408,10 +1408,23 @@ document.getElementById('exportSummary').addEventListener('click', async () => {
 // ============================================================
 
 document.getElementById('reload').addEventListener('click', render);
+
 document.getElementById('ticker').addEventListener('change', () => {
+  saveCurrentTicker();
   updateTickerLabel();
   render();
 });
+
+// Сохраняем выбранный тикер — чтобы он не сбрасывался при переходах
+// между страницами (index.html ↔ portfolio.html).
+function saveCurrentTicker() {
+  const select = document.getElementById('ticker');
+  if (!select) return;
+  try {
+    localStorage.setItem(CURRENT_TICKER_KEY, select.value);
+  } catch (e) { /* приватный режим */ }
+}
+
 document.getElementById('strategy').addEventListener('change', () => {
   renderStrategyParams();
   document.getElementById('optimizerSection').style.display = 'none';
@@ -1507,6 +1520,7 @@ render();
 const TICKERS_INDEX_URL = './data/tickers.json';
 const RECENT_KEY = 'trading-signals-recent-tickers';
 const DRAWER_SECTIONS_KEY = 'trading-signals-drawer-sections';
+const CURRENT_TICKER_KEY = 'trading-signals-current-ticker';
 const RECENT_MAX = 8;
 
 let tickersIndex = null;               // { updatedAt, board, count, tickers: [...] }
@@ -1568,15 +1582,23 @@ function populateSelectOptions() {
     select.appendChild(opt);
   }
 
-  // Приоритет: URL-параметр → текущее значение → первая бумага
+  // Приоритет: URL-параметр → сохранённый тикер → текущее значение → первая
+  let savedTicker = null;
+  try { savedTicker = localStorage.getItem(CURRENT_TICKER_KEY); } catch (e) {}
+
   if (_pendingTickerFromUrl && tickerByCode.has(_pendingTickerFromUrl)) {
     select.value = _pendingTickerFromUrl;
     _pendingTickerFromUrl = null;
+  } else if (savedTicker && tickerByCode.has(savedTicker)) {
+    select.value = savedTicker;
   } else if (current && tickerByCode.has(current)) {
     select.value = current;
   } else if (tickersIndex.tickers.length > 0) {
     select.value = tickersIndex.tickers[0].ticker;
   }
+
+  // Обновляем метку в шапке
+  updateTickerLabel();
 }
 
 function updateTickerLabel() {
@@ -1802,6 +1824,7 @@ function selectTicker(ticker) {
   }
 
   select.value = ticker;
+  saveCurrentTicker();
   updateTickerLabel();
   addToRecent(ticker);
   closeTickerDrawer();
@@ -2159,6 +2182,24 @@ function applyCorrelationDrawer() {
   const btnWatchlist = document.getElementById('corrFromWatchlist');
   const btnPick = document.getElementById('corrPick');
   const btnReset = document.getElementById('corrReset');
+  const btnRefresh = document.getElementById('corrRefresh');
+
+  // Кнопка «🔄 Обновить» — пересчитать матрицу вручную
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', () => {
+      correlationCache = null;
+      renderCorrelation();
+      showToast('Корреляция пересчитана');
+    });
+  }
+
+  // Слушаем событие из correlation.js — когда «+ В набор» меняет набор,
+  // пересчитываем матрицу автоматически, без переключения вкладок.
+  window.addEventListener('correlation-set-changed', () => {
+    correlationCache = null;
+    renderCorrelation();
+    updateCorrelationSourceHint();
+  });
 
   if (btnWatchlist) {
     btnWatchlist.addEventListener('click', correlationUseWatchlist);
