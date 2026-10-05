@@ -137,8 +137,10 @@ def load_prices(ticker, cutoff_date):
     for c in candles:
         if not isinstance(c, dict):
             continue
-        d = pick(c, "TRADEDATE", "tradedate", "date", "begin", "trade_date")
-        cl = pick(c, "CLOSE", "close", "Close", "close_price")
+        # Ключ даты: сначала "time" (наш формат), потом остальные на всякий случай
+        d = pick(c, "time", "TRADEDATE", "tradedate", "date",
+                 "begin", "trade_date", "datetime", "ts")
+        cl = pick(c, "close", "CLOSE", "Close", "close_price", "c")
         if d is None or cl is None:
             continue
         try:
@@ -181,16 +183,30 @@ def main():
     files = sorted(DATA_DIR.glob("*.json"))
     print(f"Файлов в data/: {len(files)}")
 
+    no_candles = []       # файлы, где вообще не нашли свечи
+    too_short = []        # файлы, где свечей < MIN_OVERLAP_DAYS
+
     for path in files:
         name = path.stem.upper()
         if path.stem.lower() in EXCLUDE:
             continue
         s = load_prices(name, cutoff)
-        if s is None or len(s) < MIN_OVERLAP_DAYS:
+        if s is None:
+            no_candles.append(name)
+            continue
+        if len(s) < MIN_OVERLAP_DAYS:
+            too_short.append((name, len(s)))
             continue
         prices[name] = s
 
     print(f"Бумаг с достаточной историей (>= {MIN_OVERLAP_DAYS} дней): {len(prices)}")
+
+    if no_candles:
+        print(f"[i] Не распарсилось файлов: {len(no_candles)}  "
+              f"(примеры: {', '.join(no_candles[:5])})")
+    if too_short:
+        print(f"[i] Слишком короткая история: {len(too_short)}  "
+              f"(примеры: {', '.join(f'{n}({k})' for n, k in too_short[:5])})")
 
     if len(prices) < 2:
         print("[!] Слишком мало бумаг — матрица не имеет смысла. Выход.")
