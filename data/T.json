@@ -3725,6 +3725,11 @@
     }
   ],
   "dividends": [],
-  "splits": [],
+  "splits": [
+    {
+      "date": "2026-04-17",
+      "ratio": 10
+    }
+  ],
   "fundamentals": null
 }

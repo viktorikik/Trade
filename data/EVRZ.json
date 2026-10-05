@@ -790,5 +790,64 @@
   ],
   "dividends": [],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 0.0,
+      "roe": 50.2,
+      "roa": 20.5,
+      "netProfitBln": 140.3,
+      "capitalizationBln": 0.0
+    },
+    "history": [
+      {
+        "year": "2017",
+        "pe": 0.0,
+        "roe": 37.5,
+        "netProfitBln": 44.3,
+        "capitalizationBln": 0.0
+      },
+      {
+        "year": "2018",
+        "pe": 0.0,
+        "roe": 129.2,
+        "roa": 23.2,
+        "netProfitBln": 150.8,
+        "capitalizationBln": 0.0
+      },
+      {
+        "year": "2019",
+        "pe": 0.0,
+        "roe": 22.7,
+        "roa": 3.9,
+        "netProfitBln": 23.6,
+        "capitalizationBln": 0.0
+      },
+      {
+        "year": "2020",
+        "pe": 0.0,
+        "roe": 104.7,
+        "roa": 9.5,
+        "netProfitBln": 61.2,
+        "capitalizationBln": 0.0
+      },
+      {
+        "year": "2021",
+        "pe": 0.0,
+        "roe": 150.0,
+        "roa": 31.3,
+        "netProfitBln": 228.9,
+        "capitalizationBln": 0.0
+      },
+      {
+        "year": "LTM",
+        "pe": 0.0,
+        "roe": 50.2,
+        "roa": 20.5,
+        "netProfitBln": 140.3,
+        "capitalizationBln": 0.0
+      }
+    ]
+  }
 }

@@ -7622,7 +7622,12 @@
       "amount": 9.71
     }
   ],
-  "splits": [],
+  "splits": [
+    {
+      "date": "2024-07-15",
+      "ratio": 0.0002
+    }
+  ],
   "fundamentals": {
     "asOf": "LTM",
     "source": "smart-lab.ru",

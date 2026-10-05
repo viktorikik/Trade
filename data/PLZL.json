@@ -7621,6 +7621,11 @@
     }
   ],
   "dividends": [],
-  "splits": [],
+  "splits": [
+    {
+      "date": "2025-03-27",
+      "ratio": 10
+    }
+  ],
   "fundamentals": null
 }

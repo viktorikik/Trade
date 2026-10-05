@@ -7620,7 +7620,7 @@
   ],
   "splits": [
     {
-      "date": "2024-04-04",
+      "date": "2024-04-08",
       "ratio": 100
     }
   ],
@@ -7628,13 +7628,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 8.13,
+      "pe": 8.11,
       "roe": 22.3,
       "roa": 8.7,
       "eps": 14.7,
       "divYield": 1.6,
       "netProfitBln": 224.2,
-      "capitalizationBln": 1824.0
+      "capitalizationBln": 1818.0
     },
     "history": [
       {
@@ -7689,13 +7689,13 @@
       },
       {
         "year": "LTM",
-        "pe": 8.13,
+        "pe": 8.11,
         "roe": 22.3,
         "roa": 8.7,
         "eps": 14.7,
         "divYield": 1.6,
         "netProfitBln": 224.2,
-        "capitalizationBln": 1824.0
+        "capitalizationBln": 1818.0
       }
     ]
   }
