@@ -45,11 +45,6 @@ const __debug = {
 // ============================================================
 // 1. ГРАФИКИ
 // ============================================================
-// Свечной график и equity-график создаются ПО-РАЗНОМУ:
-//   — Свечной создаётся сразу: он в табе «Обзор», активном по умолчанию.
-//   — Equity создаётся lazy: он в табе «Стратегия», который может быть скрыт.
-//     Lightweight Charts не умеет рисовать в контейнер с width=0.
-//   — Macro-график тоже lazy — та же причина.
 
 // ---------- Палитра графиков из CSS-переменных ----------
 function getChartColors() {
@@ -124,7 +119,6 @@ function applyEquityData(data) {
   pendingEquityData = data;
   if (!data) return;
   if (!equityChart) {
-    // Создаём график только если контейнер уже виден
     if (isTabActive('strategy')) {
       ensureEquityChart();
     }
@@ -188,11 +182,9 @@ function isTabActive(name) {
   return !!(el && el.classList.contains('active'));
 }
 
-// Перекрашиваем все графики под текущую тему
 function applyThemeToCharts() {
   const c = getChartColors();
 
-  // Свечной
   chart.applyOptions({
     layout: { background: { color: c.bg }, textColor: c.text },
     grid: { vertLines: { color: c.grid }, horzLines: { color: c.grid } },
@@ -210,7 +202,6 @@ function applyThemeToCharts() {
   emaFastSeries.applyOptions({ color: c.accent });
   emaSlowSeries.applyOptions({ color: c.danger });
 
-  // Equity
   if (equityChart) {
     equityChart.applyOptions({
       layout: { background: { color: c.bg }, textColor: c.text },
@@ -221,7 +212,6 @@ function applyThemeToCharts() {
     if (equitySeries) equitySeries.applyOptions({ lineColor: c.accent });
   }
 
-  // Macro
   if (macroChart) {
     macroChart.applyOptions({
       layout: { background: { color: c.bg }, textColor: c.text },
@@ -233,8 +223,6 @@ function applyThemeToCharts() {
   }
 }
 
-// Наблюдаем за сменой темы: inline-скрипт в index.html
-// ставит/убирает атрибут data-theme на <html>.
 const themeObserver = new MutationObserver(() => {
   applyThemeToCharts();
 });
@@ -243,8 +231,6 @@ themeObserver.observe(document.documentElement, {
   attributeFilter: ['data-theme'],
 });
 
-// Наблюдаем за сменой таба: как только таб становится активным —
-// создаём графики, которые до этого момента были скрыты.
 const tabObserver = new MutationObserver((mutations) => {
   for (const m of mutations) {
     if (m.attributeName !== 'class') continue;
@@ -303,6 +289,10 @@ const dataCache = new Map();
 let macroCache = null;
 let correlationCache = null;
 
+// Если при авто-откате на SBER мы что-то сообщили пользователю — покажем
+// это сообщение в шапке при следующем успешном рендере.
+let _pendingFallbackNote = null;
+
 function normalizeTickerPayload(raw, ticker) {
   if (Array.isArray(raw)) {
     return {
@@ -324,15 +314,37 @@ function normalizeTickerPayload(raw, ticker) {
   throw new Error('Неизвестный формат файла данных');
 }
 
+// Загрузка свечей одной бумаги.
+// Делаем 2 попытки:
+//   1) обычный fetch (быстро, из кэша SW);
+//   2) если 1-я упала — fetch с cache: 'reload' (в обход кэша, прямо с сервера).
+// Это спасает от «моргнувшей» сети и от битого ответа в кэше service worker.
 async function loadRealData(ticker) {
   if (dataCache.has(ticker)) return dataCache.get(ticker);
-  const resp = await fetch(`./data/${ticker}.json`);
-  if (!resp.ok) throw new Error(`Не удалось загрузить data/${ticker}.json: HTTP ${resp.status}`);
-  const raw = await resp.json();
-  const payload = normalizeTickerPayload(raw, ticker);
-  if (payload.candles.length === 0) throw new Error(`Файл data/${ticker}.json пустой`);
-  dataCache.set(ticker, payload);
-  return payload;
+
+  const url = `./data/${ticker}.json`;
+  let lastErr = null;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const opts = attempt === 0 ? {} : { cache: 'reload' };
+      const resp = await fetch(url, opts);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const raw = await resp.json();
+      const payload = normalizeTickerPayload(raw, ticker);
+      if (payload.candles.length === 0) throw new Error('файл пустой');
+      dataCache.set(ticker, payload);
+      return payload;
+    } catch (err) {
+      lastErr = err;
+      // Перед второй попыткой — короткая пауза, чтобы сеть «успокоилась»
+      if (attempt === 0) {
+        await new Promise(r => setTimeout(r, 800));
+      }
+    }
+  }
+
+  throw new Error(`Не удалось загрузить data/${ticker}.json: ${lastErr && lastErr.message}`);
 }
 
 async function loadMacroData() {
@@ -354,12 +366,9 @@ async function loadMacroData() {
 }
 
 // Загрузка данных для набора корреляции.
-// Набор берётся из getCorrelationSet() — это может быть дефолт,
-// «Избранное» или ручной выбор пользователя (см. раздел 16).
 async function loadCorrelationData() {
   const tickers = getCorrelationSet();
 
-  // Простой кэш: если набор не менялся и данные уже загружены — отдаём как есть.
   if (correlationCache && correlationCache.__setKey === tickers.join(',')) {
     return correlationCache;
   }
@@ -375,7 +384,6 @@ async function loadCorrelationData() {
     }
   });
 
-  // Сохраняем «отпечаток» набора, чтобы понимать, надо ли пересчитывать.
   payloads.__setKey = tickers.join(',');
   correlationCache = payloads;
   return payloads;
@@ -393,7 +401,6 @@ async function renderCorrelation() {
     const useSplits = document.getElementById('useCorpSplits').checked;
     const useDividends = document.getElementById('useCorpDividends').checked;
 
-    // Тикеры — из текущего набора
     const tickers = getCorrelationSet();
 
     __debug.start('corr.compute');
@@ -403,7 +410,6 @@ async function renderCorrelation() {
     __debug.start('corr.render');
     renderCorrelationSection(result);
 
-    // Оценка диверсификации — считаем после отрисовки матрицы
     const sectorLookup = (t) => {
       const info = tickerByCode.get(t);
       return info ? info.sector : null;
@@ -516,9 +522,6 @@ function renderFundamentalSection(payload) {
 
   const analysis = analyzeFundamentals(payload);
   if (!analysis) {
-    // Фундаментал ещё не загружен (идёт умная ротация Smart-Lab).
-    // Не скрываем секцию, а показываем понятную заглушку — иначе кажется,
-    // что что-то сломалось.
     const ticker = payload.ticker || 'этой бумаги';
 
     const asOfEl = document.getElementById('fundamentalAsOf');
@@ -747,7 +750,6 @@ function renderMacroSection(macroData) {
 
   if (hasChartData) {
     if (chartWrap) chartWrap.style.display = '';
-    // Откладываем отрисовку графика до показа таба
     pendingMacroData = analysis.chartData;
     if (isTabActive('analysis')) {
       ensureMacroChart();
@@ -886,7 +888,6 @@ function renderCorpSection(payload, result, splitEvents, gapDates, useSplits, us
 // 10. ПАРАМЕТРЫ СТРАТЕГИИ
 // ============================================================
 
-// Человеческие описания стратегий — для обзора «для новичка»
 const STRATEGY_DESCRIPTIONS = {
   ema: 'Покупает, когда быстрая EMA пересекает медленную снизу вверх. Продаёт — когда сверху вниз.',
   rsi: 'Покупает, когда RSI падает ниже уровня перепроданности. Продаёт — когда поднимается выше уровня перекупленности.',
@@ -1013,8 +1014,39 @@ async function render() {
     __debug.end('loadData');
   } catch (err) {
     console.error(err);
+    __debug.end('loadData');
+
+    // ---- АВТООТКАТ НА SBER ----
+    // Если упал не-SBER тикер — попробуем SBER как запасной вариант.
+    // Сохранённый тикер в localStorage НЕ перезаписываем: при следующем
+    // запуске снова попробуем исходный (вдруг сеть уже в порядке).
+    if (ticker !== 'SBER') {
+      console.warn(`[app] ${ticker} не загрузился (${err.message}), откат на SBER`);
+
+      // Выкинем из кэша возможно битую запись
+      dataCache.delete(ticker);
+
+      // Запомним сообщение — покажем его в шапке при успешном рендере SBER
+      _pendingFallbackNote = {
+        failedTicker: ticker,
+        errorMsg: err.message,
+      };
+
+      // Переключаем select на SBER (без сохранения в localStorage)
+      const select = document.getElementById('ticker');
+      select.value = 'SBER';
+      updateTickerLabel();
+
+      // Перезапускаем рендер
+      setTimeout(() => render(), 50);
+      __debug.end('total');
+      __debug.show();
+      return;
+    }
+
+    // Если уже SBER и он не загрузился — показываем честную ошибку
     document.getElementById('stats').innerHTML =
-      `<b style="color:#f87171">Ошибка загрузки: ${err.message}</b>`;
+      `<b style="color:#f87171">Ошибка загрузки SBER: ${err.message}</b>`;
     document.getElementById('metrics').innerHTML = '';
     document.getElementById('splitSection').style.display = 'none';
     document.getElementById('corpSection').style.display = 'none';
@@ -1111,7 +1143,6 @@ async function render() {
   const result = runBacktest(adjusted, signals, backtestOptions);
   currentLastResult = { ticker, strategyId, params, result, payload };
 
-  // Equity — откладываем отрисовку, если таб «Стратегия» не активен
   applyEquityData(result.equity);
 
   renderMetricsInto('metrics', result);
@@ -1145,7 +1176,20 @@ async function render() {
   const lotWord = payload.lotSize === 1 ? 'акция'
               : (payload.lotSize >= 2 && payload.lotSize <= 4 ? 'акции' : 'акций');
 
-  document.getElementById('stats').innerHTML = `
+  // Плашка-предупреждение (если только что был откат с другого тикера)
+  let fallbackBanner = '';
+  if (_pendingFallbackNote) {
+    const f = _pendingFallbackNote;
+    _pendingFallbackNote = null;
+    fallbackBanner = `
+      <div style="padding:10px 14px;border-radius:8px;background:rgba(251,191,36,0.15);border-left:3px solid #fbbf24;margin-bottom:12px;font-size:12.5px;line-height:1.5">
+        ⚠️ <b>${f.failedTicker}</b> не загрузился${f.errorMsg ? ` (${f.errorMsg})` : ''}.
+        Показан <b>SBER</b> как запасной вариант. Выбери <b>${f.failedTicker}</b> заново через шапку, когда сеть будет доступна.
+      </div>
+    `;
+  }
+
+  document.getElementById('stats').innerHTML = fallbackBanner + `
     <div class="overview-header">
       <div class="ov-line ov-title">📊 <b>${ticker}</b> · ${payload.name}</div>
       <div class="ov-line">Последняя цена: <b>${priceStr} ₽</b>${showRawPrice ? ' <span class="badge-adjusted" title="На графике цена приведена к текущему масштабу">скорр.</span>' : ''}</div>
@@ -1483,10 +1527,6 @@ render();
 // ============================================================
 // 14. СОХРАНЕНИЕ СОСТОЯНИЯ СВОРАЧИВАЕМЫХ СЕКЦИЙ (таб «Анализ»)
 // ============================================================
-// Пользователь тапнул «Фундаментал» → раскрылось. Ушёл на другой таб,
-// вернулся — секция всё ещё раскрыта. Сохраняем в localStorage.
-// Плюс: если секция содержит график (макро) — дорисовываем его
-// при раскрытии, потому что в свёрнутом виде контейнер имеет width=0.
 
 (function initCollapsiblePersistence() {
   const STORAGE_KEY = 'trading-signals-collapsible';
@@ -1503,21 +1543,16 @@ render();
   collapsibles.forEach(el => {
     const key = el.id;
 
-    // Восстанавливаем сохранённое состояние
     if (typeof saved[key] === 'boolean') {
       el.open = saved[key];
     }
 
-    // Слушаем изменения
     el.addEventListener('toggle', () => {
       saved[key] = el.open;
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
       } catch (e) { /* приватный режим — игнорируем */ }
 
-      // Если раскрылась макро-секция — дорисовываем график.
-      // В свёрнутом виде у контейнера width=0, и Lightweight Charts
-      // не может создать canvas. Поэтому создаём график только сейчас.
       if (el.open && el.id === 'macroSection') {
         requestAnimationFrame(() => {
           if (typeof ensureMacroChart !== 'function') return;
@@ -1537,11 +1572,8 @@ render();
 })();
 
 // ============================================================
-// 15. ШТОРКА ВЫБОРА БУМАГ (Шаг 21, Итерация 3)
+// 15. ШТОРКА ВЫБОРА БУМАГ
 // ============================================================
-// Загружает data/tickers.json (475 акций), показывает шторку снизу
-// с поиском, «Недавними» и группами по отраслям. При выборе бумаги
-// обновляет скрытый <select id="ticker"> и вызывает render().
 
 const TICKERS_INDEX_URL = './data/tickers.json';
 const RECENT_KEY = 'trading-signals-recent-tickers';
@@ -1549,12 +1581,11 @@ const DRAWER_SECTIONS_KEY = 'trading-signals-drawer-sections';
 const CURRENT_TICKER_KEY = 'trading-signals-current-ticker';
 const RECENT_MAX = 8;
 
-let tickersIndex = null;               // { updatedAt, board, count, tickers: [...] }
-const tickerByCode = new Map();        // ticker -> { ticker, name, sector, lotSize }
-const sectionsBySector = new Map();    // sector -> [{ ticker, name, lotSize }]
-let recentTickers = [];                // ["SBER", "GAZP", ...]
+let tickersIndex = null;
+const tickerByCode = new Map();
+const sectionsBySector = new Map();
+let recentTickers = [];
 
-// Порядок отраслей в шторке: сверху — самые популярные.
 const SECTOR_ORDER = [
   'Нефть и газ',
   'Финансы',
@@ -1587,7 +1618,6 @@ async function loadTickersIndex() {
     sectionsBySector.get(t.sector).push(t);
   }
 
-  // Сортируем бумаги внутри каждой секции по алфавиту тикера
   for (const list of sectionsBySector.values()) {
     list.sort((a, b) => a.ticker.localeCompare(b.ticker));
   }
@@ -1623,7 +1653,6 @@ function populateSelectOptions() {
     select.value = tickersIndex.tickers[0].ticker;
   }
 
-  // Обновляем метку в шапке
   updateTickerLabel();
 }
 
@@ -1701,7 +1730,6 @@ function renderTickerDrawer(query = '') {
 
   const q = query.trim().toLowerCase();
 
-  // --- Режим поиска ---
   if (q) {
     const matches = tickersIndex.tickers.filter(t =>
       t.ticker.toLowerCase().includes(q) ||
@@ -1722,10 +1750,8 @@ function renderTickerDrawer(query = '') {
     return;
   }
 
-  // --- Обычный режим: недавние + секции ---
   const parts = [];
 
-  // Недавние
   const recentValid = recentTickers.filter(t => tickerByCode.has(t));
   if (recentValid.length > 0) {
     parts.push('<div class="ticker-recent-title">Недавние</div>');
@@ -1734,7 +1760,6 @@ function renderTickerDrawer(query = '') {
     }
   }
 
-  // Секции по отраслям
   const savedSections = loadDrawerSections();
   const sectors = SECTOR_ORDER.filter(s => sectionsBySector.has(s));
   for (const s of sectionsBySector.keys()) {
@@ -1783,8 +1808,6 @@ function bindTickerDrawerEvents(body) {
   });
 }
 
-// ---------- Сохранение открытых секций ----------
-
 function loadDrawerSections() {
   try {
     const raw = localStorage.getItem(DRAWER_SECTIONS_KEY);
@@ -1811,7 +1834,6 @@ async function openTickerDrawer() {
 
   drawer.classList.add('show');
 
-  // Ленивая загрузка индекса при первом открытии
   if (!tickersIndex) {
     if (body) body.innerHTML = '<div class="ticker-drawer-loading">Загрузка списка бумаг…</div>';
     try {
@@ -1837,8 +1859,6 @@ function closeTickerDrawer() {
   if (drawer) drawer.classList.remove('show');
 }
 
-// ---------- Выбор тикера ----------
-
 function selectTicker(ticker) {
   if (!ticker) return;
   const select = document.getElementById('ticker');
@@ -1857,8 +1877,6 @@ function selectTicker(ticker) {
   render();
 }
 
-// ---------- Обработчики ----------
-
 (function initTickerDrawer() {
   const drawer = document.getElementById('tickerDrawer');
   const openBtn = document.getElementById('openTickerDrawer');
@@ -1876,19 +1894,16 @@ function selectTicker(ticker) {
     closeBtn.addEventListener('click', () => closeTickerDrawer());
   }
 
-  // Клик по затемнению (не по самой шторке) — закрыть
   drawer.addEventListener('click', (e) => {
     if (e.target === drawer) closeTickerDrawer();
   });
 
-  // Escape — закрыть
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && drawer.classList.contains('show')) {
       closeTickerDrawer();
     }
   });
 
-  // Поиск
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       renderTickerDrawer(e.target.value);
@@ -1897,13 +1912,8 @@ function selectTicker(ticker) {
 })();
 
 // ============================================================
-// 16. УПРАВЛЕНИЕ НАБОРОМ КОРРЕЛЯЦИИ (Шаг 21, Итерация 5)
+// 16. УПРАВЛЕНИЕ НАБОРОМ КОРРЕЛЯЦИИ
 // ============================================================
-// Пользователь может выбрать, по каким бумагам считать матрицу:
-//   — Дефолт: 10 популярных бумаг из разных секторов
-//   — Из Избранного: все тикеры из Watchlist (до 12)
-//   — Вручную: шторка с чекбоксами, отметить до 12
-// Набор хранится в localStorage, при смене — пересчитываем матрицу.
 
 const CORRELATION_DEFAULT = [
   'SBER', 'GAZP', 'LKOH', 'GMKN', 'ROSN',
@@ -1914,8 +1924,6 @@ const CORRELATION_MIN = 2;
 const CORRELATION_STORAGE_KEY = 'trading-signals-correlation-set';
 const CORRELATION_SOURCE_KEY = 'trading-signals-correlation-source';
 
-// ---------- Чтение / запись набора ----------
-
 function getCorrelationSet() {
   try {
     const raw = localStorage.getItem(CORRELATION_STORAGE_KEY);
@@ -1924,7 +1932,6 @@ function getCorrelationSet() {
     if (!Array.isArray(arr) || arr.length < CORRELATION_MIN) {
       return [...CORRELATION_DEFAULT];
     }
-    // Чистим мусор и режем до максимума
     const clean = arr
       .filter(t => typeof t === 'string' && t.length > 0)
       .slice(0, CORRELATION_MAX);
@@ -1947,7 +1954,6 @@ function saveCorrelationSet(tickers, source) {
     localStorage.setItem(CORRELATION_STORAGE_KEY, JSON.stringify(tickers));
     localStorage.setItem(CORRELATION_SOURCE_KEY, source || 'custom');
   } catch (e) { /* приватный режим */ }
-  // Сбрасываем кэш данных и пересчитываем
   correlationCache = null;
   renderCorrelation();
   updateCorrelationSourceHint(source);
@@ -1963,8 +1969,6 @@ function resetCorrelationSet() {
   updateCorrelationSourceHint('default');
   showToast('Набор сброшен к 10 популярным бумагам');
 }
-
-// ---------- Подсказка над матрицей ----------
 
 function updateCorrelationSourceHint(source) {
   const el = document.getElementById('correlationSourceHint');
@@ -1984,8 +1988,6 @@ function updateCorrelationSourceHint(source) {
   el.textContent = text;
 }
 
-// ---------- Действие: «Из Избранного» ----------
-
 function correlationUseWatchlist() {
   const list = loadWatchlist();
   if (!list || list.length === 0) {
@@ -1995,7 +1997,6 @@ function correlationUseWatchlist() {
 
   let tickers = list.map(e => e.ticker).filter(Boolean);
 
-  // Ограничиваем по лимиту
   if (tickers.length > CORRELATION_MAX) {
     tickers = tickers.slice(0, CORRELATION_MAX);
     showToast(`Взяли первые ${CORRELATION_MAX} из ${list.length} бумаг`);
@@ -2010,9 +2011,6 @@ function correlationUseWatchlist() {
   showToast(`Корреляция из Избранного: ${tickers.length} бумаг`);
 }
 
-// ---------- Шторка с чекбоксами ----------
-
-// Временный выбор в шторке (не сохраняется до «Готово»)
 let _corrDraftSet = new Set();
 let _corrDrawerQuery = '';
 
@@ -2021,13 +2019,11 @@ async function openCorrelationDrawer() {
   const body = document.getElementById('correlationDrawerBody');
   if (!drawer) return;
 
-  // Стартовый черновик — текущий набор
   _corrDraftSet = new Set(getCorrelationSet());
   _corrDrawerQuery = '';
 
   drawer.classList.add('show');
 
-  // Загружаем индекс (если ещё не загружен)
   if (!tickersIndex) {
     if (body) body.innerHTML = '<div class="ticker-drawer-loading">Загрузка списка бумаг…</div>';
     try {
@@ -2080,7 +2076,6 @@ function renderCorrelationDrawer(query = '') {
 
   const q = query.trim().toLowerCase();
 
-  // --- Режим поиска ---
   if (q) {
     const matches = tickersIndex.tickers.filter(t =>
       t.ticker.toLowerCase().includes(q) ||
@@ -2101,7 +2096,6 @@ function renderCorrelationDrawer(query = '') {
     return;
   }
 
-  // --- Обычный режим: секции ---
   const parts = [];
 
   const savedSections = loadDrawerSections();
@@ -2153,7 +2147,6 @@ function bindCorrelationDrawerEvents(body) {
       const ticker = row.dataset.ticker;
 
       if (cb.checked) {
-        // Проверяем лимит
         if (_corrDraftSet.size >= CORRELATION_MAX) {
           cb.checked = false;
           showToast(`Максимум ${CORRELATION_MAX} бумаг`);
@@ -2169,9 +2162,8 @@ function bindCorrelationDrawerEvents(body) {
       updateCorrelationDrawerFooter();
     });
 
-    // Клик по строке — тоже переключает (кроме самого чекбокса)
     row.addEventListener('click', (e) => {
-      if (e.target === cb) return; // уже обработано выше
+      if (e.target === cb) return;
       e.preventDefault();
       cb.checked = !cb.checked;
       cb.dispatchEvent(new Event('change', { bubbles: false }));
@@ -2202,15 +2194,12 @@ function applyCorrelationDrawer() {
   showToast(`Корреляция: ${tickers.length} бумаг`);
 }
 
-// ---------- Инициализация ----------
-
 (function initCorrelationControls() {
   const btnWatchlist = document.getElementById('corrFromWatchlist');
   const btnPick = document.getElementById('corrPick');
   const btnReset = document.getElementById('corrReset');
   const btnRefresh = document.getElementById('corrRefresh');
 
-  // Кнопка «🔄 Обновить» — пересчитать матрицу вручную
   if (btnRefresh) {
     btnRefresh.addEventListener('click', () => {
       correlationCache = null;
@@ -2219,8 +2208,6 @@ function applyCorrelationDrawer() {
     });
   }
 
-  // Слушаем событие из correlation.js — когда «+ В набор» меняет набор,
-  // пересчитываем матрицу автоматически, без переключения вкладок.
   window.addEventListener('correlation-set-changed', () => {
     correlationCache = null;
     renderCorrelation();
@@ -2237,7 +2224,6 @@ function applyCorrelationDrawer() {
     btnReset.addEventListener('click', resetCorrelationSet);
   }
 
-  // Шторка
   const drawer = document.getElementById('correlationDrawer');
   const closeBtn = document.getElementById('closeCorrelationDrawer');
   const searchInput = document.getElementById('correlationSearch');
@@ -2265,29 +2251,23 @@ function applyCorrelationDrawer() {
     doneBtn.addEventListener('click', applyCorrelationDrawer);
   }
 
-  // Подсказка над матрицей — при первой загрузке
   updateCorrelationSourceHint();
 })();
 
 // ============================================================
-// 17. ОЦЕНКА ДИВЕРСИФИКАЦИИ (Шаг 21, Итерация 6)
+// 17. ОЦЕНКА ДИВЕРСИФИКАЦИИ
 // ============================================================
-// Рисует блок с баллом 0..10 и подсказками. Саму оценку считает
-// функция scoreDiversification() в js/correlation.js — здесь только
-// отрисовка.
 
 function renderDiversification(diversification) {
   const el = document.getElementById('diversificationBlock');
   if (!el) return;
 
-  // Оценки нет — скрываем блок
   if (!diversification) {
     el.style.display = 'none';
     el.innerHTML = '';
     return;
   }
 
-  // Недостаточно бумаг (меньше 5) — показываем подсказку
   if (diversification.insufficient) {
     el.style.display = 'block';
     el.className = 'diversification-block diversification-insufficient';
@@ -2305,8 +2285,7 @@ function renderDiversification(diversification) {
   }
 
   const d = diversification;
-  const scoreCls = d.levelCls; // good / neutral / bad
-  // Заполненность полосы-индикатора в процентах
+  const scoreCls = d.levelCls;
   const barPct = Math.max(0, Math.min(100, d.score * 10));
 
   const warningsHtml = (d.warnings && d.warnings.length > 0)
