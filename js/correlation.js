@@ -23,7 +23,12 @@
 //   — шторка: display:grid с grid-template-rows auto/auto/1fr.
 //   — цвета элементов шторки — через переменные проекта
 //     (--card, --text, --border, --accent), а не через --bg/--fg.
-//     Это гарантирует читаемость и в тёмной, и в светлой теме.
+//
+// Обновлено (шаг 3.4):
+//   — getCurrentSet() делегирует в getCorrelationSet() из app.js
+//     (чтобы «default» = 10 популярных бумаг работал корректно);
+//   — addTickerToSet() использует saveCorrelationSet() из app.js
+//     (дописывает к текущему набору + шлёт CustomEvent для пересчёта).
 
 // Красивые короткие имена. Если тикера нет в словаре — берём payload.name.
 const CORRELATION_NAMES = {
@@ -492,8 +497,6 @@ function getPairR(data, tickerA, tickerB) {
 }
 
 // ----- Стили шторки -----
-// Используем переменные проекта: --card, --text, --border, --accent.
-// Если их вдруг нет — сработают разумные fallback'и.
 function injectPanelStyles() {
   if (_corrStylesInjected) return;
   _corrStylesInjected = true;
@@ -523,8 +526,6 @@ function injectPanelStyles() {
       box-shadow: 0 -6px 24px rgba(0,0,0,0.25);
       transform: translateY(105%);
       transition: transform 0.25s ease;
-      /* grid вместо flex — три строки: шапка (auto), чипы (auto),
-         список (1fr). Первые две строки не сжимаются никогда. */
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
       padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -562,8 +563,6 @@ function injectPanelStyles() {
       height: 32px;
       padding: 0 14px;
       border-radius: 999px;
-      /* цвета — через переменные проекта, чтобы и в светлой, и в тёмной
-         теме текст был читаемым */
       border: 1px solid var(--border, rgba(128,128,128,0.4));
       background: var(--bg, transparent);
       color: var(--text, inherit);
@@ -825,7 +824,14 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+// ----- Текущий набор -----
+// Делегируем в app.js getCorrelationSet(), если она есть: она корректно
+// учитывает «default» (10 популярных бумаг), когда ключа в localStorage нет.
+// Если app.js не загрузился — fallback на прямое чтение localStorage.
 function getCurrentSet() {
+  if (typeof getCorrelationSet === 'function') {
+    try { return getCorrelationSet(); } catch (e) { /* fallthrough */ }
+  }
   try {
     const raw = localStorage.getItem('trading-signals-correlation-set');
     if (!raw) return [];
@@ -836,6 +842,12 @@ function getCurrentSet() {
   }
 }
 
+// ----- Добавить тикер в набор -----
+// Используем saveCorrelationSet() из app.js — она:
+//   1) дописывает бумагу к ТЕКУЩЕМУ набору (default / watchlist / custom);
+//   2) сохраняет source = 'custom';
+//   3) сбрасывает кэш и пересчитывает матрицу наверху.
+// Если app.js не загрузился — fallback на прямую запись в localStorage.
 function addTickerToSet(ticker) {
   const set = getCurrentSet();
   if (set.includes(ticker)) {
@@ -846,10 +858,25 @@ function addTickerToSet(ticker) {
     showCorrToast('Лимит: 12 бумаг в наборе');
     return;
   }
-  set.push(ticker);
+  const next = [...set, ticker];
+
+  if (typeof saveCorrelationSet === 'function') {
+    try {
+      saveCorrelationSet(next, 'custom');
+      showCorrToast(`${ticker} добавлен (${next.length}/12)`);
+      if (_currentPanelTicker && _corrMatrixCache) {
+        renderTickerList(_corrMatrixCache, _currentPanelTicker);
+      }
+      return;
+    } catch (e) {
+      console.warn('[correlation] saveCorrelationSet упал, fallback:', e);
+    }
+  }
+
+  // Fallback — прямая запись
   try {
-    localStorage.setItem('trading-signals-correlation-set', JSON.stringify(set));
-    localStorage.setItem('trading-signals-correlation-source', 'manual');
+    localStorage.setItem('trading-signals-correlation-set', JSON.stringify(next));
+    localStorage.setItem('trading-signals-correlation-source', 'custom');
   } catch (e) {
     console.warn('[correlation] не удалось сохранить набор:', e);
     showCorrToast('Не удалось сохранить набор');
@@ -858,12 +885,11 @@ function addTickerToSet(ticker) {
 
   try {
     window.dispatchEvent(new CustomEvent('correlation-set-changed', {
-      detail: { ticker, set: set.slice() },
+      detail: { ticker, set: next },
     }));
   } catch (e) { /* ignore */ }
 
-  showCorrToast(`${ticker} добавлен (${set.length}/12). Обнови вкладку корреляции, чтобы увидеть в матрице.`);
-
+  showCorrToast(`${ticker} добавлен (${next.length}/12)`);
   if (_currentPanelTicker && _corrMatrixCache) {
     renderTickerList(_corrMatrixCache, _currentPanelTicker);
   }
