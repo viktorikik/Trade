@@ -7642,9 +7642,116 @@
       "low": 323.0,
       "close": 344.8,
       "volume": 12180
+    },
+    {
+      "time": "2026-10-05",
+      "open": 344.8,
+      "high": 344.8,
+      "low": 327.0,
+      "close": 335.6,
+      "volume": 9550
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-05-18",
+      "amount": 35.0
+    },
+    {
+      "date": "2023-12-11",
+      "amount": 14.0
+    },
+    {
+      "date": "2024-05-24",
+      "amount": 15.0
+    },
+    {
+      "date": "2024-12-02",
+      "amount": 7.0
+    },
+    {
+      "date": "2025-05-23",
+      "amount": 2.5
+    },
+    {
+      "date": "2025-09-22",
+      "amount": 4.0
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 8.02,
+      "roe": 7.3,
+      "roa": 4.5,
+      "eps": 42.6,
+      "divYield": 0.0,
+      "netProfitBln": 7.53,
+      "capitalizationBln": 60.4
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 4.37,
+        "roe": 44.3,
+        "roa": 23.1,
+        "eps": 90.5,
+        "divYield": 7.0,
+        "netProfitBln": 21.2,
+        "capitalizationBln": 92.6
+      },
+      {
+        "year": "2022",
+        "pe": 2.79,
+        "roe": 47.5,
+        "roa": 33.3,
+        "eps": 164.5,
+        "divYield": 11.0,
+        "netProfitBln": 38.5,
+        "capitalizationBln": 107.6
+      },
+      {
+        "year": "2023",
+        "pe": 8.83,
+        "roe": 15.1,
+        "roa": 10.7,
+        "eps": 73.1,
+        "divYield": 4.6,
+        "netProfitBln": 12.9,
+        "capitalizationBln": 114.0
+      },
+      {
+        "year": "2024",
+        "pe": 6.63,
+        "roe": 13.3,
+        "roa": 7.7,
+        "eps": 70.5,
+        "divYield": 2.1,
+        "netProfitBln": 12.5,
+        "capitalizationBln": 82.5
+      },
+      {
+        "year": "2025",
+        "pe": 13.2,
+        "roe": 5.8,
+        "roa": 4.0,
+        "eps": 32.4,
+        "divYield": 1.0,
+        "netProfitBln": 5.72,
+        "capitalizationBln": 75.4
+      },
+      {
+        "year": "LTM",
+        "pe": 8.02,
+        "roe": 7.3,
+        "roa": 4.5,
+        "eps": 42.6,
+        "divYield": 0.0,
+        "netProfitBln": 7.53,
+        "capitalizationBln": 60.4
+      }
+    ]
+  }
 }
