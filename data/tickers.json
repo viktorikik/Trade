@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-10-06",
+  "updatedAt": "2026-10-07",
   "board": "TQBR",
-  "count": 475,
+  "count": 476,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -2738,6 +2738,12 @@
       "name": "КлючАктив",
       "sector": "Прочее",
       "lotSize": 10
+    },
+    {
+      "ticker": "XLAMIX",
+      "name": "2хAMIX",
+      "sector": "Прочее",
+      "lotSize": 1
     },
     {
       "ticker": "XNIRUM",
