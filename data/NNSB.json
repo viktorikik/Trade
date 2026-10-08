@@ -7594,9 +7594,91 @@
       "low": 2640.0,
       "close": 2670.0,
       "volume": 180
+    },
+    {
+      "time": "2026-10-07",
+      "open": 2680.0,
+      "high": 2680.0,
+      "low": 2650.0,
+      "close": 2680.0,
+      "volume": 236
     }
   ],
   "dividends": [],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 3.45,
+      "roe": 183.9,
+      "roa": 21.1,
+      "eps": 867.5,
+      "divYield": 0.0,
+      "netProfitBln": 3.4,
+      "capitalizationBln": 11.7
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 19.4,
+        "roe": -6.8,
+        "roa": 2.4,
+        "eps": 121.2,
+        "divYield": 0.0,
+        "netProfitBln": 0.475,
+        "capitalizationBln": 9.21
+      },
+      {
+        "year": "2022",
+        "pe": -2.88,
+        "roe": 26.1,
+        "roa": -14.7,
+        "eps": -650.6,
+        "divYield": 0.0,
+        "netProfitBln": -2.55,
+        "capitalizationBln": 7.34
+      },
+      {
+        "year": "2023",
+        "pe": -6.12,
+        "roe": 30.9,
+        "roa": -18.9,
+        "eps": -819.0,
+        "divYield": 0.0,
+        "netProfitBln": -3.21,
+        "capitalizationBln": 19.6
+      },
+      {
+        "year": "2024",
+        "pe": 38.7,
+        "roe": -6.7,
+        "roa": 2.4,
+        "eps": 96.4,
+        "divYield": 0.0,
+        "netProfitBln": 0.378,
+        "capitalizationBln": 14.6
+      },
+      {
+        "year": "2025",
+        "pe": 8.89,
+        "roe": 413.5,
+        "roa": 10.8,
+        "eps": 514.9,
+        "divYield": 0.0,
+        "netProfitBln": 2.02,
+        "capitalizationBln": 17.9
+      },
+      {
+        "year": "LTM",
+        "pe": 3.45,
+        "roe": 183.9,
+        "roa": 21.1,
+        "eps": 867.5,
+        "divYield": 0.0,
+        "netProfitBln": 3.4,
+        "capitalizationBln": 11.7
+      }
+    ]
+  }
 }

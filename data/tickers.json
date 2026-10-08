@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-10-07",
+  "updatedAt": "2026-10-08",
   "board": "TQBR",
-  "count": 476,
+  "count": 477,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -26,6 +26,12 @@
       "name": "Аэрофлот",
       "sector": "Транспорт",
       "lotSize": 10
+    },
+    {
+      "ticker": "AIIQ",
+      "name": "AIIQ ETF",
+      "sector": "Прочее",
+      "lotSize": 1
     },
     {
       "ticker": "AKAI",
