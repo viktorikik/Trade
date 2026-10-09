@@ -7666,9 +7666,100 @@
       "low": 98.2,
       "close": 101.0,
       "volume": 2410
+    },
+    {
+      "time": "2026-10-08",
+      "open": 100.2,
+      "high": 100.8,
+      "low": 99.8,
+      "close": 100.0,
+      "volume": 290
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-05-18",
+      "amount": 11.0
+    },
+    {
+      "date": "2024-05-27",
+      "amount": 15.85
+    },
+    {
+      "date": "2026-07-03",
+      "amount": 4.75
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 4.91,
+      "pb": 0.56,
+      "eps": 20.4,
+      "divYield": 4.8,
+      "netProfitBln": 0.56,
+      "capitalizationBln": 2.75,
+      "equityBln": 4.87
+    },
+    "history": [
+      {
+        "year": "2021",
+        "eps": 0.0,
+        "divYield": 5.5,
+        "capitalizationBln": 3.06
+      },
+      {
+        "year": "2022",
+        "pe": 7.68,
+        "pb": 0.79,
+        "eps": 19.3,
+        "divYield": 7.4,
+        "netProfitBln": 0.292,
+        "capitalizationBln": 2.24,
+        "equityBln": 2.85
+      },
+      {
+        "year": "2023",
+        "pe": 4.91,
+        "pb": 0.77,
+        "eps": 35.0,
+        "divYield": 9.2,
+        "netProfitBln": 0.531,
+        "capitalizationBln": 2.61,
+        "equityBln": 3.39
+      },
+      {
+        "year": "2024",
+        "pe": 7.61,
+        "pb": 1.5,
+        "eps": 30.8,
+        "divYield": 0.0,
+        "netProfitBln": 0.737,
+        "capitalizationBln": 5.61,
+        "equityBln": 3.75
+      },
+      {
+        "year": "2025",
+        "pe": 20.8,
+        "pb": 1.21,
+        "eps": 10.1,
+        "divYield": 3.9,
+        "netProfitBln": 0.279,
+        "capitalizationBln": 5.8,
+        "equityBln": 4.78
+      },
+      {
+        "year": "LTM",
+        "pe": 4.91,
+        "pb": 0.56,
+        "eps": 20.4,
+        "divYield": 4.8,
+        "netProfitBln": 0.56,
+        "capitalizationBln": 2.75,
+        "equityBln": 4.87
+      }
+    ]
+  }
 }
