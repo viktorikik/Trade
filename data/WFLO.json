@@ -1,0 +1,18 @@
+{
+  "ticker": "WFLO",
+  "name": "WFLO ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-10-09",
+      "open": 100.81,
+      "high": 100.81,
+      "low": 100.71,
+      "close": 100.77,
+      "volume": 6681
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

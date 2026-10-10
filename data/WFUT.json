@@ -1,0 +1,18 @@
+{
+  "ticker": "WFUT",
+  "name": "WFUT ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-10-09",
+      "open": 101.4,
+      "high": 103.27,
+      "low": 100.18,
+      "close": 103.27,
+      "volume": 4187
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

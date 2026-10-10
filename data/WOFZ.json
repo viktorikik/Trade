@@ -1,0 +1,18 @@
+{
+  "ticker": "WOFZ",
+  "name": "WOFZ ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-10-09",
+      "open": 99.87,
+      "high": 99.93,
+      "low": 99.61,
+      "close": 99.93,
+      "volume": 6120
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

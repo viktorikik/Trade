@@ -1,0 +1,18 @@
+{
+  "ticker": "WUSD",
+  "name": "WUSD ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-10-09",
+      "open": 101.85,
+      "high": 101.85,
+      "low": 100.56,
+      "close": 101.33,
+      "volume": 7788
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

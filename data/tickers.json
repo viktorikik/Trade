@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "board": "TQBR",
-  "count": 477,
+  "count": 481,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -2644,8 +2644,26 @@
       "lotSize": 1
     },
     {
+      "ticker": "WFLO",
+      "name": "WFLO ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WFUT",
+      "name": "WFUT ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
       "ticker": "WILD",
       "name": "WILD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "WOFZ",
+      "name": "WOFZ ETF",
       "sector": "Прочее",
       "lotSize": 1
     },
@@ -2660,6 +2678,12 @@
       "name": "ЦМТ ап",
       "sector": "Прочее",
       "lotSize": 100
+    },
+    {
+      "ticker": "WUSD",
+      "name": "WUSD ETF",
+      "sector": "Прочее",
+      "lotSize": 1
     },
     {
       "ticker": "WUSH",
