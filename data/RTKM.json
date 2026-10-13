@@ -1,7 +1,7 @@
 {
   "ticker": "RTKM",
-  "name": "Ростел -ао",
-  "lotSize": 10,
+  "name": "RTKM",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 39.42,
       "close": 40.38,
       "volume": 5603210
+    },
+    {
+      "time": "2026-10-12",
+      "open": 40.38,
+      "high": 41.37,
+      "low": 39.66,
+      "close": 41.14,
+      "volume": 12908870
     }
   ],
   "dividends": [

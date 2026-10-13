@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-10-12",
+  "updatedAt": "2026-10-13",
   "board": "TQBR",
-  "count": 481,
+  "count": 479,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -960,18 +960,6 @@
     {
       "ticker": "LMBZ",
       "name": "Ламбумиз",
-      "sector": "Прочее",
-      "lotSize": 1
-    },
-    {
-      "ticker": "LNZL",
-      "name": "Лензолото",
-      "sector": "Прочее",
-      "lotSize": 1
-    },
-    {
-      "ticker": "LNZLP",
-      "name": "Лензол. ап",
       "sector": "Прочее",
       "lotSize": 1
     },

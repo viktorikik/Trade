@@ -1,6 +1,6 @@
 {
   "ticker": "PHOR",
-  "name": "ФосАгро ао",
+  "name": "PHOR",
   "lotSize": 1,
   "candles": [
     {
@@ -7682,6 +7682,14 @@
       "low": 5184.0,
       "close": 5345.0,
       "volume": 100998
+    },
+    {
+      "time": "2026-10-12",
+      "open": 5371.0,
+      "high": 5413.0,
+      "low": 5256.0,
+      "close": 5320.0,
+      "volume": 105068
     }
   ],
   "dividends": [

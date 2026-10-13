@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A0ZZCD8",
-  "name": "ИПИФМирИнв",
+  "name": "RU000A0ZZCD8",
   "lotSize": 1,
   "candles": [
     {
@@ -626,6 +626,14 @@
       "low": 3000.0,
       "close": 3040.0,
       "volume": 176
+    },
+    {
+      "time": "2026-10-12",
+      "open": 3060.0,
+      "high": 3060.0,
+      "low": 3020.0,
+      "close": 3060.0,
+      "volume": 323
     }
   ],
   "dividends": [],

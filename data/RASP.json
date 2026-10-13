@@ -1,7 +1,7 @@
 {
   "ticker": "RASP",
-  "name": "Распадская",
-  "lotSize": 10,
+  "name": "RASP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 125.9,
       "close": 130.6,
       "volume": 137200
+    },
+    {
+      "time": "2026-10-12",
+      "open": 131.0,
+      "high": 136.9,
+      "low": 129.6,
+      "close": 135.45,
+      "volume": 524090
     }
   ],
   "dividends": [],

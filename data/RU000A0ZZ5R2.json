@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A0ZZ5R2",
-  "name": "СоврАрБиз3",
+  "name": "RU000A0ZZ5R2",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 852.0,
       "close": 852.0,
       "volume": 638
+    },
+    {
+      "time": "2026-10-12",
+      "open": 856.0,
+      "high": 860.0,
+      "low": 844.0,
+      "close": 852.0,
+      "volume": 1839
     }
   ],
   "dividends": [],

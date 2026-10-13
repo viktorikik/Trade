@@ -1,6 +1,6 @@
 {
   "ticker": "RNFT",
-  "name": "РуссНфт ао",
+  "name": "RNFT",
   "lotSize": 1,
   "candles": [
     {
@@ -7682,6 +7682,14 @@
       "low": 83.6,
       "close": 90.6,
       "volume": 7880350
+    },
+    {
+      "time": "2026-10-12",
+      "open": 91.0,
+      "high": 93.4,
+      "low": 88.15,
+      "close": 92.6,
+      "volume": 15697687
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "PSGM",
-  "name": "PSGM ETF",
+  "name": "PSGM",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 13.206,
       "close": 13.25,
       "volume": 94065
+    },
+    {
+      "time": "2026-10-12",
+      "open": 13.242,
+      "high": 13.335,
+      "low": 13.091,
+      "close": 13.105,
+      "volume": 47455
     }
   ],
   "dividends": [],

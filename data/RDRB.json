@@ -1,7 +1,7 @@
 {
   "ticker": "RDRB",
-  "name": "РДБанк ао",
-  "lotSize": 10,
+  "name": "RDRB",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 99.4,
       "close": 100.8,
       "volume": 730
+    },
+    {
+      "time": "2026-10-12",
+      "open": 100.8,
+      "high": 100.8,
+      "low": 99.4,
+      "close": 100.8,
+      "volume": 1070
     }
   ],
   "dividends": [

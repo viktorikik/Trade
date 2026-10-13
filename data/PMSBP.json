@@ -1,7 +1,7 @@
 {
   "ticker": "PMSBP",
-  "name": "ПермьЭнС-п",
-  "lotSize": 10,
+  "name": "PMSBP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 460.0,
       "close": 466.0,
       "volume": 18900
+    },
+    {
+      "time": "2026-10-12",
+      "open": 469.4,
+      "high": 479.8,
+      "low": 467.8,
+      "close": 472.6,
+      "volume": 18780
     }
   ],
   "dividends": [],

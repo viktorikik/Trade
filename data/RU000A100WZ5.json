@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A100WZ5",
-  "name": "АКЦЕНТ 4",
+  "name": "RU000A100WZ5",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 1381.0,
       "close": 1384.0,
       "volume": 405
+    },
+    {
+      "time": "2026-10-12",
+      "open": 1385.0,
+      "high": 1394.0,
+      "low": 1385.0,
+      "close": 1394.0,
+      "volume": 298
     }
   ],
   "dividends": [],

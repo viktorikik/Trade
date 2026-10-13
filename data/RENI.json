@@ -1,7 +1,7 @@
 {
   "ticker": "RENI",
-  "name": "Ренессанс",
-  "lotSize": 10,
+  "name": "RENI",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 68.54,
       "close": 70.78,
       "volume": 719860
+    },
+    {
+      "time": "2026-10-12",
+      "open": 70.52,
+      "high": 71.9,
+      "low": 69.9,
+      "close": 71.1,
+      "volume": 687880
     }
   ],
   "dividends": [

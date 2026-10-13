@@ -458,6 +458,14 @@
       "low": 5.15,
       "close": 5.17,
       "volume": 785
+    },
+    {
+      "time": "2026-10-12",
+      "open": 5.17,
+      "high": 5.17,
+      "low": 5.15,
+      "close": 5.17,
+      "volume": 612
     }
   ],
   "dividends": [],

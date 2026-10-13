@@ -1,7 +1,7 @@
 {
   "ticker": "OZPH",
-  "name": "iОзонФарм",
-  "lotSize": 10,
+  "name": "OZPH",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2024-10-17",
@@ -4034,6 +4034,14 @@
       "low": 44.74,
       "close": 45.38,
       "volume": 716560
+    },
+    {
+      "time": "2026-10-12",
+      "open": 45.38,
+      "high": 45.96,
+      "low": 45.11,
+      "close": 45.75,
+      "volume": 1620210
     }
   ],
   "dividends": [

@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A102PE0",
-  "name": "Фондсуб1",
+  "name": "RU000A102PE0",
   "lotSize": 1,
   "candles": [
     {
@@ -618,6 +618,14 @@
       "low": 10000.0,
       "close": 10000.0,
       "volume": 544
+    },
+    {
+      "time": "2026-10-12",
+      "open": 10000.0,
+      "high": 10000.0,
+      "low": 10000.0,
+      "close": 10000.0,
+      "volume": 149
     }
   ],
   "dividends": [],

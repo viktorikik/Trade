@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A1027E5",
-  "name": "ЗПИФ ВДО",
+  "name": "RU000A1027E5",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 15300.0,
       "close": 15620.0,
       "volume": 277
+    },
+    {
+      "time": "2026-10-12",
+      "open": 15420.0,
+      "high": 15800.0,
+      "low": 14600.0,
+      "close": 15220.0,
+      "volume": 105
     }
   ],
   "dividends": [],

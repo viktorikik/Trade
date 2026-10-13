@@ -1,6 +1,6 @@
 {
   "ticker": "NVTK",
-  "name": "Новатэк ао",
+  "name": "NVTK",
   "lotSize": 1,
   "candles": [
     {
@@ -7682,6 +7682,14 @@
       "low": 1054.1,
       "close": 1108.0,
       "volume": 3519334
+    },
+    {
+      "time": "2026-10-12",
+      "open": 1096.0,
+      "high": 1096.6,
+      "low": 1065.3,
+      "close": 1069.0,
+      "volume": 5221716
     }
   ],
   "dividends": [
@@ -7723,13 +7731,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 19.0,
+      "pe": 18.5,
       "roe": 6.1,
       "roa": 4.7,
       "eps": 58.0,
-      "divYield": 7.5,
+      "divYield": 7.7,
       "netProfitBln": 176.0,
-      "capitalizationBln": 3346.0
+      "capitalizationBln": 3247.0
     },
     "history": [
       {
@@ -7780,13 +7788,13 @@
       },
       {
         "year": "LTM",
-        "pe": 19.0,
+        "pe": 18.5,
         "roe": 6.1,
         "roa": 4.7,
         "eps": 58.0,
-        "divYield": 7.5,
+        "divYield": 7.7,
         "netProfitBln": 176.0,
-        "capitalizationBln": 3346.0
+        "capitalizationBln": 3247.0
       }
     ]
   }

@@ -1,6 +1,6 @@
 {
   "ticker": "RAGR",
-  "name": "Русагро",
+  "name": "RAGR",
   "lotSize": 1,
   "candles": [
     {
@@ -3362,6 +3362,14 @@
       "low": 69.48,
       "close": 70.72,
       "volume": 5450285
+    },
+    {
+      "time": "2026-10-12",
+      "open": 71.18,
+      "high": 73.88,
+      "low": 70.16,
+      "close": 73.18,
+      "volume": 15314743
     }
   ],
   "dividends": [

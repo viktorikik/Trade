@@ -1,6 +1,6 @@
 {
   "ticker": "PSRE",
-  "name": "PSRE ETF",
+  "name": "PSRE",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 9.014,
       "close": 9.32,
       "volume": 7496
+    },
+    {
+      "time": "2026-10-12",
+      "open": 9.279,
+      "high": 9.35,
+      "low": 9.186,
+      "close": 9.258,
+      "volume": 398708
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "PRMB",
-  "name": "Приморье",
+  "name": "PRMB",
   "lotSize": 1,
   "candles": [
     {
@@ -7314,6 +7314,14 @@
       "low": 18000.0,
       "close": 18000.0,
       "volume": 3
+    },
+    {
+      "time": "2026-10-12",
+      "open": 18000.0,
+      "high": 18000.0,
+      "low": 17800.0,
+      "close": 17800.0,
+      "volume": 5
     }
   ],
   "dividends": [

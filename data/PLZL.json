@@ -1,6 +1,6 @@
 {
   "ticker": "PLZL",
-  "name": "Полюс",
+  "name": "PLZL",
   "lotSize": 1,
   "candles": [
     {
@@ -7658,6 +7658,14 @@
       "low": 982.0,
       "close": 1011.6,
       "volume": 4033614
+    },
+    {
+      "time": "2026-10-12",
+      "open": 1011.6,
+      "high": 1067.0,
+      "low": 1000.6,
+      "close": 1058.8,
+      "volume": 5674766
     }
   ],
   "dividends": [],

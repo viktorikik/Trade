@@ -1,6 +1,6 @@
 {
   "ticker": "PRMD",
-  "name": "iПРОМОМЕД",
+  "name": "PRMD",
   "lotSize": 1,
   "candles": [
     {
@@ -4586,6 +4586,14 @@
       "low": 397.0,
       "close": 400.2,
       "volume": 111737
+    },
+    {
+      "time": "2026-10-12",
+      "open": 400.2,
+      "high": 404.5,
+      "low": 398.4,
+      "close": 401.05,
+      "volume": 98964
     }
   ],
   "dividends": [],

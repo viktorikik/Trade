@@ -1,7 +1,7 @@
 {
   "ticker": "OKEY",
-  "name": "OKEY-гдр",
-  "lotSize": 10,
+  "name": "OKEY",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 47.79,
       "close": 48.61,
       "volume": 20260
+    },
+    {
+      "time": "2026-10-12",
+      "open": 48.81,
+      "high": 51.0,
+      "low": 48.15,
+      "close": 50.99,
+      "volume": 53060
     }
   ],
   "dividends": [],

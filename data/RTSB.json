@@ -1,7 +1,7 @@
 {
   "ticker": "RTSB",
-  "name": "ТНСэнРст",
-  "lotSize": 1000,
+  "name": "RTSB",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 2.74,
       "close": 2.77,
       "volume": 117000
+    },
+    {
+      "time": "2026-10-12",
+      "open": 2.745,
+      "high": 2.76,
+      "low": 2.73,
+      "close": 2.745,
+      "volume": 95000
     }
   ],
   "dividends": [

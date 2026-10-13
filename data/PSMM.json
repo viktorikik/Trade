@@ -1,6 +1,6 @@
 {
   "ticker": "PSMM",
-  "name": "PSMM ETF",
+  "name": "PSMM",
   "lotSize": 1,
   "candles": [
     {
@@ -642,6 +642,14 @@
       "low": 14.799,
       "close": 14.803,
       "volume": 2500499
+    },
+    {
+      "time": "2026-10-12",
+      "open": 14.804,
+      "high": 14.81,
+      "low": 14.802,
+      "close": 14.802,
+      "volume": 3278894
     }
   ],
   "dividends": [],

@@ -1,7 +1,7 @@
 {
   "ticker": "NKSH",
-  "name": "Нижкамшина",
-  "lotSize": 100,
+  "name": "NKSH",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7682,6 +7682,14 @@
       "low": 32.0,
       "close": 32.05,
       "volume": 3300
+    },
+    {
+      "time": "2026-10-12",
+      "open": 32.15,
+      "high": 32.65,
+      "low": 31.3,
+      "close": 32.1,
+      "volume": 23800
     }
   ],
   "dividends": [],

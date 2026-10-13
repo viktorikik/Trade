@@ -1,6 +1,6 @@
 {
   "ticker": "OLIQ",
-  "name": "OLIQ ETF",
+  "name": "OLIQ",
   "lotSize": 1,
   "candles": [
     {
@@ -618,6 +618,14 @@
       "low": 104.08,
       "close": 104.09,
       "volume": 2822
+    },
+    {
+      "time": "2026-10-12",
+      "open": 104.13,
+      "high": 104.13,
+      "low": 104.12,
+      "close": 104.13,
+      "volume": 93958
     }
   ],
   "dividends": [],
