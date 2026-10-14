@@ -1,7 +1,7 @@
 {
   "ticker": "RGSS",
-  "name": "RGSS",
-  "lotSize": 1,
+  "name": "РГС СК ао",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 0.1784,
       "close": 0.181,
       "volume": 4475000
+    },
+    {
+      "time": "2026-10-13",
+      "open": 0.18,
+      "high": 0.1844,
+      "low": 0.175,
+      "close": 0.1806,
+      "volume": 9996000
     }
   ],
   "dividends": [

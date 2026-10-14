@@ -1,7 +1,7 @@
 {
   "ticker": "OGKB",
-  "name": "OGKB",
-  "lotSize": 1,
+  "name": "ОГК-2 ао",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 0.2154,
       "close": 0.222,
       "volume": 91244000
+    },
+    {
+      "time": "2026-10-13",
+      "open": 0.222,
+      "high": 0.2259,
+      "low": 0.2185,
+      "close": 0.2241,
+      "volume": 154853000
     }
   ],
   "dividends": [

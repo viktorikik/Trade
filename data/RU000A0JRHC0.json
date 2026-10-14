@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A0JRHC0",
-  "name": "RU000A0JRHC0",
+  "name": "ПИФ АТРИУМ",
   "lotSize": 1,
   "candles": [
     {
@@ -650,6 +650,14 @@
       "low": 2995.0,
       "close": 3000.0,
       "volume": 54
+    },
+    {
+      "time": "2026-10-13",
+      "open": 3000.0,
+      "high": 3020.0,
+      "low": 3000.0,
+      "close": 3015.0,
+      "volume": 55
     }
   ],
   "dividends": [],

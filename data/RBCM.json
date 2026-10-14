@@ -1,7 +1,7 @@
 {
   "ticker": "RBCM",
-  "name": "RBCM",
-  "lotSize": 1,
+  "name": "ГК РБК ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -6930,6 +6930,14 @@
       "low": 7.81,
       "close": 7.89,
       "volume": 406600
+    },
+    {
+      "time": "2026-10-13",
+      "open": 7.915,
+      "high": 8.4,
+      "low": 7.88,
+      "close": 8.01,
+      "volume": 2138600
     }
   ],
   "dividends": [],

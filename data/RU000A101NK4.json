@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A101NK4",
-  "name": "RU000A101NK4",
+  "name": "ЗПИФ ФПР",
   "lotSize": 1,
   "candles": [
     {
@@ -650,6 +650,14 @@
       "low": 738.0,
       "close": 765.5,
       "volume": 10783
+    },
+    {
+      "time": "2026-10-13",
+      "open": 739.5,
+      "high": 762.5,
+      "low": 739.5,
+      "close": 756.5,
+      "volume": 1735
     }
   ],
   "dividends": [],

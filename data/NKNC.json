@@ -1,7 +1,7 @@
 {
   "ticker": "NKNC",
-  "name": "NKNC",
-  "lotSize": 1,
+  "name": "НКНХ ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 44.2,
       "close": 45.2,
       "volume": 83380
+    },
+    {
+      "time": "2026-10-13",
+      "open": 45.2,
+      "high": 46.15,
+      "low": 43.95,
+      "close": 45.55,
+      "volume": 47530
     }
   ],
   "dividends": [

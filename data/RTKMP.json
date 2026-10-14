@@ -1,7 +1,7 @@
 {
   "ticker": "RTKMP",
-  "name": "RTKMP",
-  "lotSize": 1,
+  "name": "Ростел -ап",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 41.35,
       "close": 42.65,
       "volume": 2904100
+    },
+    {
+      "time": "2026-10-13",
+      "open": 42.6,
+      "high": 44.4,
+      "low": 42.6,
+      "close": 44.15,
+      "volume": 2132760
     }
   ],
   "dividends": [],

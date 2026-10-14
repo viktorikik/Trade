@@ -1,6 +1,6 @@
 {
   "ticker": "NNSBP",
-  "name": "NNSBP",
+  "name": "ТНСэнНН ап",
   "lotSize": 1,
   "candles": [
     {
@@ -7674,6 +7674,14 @@
       "low": 1262.0,
       "close": 1288.0,
       "volume": 56
+    },
+    {
+      "time": "2026-10-13",
+      "open": 1284.0,
+      "high": 1296.0,
+      "low": 1260.0,
+      "close": 1276.0,
+      "volume": 104
     }
   ],
   "dividends": [],

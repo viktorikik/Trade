@@ -1,6 +1,6 @@
 {
   "ticker": "PSRB",
-  "name": "PSRB",
+  "name": "PSRB ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -650,6 +650,14 @@
       "low": 13.951,
       "close": 14.01,
       "volume": 17243
+    },
+    {
+      "time": "2026-10-13",
+      "open": 14.015,
+      "high": 14.106,
+      "low": 13.982,
+      "close": 14.015,
+      "volume": 182599
     }
   ],
   "dividends": [],

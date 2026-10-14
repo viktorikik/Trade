@@ -1,6 +1,6 @@
 {
   "ticker": "POSI",
-  "name": "POSI",
+  "name": "iПозитив",
   "lotSize": 1,
   "candles": [
     {
@@ -7690,6 +7690,14 @@
       "low": 1083.0,
       "close": 1092.0,
       "volume": 386242
+    },
+    {
+      "time": "2026-10-13",
+      "open": 1089.8,
+      "high": 1122.0,
+      "low": 1086.2,
+      "close": 1100.6,
+      "volume": 653626
     }
   ],
   "dividends": [

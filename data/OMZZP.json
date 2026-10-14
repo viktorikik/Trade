@@ -1,6 +1,6 @@
 {
   "ticker": "OMZZP",
-  "name": "OMZZP",
+  "name": "ОМЗ-ап",
   "lotSize": 1,
   "candles": [
     {
@@ -7650,6 +7650,14 @@
       "low": 9380.0,
       "close": 9380.0,
       "volume": 14
+    },
+    {
+      "time": "2026-10-13",
+      "open": 9540.0,
+      "high": 9600.0,
+      "low": 9500.0,
+      "close": 9500.0,
+      "volume": 20
     }
   ],
   "dividends": [],

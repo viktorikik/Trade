@@ -1,7 +1,7 @@
 {
   "ticker": "RU000A0JPZL7",
-  "name": "RU000A0JPZL7",
-  "lotSize": 1,
+  "name": "АкБрс-Инв",
+  "lotSize": 100,
   "candles": [],
   "dividends": [],
   "splits": [],

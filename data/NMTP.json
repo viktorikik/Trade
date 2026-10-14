@@ -1,7 +1,7 @@
 {
   "ticker": "NMTP",
-  "name": "NMTP",
-  "lotSize": 1,
+  "name": "НМТП ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 6.76,
       "close": 6.85,
       "volume": 27206800
+    },
+    {
+      "time": "2026-10-13",
+      "open": 6.895,
+      "high": 6.955,
+      "low": 6.825,
+      "close": 6.91,
+      "volume": 12943800
     }
   ],
   "dividends": [

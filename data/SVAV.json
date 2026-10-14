@@ -7690,9 +7690,104 @@
       "low": 371.0,
       "close": 376.0,
       "volume": 46478
+    },
+    {
+      "time": "2026-10-13",
+      "open": 376.0,
+      "high": 392.0,
+      "low": 374.0,
+      "close": 383.5,
+      "volume": 115776
     }
   ],
-  "dividends": [],
+  "dividends": [
+    {
+      "date": "2023-07-06",
+      "amount": 45.39
+    },
+    {
+      "date": "2024-07-04",
+      "amount": 89.0
+    },
+    {
+      "date": "2025-06-10",
+      "amount": 70.0
+    },
+    {
+      "date": "2026-06-10",
+      "amount": 25.5
+    }
+  ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": 14.4,
+      "roe": 6.7,
+      "roa": 0.9,
+      "eps": 26.6,
+      "divYield": 6.7,
+      "netProfitBln": 0.839,
+      "capitalizationBln": 12.0
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": 3.05,
+        "roe": 8.8,
+        "roa": 3.4,
+        "eps": 70.9,
+        "divYield": 0.0,
+        "netProfitBln": 2.43,
+        "capitalizationBln": 7.42
+      },
+      {
+        "year": "2022",
+        "eps": 0.0,
+        "divYield": 21.4,
+        "capitalizationBln": 6.68
+      },
+      {
+        "year": "2023",
+        "pe": 5.07,
+        "roe": 32.7,
+        "roa": 7.0,
+        "eps": 156.6,
+        "divYield": 11.2,
+        "netProfitBln": 4.93,
+        "capitalizationBln": 25.0
+      },
+      {
+        "year": "2024",
+        "pe": 5.87,
+        "roe": 23.3,
+        "roa": 4.8,
+        "eps": 118.4,
+        "divYield": 10.1,
+        "netProfitBln": 3.73,
+        "capitalizationBln": 21.9
+      },
+      {
+        "year": "2025",
+        "pe": 7.86,
+        "roe": 14.3,
+        "roa": 2.8,
+        "eps": 73.0,
+        "divYield": 4.4,
+        "netProfitBln": 2.3,
+        "capitalizationBln": 18.1
+      },
+      {
+        "year": "LTM",
+        "pe": 14.4,
+        "roe": 6.7,
+        "roa": 0.9,
+        "eps": 26.6,
+        "divYield": 6.7,
+        "netProfitBln": 0.839,
+        "capitalizationBln": 12.0
+      }
+    ]
+  }
 }

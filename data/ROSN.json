@@ -1,6 +1,6 @@
 {
   "ticker": "ROSN",
-  "name": "ROSN",
+  "name": "Роснефть",
   "lotSize": 1,
   "candles": [
     {
@@ -7690,6 +7690,14 @@
       "low": 372.7,
       "close": 377.95,
       "volume": 50106370
+    },
+    {
+      "time": "2026-10-13",
+      "open": 378.0,
+      "high": 381.6,
+      "low": 371.0,
+      "close": 377.35,
+      "volume": 21113193
     }
   ],
   "dividends": [
@@ -7737,7 +7745,7 @@
       "eps": 23.4,
       "divYield": 3.7,
       "netProfitBln": 248.0,
-      "capitalizationBln": 4003.0
+      "capitalizationBln": 4000.0
     },
     "history": [
       {
@@ -7796,7 +7804,7 @@
         "eps": 23.4,
         "divYield": 3.7,
         "netProfitBln": 248.0,
-        "capitalizationBln": 4003.0
+        "capitalizationBln": 4000.0
       }
     ]
   }

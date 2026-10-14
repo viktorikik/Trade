@@ -1,6 +1,6 @@
 {
   "ticker": "RSHU",
-  "name": "RSHU",
+  "name": "RSHU ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -650,6 +650,14 @@
       "low": 130.74,
       "close": 130.76,
       "volume": 642
+    },
+    {
+      "time": "2026-10-13",
+      "open": 131.6,
+      "high": 132.56,
+      "low": 131.6,
+      "close": 131.8,
+      "volume": 336
     }
   ],
   "dividends": [],

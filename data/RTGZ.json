@@ -1,6 +1,6 @@
 {
   "ticker": "RTGZ",
-  "name": "RTGZ",
+  "name": "ГР Ростов",
   "lotSize": 1,
   "candles": [
     {
@@ -7410,6 +7410,14 @@
       "low": 34000.0,
       "close": 34800.0,
       "volume": 710
+    },
+    {
+      "time": "2026-10-13",
+      "open": 34800.0,
+      "high": 35400.0,
+      "low": 34600.0,
+      "close": 34800.0,
+      "volume": 311
     }
   ],
   "dividends": [],

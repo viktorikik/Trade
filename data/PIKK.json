@@ -1,6 +1,6 @@
 {
   "ticker": "PIKK",
-  "name": "PIKK",
+  "name": "ПИК ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7690,6 +7690,14 @@
       "low": 543.1,
       "close": 550.2,
       "volume": 167413
+    },
+    {
+      "time": "2026-10-13",
+      "open": 547.3,
+      "high": 552.0,
+      "low": 545.0,
+      "close": 548.8,
+      "volume": 179335
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A0JWCE7",
-  "name": "RU000A0JWCE7",
+  "name": "Перловский",
   "lotSize": 1,
   "candles": [
     {
@@ -610,6 +610,14 @@
       "low": 1285.0,
       "close": 1300.0,
       "volume": 32
+    },
+    {
+      "time": "2026-10-13",
+      "open": 1305.0,
+      "high": 1305.0,
+      "low": 1300.0,
+      "close": 1305.0,
+      "volume": 24
     }
   ],
   "dividends": [],

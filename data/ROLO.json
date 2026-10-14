@@ -1,7 +1,7 @@
 {
   "ticker": "ROLO",
-  "name": "ROLO",
-  "lotSize": 1,
+  "name": "Русолово",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7642,6 +7642,14 @@
       "low": 0.3742,
       "close": 0.4118,
       "volume": 342540000
+    },
+    {
+      "time": "2026-10-13",
+      "open": 0.4114,
+      "high": 0.4326,
+      "low": 0.398,
+      "close": 0.4098,
+      "volume": 424262000
     }
   ],
   "dividends": [],

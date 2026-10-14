@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A0JXP78",
-  "name": "RU000A0JXP78",
+  "name": "ЗПИФДОМ.РФ",
   "lotSize": 1,
   "candles": [
     {
@@ -634,6 +634,14 @@
       "low": 15050.0,
       "close": 15550.0,
       "volume": 6
+    },
+    {
+      "time": "2026-10-13",
+      "open": 15700.0,
+      "high": 15700.0,
+      "low": 15450.0,
+      "close": 15450.0,
+      "volume": 4
     }
   ],
   "dividends": [],

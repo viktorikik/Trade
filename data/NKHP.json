@@ -1,7 +1,7 @@
 {
   "ticker": "NKHP",
-  "name": "NKHP",
-  "lotSize": 1,
+  "name": "НКХП ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 381.0,
       "close": 386.0,
       "volume": 76820
+    },
+    {
+      "time": "2026-10-13",
+      "open": 388.0,
+      "high": 392.0,
+      "low": 385.0,
+      "close": 387.0,
+      "volume": 34320
     }
   ],
   "dividends": [

@@ -1,7 +1,7 @@
 {
   "ticker": "NSVZ",
-  "name": "NSVZ",
-  "lotSize": 1,
+  "name": "iНаукаСвяз",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 189.5,
       "close": 193.5,
       "volume": 7990
+    },
+    {
+      "time": "2026-10-13",
+      "open": 193.0,
+      "high": 196.0,
+      "low": 192.5,
+      "close": 193.0,
+      "volume": 5250
     }
   ],
   "dividends": [],

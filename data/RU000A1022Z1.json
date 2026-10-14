@@ -1,6 +1,6 @@
 {
   "ticker": "RU000A1022Z1",
-  "name": "RU000A1022Z1",
+  "name": "ПАРУС-ОЗН",
   "lotSize": 1,
   "candles": [
     {
@@ -650,6 +650,14 @@
       "low": 8426.0,
       "close": 8568.0,
       "volume": 107
+    },
+    {
+      "time": "2026-10-13",
+      "open": 8483.0,
+      "high": 8678.0,
+      "low": 8412.0,
+      "close": 8678.0,
+      "volume": 60
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "OZON",
-  "name": "OZON",
+  "name": "Озон",
   "lotSize": 1,
   "candles": [
     {
@@ -7410,6 +7410,14 @@
       "low": 3174.5,
       "close": 3316.0,
       "volume": 2195466
+    },
+    {
+      "time": "2026-10-13",
+      "open": 3329.0,
+      "high": 3485.0,
+      "low": 3316.0,
+      "close": 3484.5,
+      "volume": 2179548
     }
   ],
   "dividends": [

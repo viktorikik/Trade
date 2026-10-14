@@ -1,7 +1,7 @@
 {
   "ticker": "RTSBP",
-  "name": "RTSBP",
-  "lotSize": 1,
+  "name": "ТНСэнРст-п",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7690,6 +7690,14 @@
       "low": 1.226,
       "close": 1.244,
       "volume": 292000
+    },
+    {
+      "time": "2026-10-13",
+      "open": 1.248,
+      "high": 1.28,
+      "low": 1.248,
+      "close": 1.27,
+      "volume": 1028000
     }
   ],
   "dividends": [],
