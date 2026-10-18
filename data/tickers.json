@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16",
+  "updatedAt": "2026-10-18",
   "board": "TQBR",
   "count": 479,
   "tickers": [
@@ -1462,6 +1462,12 @@
       "lotSize": 1
     },
     {
+      "ticker": "ROBL",
+      "name": "ROBL ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
       "ticker": "ROLO",
       "name": "Русолово",
       "sector": "Прочее",
@@ -1638,12 +1644,6 @@
     {
       "ticker": "RU000A102PF7",
       "name": "Фондсуб2",
-      "sector": "Прочее",
-      "lotSize": 1
-    },
-    {
-      "ticker": "RU000A102PN1",
-      "name": "ПИФАльфаФФ",
       "sector": "Прочее",
       "lotSize": 1
     },
