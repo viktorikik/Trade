@@ -7735,5 +7735,79 @@
     }
   ],
   "splits": [],
-  "fundamentals": null
+  "fundamentals": {
+    "asOf": "LTM",
+    "source": "smart-lab.ru",
+    "metrics": {
+      "pe": -0.46,
+      "roe": 79.4,
+      "roa": -5.5,
+      "eps": -16.9,
+      "divYield": 0.0,
+      "netProfitBln": -163.5,
+      "capitalizationBln": 75.0
+    },
+    "history": [
+      {
+        "year": "2021",
+        "pe": -25.4,
+        "roe": -10.4,
+        "roa": -0.5,
+        "eps": -0.92,
+        "divYield": 0.0,
+        "netProfitBln": -8.9,
+        "capitalizationBln": 226.1
+      },
+      {
+        "year": "2022",
+        "pe": 5.9,
+        "roe": 18.5,
+        "roa": 0.9,
+        "eps": 2.01,
+        "divYield": 3.5,
+        "netProfitBln": 19.4,
+        "capitalizationBln": 114.5
+      },
+      {
+        "year": "2023",
+        "pe": -4.9,
+        "roe": -47.6,
+        "roa": -1.3,
+        "eps": -3.27,
+        "divYield": 3.2,
+        "netProfitBln": -31.5,
+        "capitalizationBln": 154.6
+      },
+      {
+        "year": "2024",
+        "pe": -5.59,
+        "roe": -237.5,
+        "roa": -0.9,
+        "eps": -2.72,
+        "divYield": 0.0,
+        "netProfitBln": -26.2,
+        "capitalizationBln": 146.6
+      },
+      {
+        "year": "2025",
+        "pe": -0.58,
+        "roe": 128.6,
+        "roa": -7.8,
+        "eps": -23.0,
+        "divYield": 0.0,
+        "netProfitBln": -222.2,
+        "capitalizationBln": 128.7
+      },
+      {
+        "year": "LTM",
+        "pe": -0.46,
+        "roe": 79.4,
+        "roa": -5.5,
+        "eps": -16.9,
+        "divYield": 0.0,
+        "netProfitBln": -163.5,
+        "capitalizationBln": 75.0
+      }
+    ]
+  }
 }

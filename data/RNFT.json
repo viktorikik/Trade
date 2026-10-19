@@ -7730,13 +7730,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 0.88,
+      "pe": 0.96,
       "roe": 18.0,
       "roa": 7.5,
       "eps": 95.2,
       "divYield": 0.0,
       "netProfitBln": 28.0,
-      "capitalizationBln": 24.6
+      "capitalizationBln": 26.9
     },
     "history": [
       {
@@ -7791,13 +7791,13 @@
       },
       {
         "year": "LTM",
-        "pe": 0.88,
+        "pe": 0.96,
         "roe": 18.0,
         "roa": 7.5,
         "eps": 95.2,
         "divYield": 0.0,
         "netProfitBln": 28.0,
-        "capitalizationBln": 24.6
+        "capitalizationBln": 26.9
       }
     ]
   }

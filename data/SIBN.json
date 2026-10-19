@@ -7752,6 +7752,10 @@
     {
       "date": "2026-07-03",
       "amount": 28.11
+    },
+    {
+      "date": "2026-10-12",
+      "amount": 42.51
     }
   ],
   "splits": [],
@@ -7759,13 +7763,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 6.98,
+      "pe": 7.17,
       "roe": 12.0,
       "roa": 5.2,
       "eps": 80.5,
-      "divYield": 12.6,
+      "divYield": 12.2,
       "netProfitBln": 381.4,
-      "capitalizationBln": 2661.0
+      "capitalizationBln": 2736.0
     },
     "history": [
       {
@@ -7820,13 +7824,13 @@
       },
       {
         "year": "LTM",
-        "pe": 6.98,
+        "pe": 7.17,
         "roe": 12.0,
         "roa": 5.2,
         "eps": 80.5,
-        "divYield": 12.6,
+        "divYield": 12.2,
         "netProfitBln": 381.4,
-        "capitalizationBln": 2661.0
+        "capitalizationBln": 2736.0
       }
     ]
   }
