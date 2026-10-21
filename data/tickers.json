@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-20",
+  "updatedAt": "2026-10-21",
   "board": "TQBR",
   "count": 479,
   "tickers": [
@@ -2579,7 +2579,7 @@
     },
     {
       "ticker": "VKCO",
-      "name": "МКПАО \"ВК\"",
+      "name": "iМКПАО ВК",
       "sector": "IT",
       "lotSize": 1
     },
@@ -2759,7 +2759,7 @@
     },
     {
       "ticker": "XLAMIX",
-      "name": "2хAMIX",
+      "name": "2xAMIX",
       "sector": "Прочее",
       "lotSize": 1
     },

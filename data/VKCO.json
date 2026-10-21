@@ -1,6 +1,6 @@
 {
   "ticker": "VKCO",
-  "name": "МКПАО \"ВК\"",
+  "name": "iМКПАО ВК",
   "lotSize": 1,
   "candles": [
     {
@@ -7546,6 +7546,14 @@
       "low": 132.55,
       "close": 137.25,
       "volume": 28517517
+    },
+    {
+      "time": "2026-10-20",
+      "open": 137.25,
+      "high": 137.95,
+      "low": 135.05,
+      "close": 137.6,
+      "volume": 6641078
     }
   ],
   "dividends": [],
@@ -7554,13 +7562,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": -5.16,
+      "pe": -6.31,
       "roe": -9.8,
       "roa": -3.9,
       "eps": -21.8,
       "divYield": 0.0,
       "netProfitBln": -12.7,
-      "capitalizationBln": 65.7
+      "capitalizationBln": 80.4
     },
     "history": [
       {
@@ -7615,13 +7623,13 @@
       },
       {
         "year": "LTM",
-        "pe": -5.16,
+        "pe": -6.31,
         "roe": -9.8,
         "roa": -3.9,
         "eps": -21.8,
         "divYield": 0.0,
         "netProfitBln": -12.7,
-        "capitalizationBln": 65.7
+        "capitalizationBln": 80.4
       }
     ]
   }
