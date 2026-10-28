@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-10-27",
+  "updatedAt": "2026-10-28",
   "board": "TQBR",
-  "count": 479,
+  "count": 480,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -2160,6 +2160,12 @@
     {
       "ticker": "SCLI",
       "name": "SCLI ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "SECR",
+      "name": "SECR ETF",
       "sector": "Прочее",
       "lotSize": 1
     },

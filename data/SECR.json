@@ -1,0 +1,18 @@
+{
+  "ticker": "SECR",
+  "name": "SECR ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-10-27",
+      "open": 10.04,
+      "high": 10.082,
+      "low": 10.02,
+      "close": 10.024,
+      "volume": 76814659
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}
