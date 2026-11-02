@@ -7819,25 +7819,15 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 3.7,
+      "pe": 5.82,
       "roe": 19.8,
       "roa": 13.8,
       "eps": 0.62,
-      "divYield": 0.0,
+      "divYield": 12.9,
       "netProfitBln": 2.15,
-      "capitalizationBln": 7.96
+      "capitalizationBln": 12.5
     },
     "history": [
-      {
-        "year": "2021",
-        "pe": 5.86,
-        "roe": 14.8,
-        "roa": 8.8,
-        "eps": 0.23,
-        "divYield": 0.0,
-        "netProfitBln": 0.815,
-        "capitalizationBln": 4.77
-      },
       {
         "year": "2022",
         "pe": 4.41,
@@ -7879,14 +7869,19 @@
         "capitalizationBln": 10.5
       },
       {
+        "year": "2026",
+        "eps": 0.0,
+        "capitalizationBln": 0.0
+      },
+      {
         "year": "LTM",
-        "pe": 3.7,
+        "pe": 5.82,
         "roe": 19.8,
         "roa": 13.8,
         "eps": 0.62,
-        "divYield": 0.0,
+        "divYield": 12.9,
         "netProfitBln": 2.15,
-        "capitalizationBln": 7.96
+        "capitalizationBln": 12.5
       }
     ]
   }
