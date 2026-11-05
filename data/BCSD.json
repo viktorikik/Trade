@@ -1,6 +1,6 @@
 {
   "ticker": "BCSD",
-  "name": "BCSD ETF",
+  "name": "BCSD",
   "lotSize": 1,
   "candles": [
     {

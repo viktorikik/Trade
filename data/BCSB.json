@@ -1,6 +1,6 @@
 {
   "ticker": "BCSB",
-  "name": "BCSB ETF",
+  "name": "BCSB",
   "lotSize": 1,
   "candles": [
     {

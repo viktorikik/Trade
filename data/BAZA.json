@@ -1,7 +1,7 @@
 {
   "ticker": "BAZA",
-  "name": "iБАЗИС",
-  "lotSize": 10,
+  "name": "BAZA",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2025-12-10",

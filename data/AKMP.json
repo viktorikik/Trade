@@ -1,6 +1,6 @@
 {
   "ticker": "AKMP",
-  "name": "AKMP ETF",
+  "name": "AKMP",
   "lotSize": 1,
   "candles": [
     {

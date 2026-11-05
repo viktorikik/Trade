@@ -1,6 +1,6 @@
 {
   "ticker": "BOND",
-  "name": "BOND ETF",
+  "name": "BOND",
   "lotSize": 1,
   "candles": [
     {

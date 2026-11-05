@@ -1,7 +1,7 @@
 {
   "ticker": "BISVP",
-  "name": "БашИнСв ап",
-  "lotSize": 100,
+  "name": "BISVP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

@@ -1,6 +1,6 @@
 {
   "ticker": "AMVY",
-  "name": "AMVY ETF",
+  "name": "AMVY",
   "lotSize": 1,
   "candles": [
     {

@@ -1,6 +1,6 @@
 {
   "ticker": "AMRE",
-  "name": "AMRE ETF",
+  "name": "AMRE",
   "lotSize": 1,
   "candles": [
     {

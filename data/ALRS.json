@@ -1,7 +1,7 @@
 {
   "ticker": "ALRS",
-  "name": "АЛРОСА ао",
-  "lotSize": 10,
+  "name": "ALRS",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

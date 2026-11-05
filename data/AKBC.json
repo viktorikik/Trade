@@ -1,6 +1,6 @@
 {
   "ticker": "AKBC",
-  "name": "AKBC ETF",
+  "name": "AKBC",
   "lotSize": 1,
   "candles": [
     {

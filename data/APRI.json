@@ -1,7 +1,7 @@
 {
   "ticker": "APRI",
-  "name": "АПРИ",
-  "lotSize": 10,
+  "name": "APRI",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2024-07-30",

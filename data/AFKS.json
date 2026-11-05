@@ -1,7 +1,7 @@
 {
   "ticker": "AFKS",
-  "name": "Система ао",
-  "lotSize": 100,
+  "name": "AFKS",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

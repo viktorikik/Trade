@@ -1,6 +1,6 @@
 {
   "ticker": "AMNY",
-  "name": "AMNY ETF",
+  "name": "AMNY",
   "lotSize": 1,
   "candles": [
     {

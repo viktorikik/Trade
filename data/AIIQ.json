@@ -1,6 +1,6 @@
 {
   "ticker": "AIIQ",
-  "name": "AIIQ ETF",
+  "name": "AIIQ",
   "lotSize": 1,
   "candles": [
     {

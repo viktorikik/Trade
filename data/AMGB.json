@@ -1,6 +1,6 @@
 {
   "ticker": "AMGB",
-  "name": "AMGB ETF",
+  "name": "AMGB",
   "lotSize": 1,
   "candles": [
     {

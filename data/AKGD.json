@@ -1,6 +1,6 @@
 {
   "ticker": "AKGD",
-  "name": "AKGD ETF",
+  "name": "AKGD",
   "lotSize": 1,
   "candles": [
     {

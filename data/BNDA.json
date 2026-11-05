@@ -1,6 +1,6 @@
 {
   "ticker": "BNDA",
-  "name": "BNDA ETF",
+  "name": "BNDA",
   "lotSize": 1,
   "candles": [
     {

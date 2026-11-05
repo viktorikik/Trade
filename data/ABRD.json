@@ -1,7 +1,7 @@
 {
   "ticker": "ABRD",
-  "name": "АбрауДюрсо",
-  "lotSize": 10,
+  "name": "ABRD",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

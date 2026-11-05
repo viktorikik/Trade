@@ -1,6 +1,6 @@
 {
   "ticker": "AKQU",
-  "name": "AKQU ETF",
+  "name": "AKQU",
   "lotSize": 1,
   "candles": [
     {

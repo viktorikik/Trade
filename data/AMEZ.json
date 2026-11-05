@@ -1,7 +1,7 @@
 {
   "ticker": "AMEZ",
-  "name": "АшинскийМЗ",
-  "lotSize": 100,
+  "name": "AMEZ",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

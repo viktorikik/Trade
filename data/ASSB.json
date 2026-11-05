@@ -1,7 +1,7 @@
 {
   "ticker": "ASSB",
-  "name": "АстрЭнСб",
-  "lotSize": 1000,
+  "name": "ASSB",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

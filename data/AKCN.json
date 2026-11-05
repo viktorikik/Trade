@@ -1,6 +1,6 @@
 {
   "ticker": "AKCN",
-  "name": "AKCN ETF",
+  "name": "AKCN",
   "lotSize": 1,
   "candles": [
     {

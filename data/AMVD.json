@@ -1,6 +1,6 @@
 {
   "ticker": "AMVD",
-  "name": "AMVD ETF",
+  "name": "AMVD",
   "lotSize": 1,
   "candles": [
     {

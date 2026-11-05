@@ -1,6 +1,6 @@
 {
   "ticker": "AKUP",
-  "name": "AKUP ETF",
+  "name": "AKUP",
   "lotSize": 1,
   "candles": [
     {

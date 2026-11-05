@@ -1,7 +1,7 @@
 {
   "ticker": "BSPB",
-  "name": "БСП ао",
-  "lotSize": 10,
+  "name": "BSPB",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

@@ -1,6 +1,6 @@
 {
   "ticker": "AKHT",
-  "name": "AKHT ETF",
+  "name": "AKHT",
   "lotSize": 1,
   "candles": [
     {

@@ -1,7 +1,7 @@
 {
   "ticker": "AFLT",
-  "name": "Аэрофлот",
-  "lotSize": 10,
+  "name": "AFLT",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",

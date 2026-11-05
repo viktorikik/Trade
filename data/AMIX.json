@@ -1,6 +1,6 @@
 {
   "ticker": "AMIX",
-  "name": "AMIX ETF",
+  "name": "AMIX",
   "lotSize": 1,
   "candles": [
     {

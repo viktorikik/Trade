@@ -1,6 +1,6 @@
 {
   "ticker": "BNDB",
-  "name": "BNDB ETF",
+  "name": "BNDB",
   "lotSize": 1,
   "candles": [
     {

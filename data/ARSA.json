@@ -1,7 +1,7 @@
 {
   "ticker": "ARSA",
-  "name": "Арсагера",
-  "lotSize": 100,
+  "name": "ARSA",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
