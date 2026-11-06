@@ -1,7 +1,7 @@
 {
   "ticker": "CARM",
-  "name": "СТГ",
-  "lotSize": 100,
+  "name": "CARM",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-07-03",
@@ -6826,6 +6826,14 @@
       "low": 0.7395,
       "close": 0.7545,
       "volume": 7431300
+    },
+    {
+      "time": "2026-11-05",
+      "open": 0.754,
+      "high": 0.7775,
+      "low": 0.742,
+      "close": 0.762,
+      "volume": 4176200
     }
   ],
   "dividends": [],

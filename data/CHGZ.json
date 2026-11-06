@@ -1,7 +1,7 @@
 {
   "ticker": "CHGZ",
-  "name": "РН-ЗапСиб",
-  "lotSize": 10,
+  "name": "CHGZ",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7674,6 +7674,14 @@
       "low": 113.8,
       "close": 114.8,
       "volume": 3840
+    },
+    {
+      "time": "2026-11-05",
+      "open": 115.0,
+      "high": 115.2,
+      "low": 113.0,
+      "close": 114.2,
+      "volume": 5050
     }
   ],
   "dividends": [],

@@ -1,7 +1,7 @@
 {
   "ticker": "CBOM",
-  "name": "МКБ ао",
-  "lotSize": 100,
+  "name": "CBOM",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 10.2,
       "close": 10.359,
       "volume": 7869900
+    },
+    {
+      "time": "2026-11-05",
+      "open": 10.498,
+      "high": 10.942,
+      "low": 10.13,
+      "close": 10.871,
+      "volume": 11435600
     }
   ],
   "dividends": [],

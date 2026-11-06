@@ -1,6 +1,6 @@
 {
   "ticker": "YDEX",
-  "name": "ЯНДЕКС",
+  "name": "YDEX",
   "lotSize": 1,
   "candles": [
     {
@@ -4658,6 +4658,14 @@
       "low": 3364.0,
       "close": 3423.5,
       "volume": 864486
+    },
+    {
+      "time": "2026-11-05",
+      "open": 3417.0,
+      "high": 3433.0,
+      "low": 3381.0,
+      "close": 3406.0,
+      "volume": 803119
     }
   ],
   "dividends": [

@@ -1,6 +1,6 @@
 {
   "ticker": "ABIO",
-  "name": "ABIO",
+  "name": "iАРТГЕН ао",
   "lotSize": 1,
   "candles": [
     {
@@ -6554,6 +6554,14 @@
       "low": 46.12,
       "close": 46.82,
       "volume": 97109
+    },
+    {
+      "time": "2026-11-05",
+      "open": 46.94,
+      "high": 47.14,
+      "low": 45.4,
+      "close": 46.18,
+      "volume": 312859
     }
   ],
   "dividends": [

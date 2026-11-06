@@ -7818,6 +7818,14 @@
       "low": 290.11,
       "close": 292.17,
       "volume": 16303950
+    },
+    {
+      "time": "2026-11-05",
+      "open": 290.89,
+      "high": 294.71,
+      "low": 289.05,
+      "close": 292.43,
+      "volume": 21116535
     }
   ],
   "dividends": [
@@ -7850,7 +7858,7 @@
       "eps": 89.4,
       "divYield": 12.9,
       "netProfitBln": 1930.0,
-      "capitalizationBln": 6597.0,
+      "capitalizationBln": 6601.0,
       "equityBln": 9005.0
     },
     "history": [
@@ -7923,7 +7931,7 @@
         "eps": 89.4,
         "divYield": 12.9,
         "netProfitBln": 1930.0,
-        "capitalizationBln": 6597.0,
+        "capitalizationBln": 6601.0,
         "equityBln": 9005.0
       }
     ]

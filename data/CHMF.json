@@ -1,6 +1,6 @@
 {
   "ticker": "CHMF",
-  "name": "СевСт-ао",
+  "name": "CHMF",
   "lotSize": 1,
   "candles": [
     {
@@ -7818,6 +7818,14 @@
       "low": 671.2,
       "close": 678.0,
       "volume": 858874
+    },
+    {
+      "time": "2026-11-05",
+      "open": 675.0,
+      "high": 697.0,
+      "low": 674.2,
+      "close": 692.8,
+      "volume": 1801609
     }
   ],
   "dividends": [

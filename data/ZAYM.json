@@ -1,7 +1,7 @@
 {
   "ticker": "ZAYM",
-  "name": "Займер ао",
-  "lotSize": 10,
+  "name": "ZAYM",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2024-04-12",
@@ -5226,6 +5226,14 @@
       "low": 129.55,
       "close": 130.8,
       "volume": 86080
+    },
+    {
+      "time": "2026-11-05",
+      "open": 130.5,
+      "high": 132.8,
+      "low": 127.35,
+      "close": 131.5,
+      "volume": 128680
     }
   ],
   "dividends": [
@@ -5275,13 +5283,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 3.71,
-      "roe": 24.7,
-      "roa": 17.3,
-      "eps": 34.1,
-      "divYield": 21.5,
-      "netProfitBln": 3.41,
-      "capitalizationBln": 12.7
+      "pe": 4.78,
+      "roe": 19.6,
+      "roa": 14.7,
+      "eps": 27.5,
+      "divYield": 20.9,
+      "netProfitBln": 2.75,
+      "capitalizationBln": 13.2
     },
     "history": [
       {
@@ -5326,13 +5334,13 @@
       },
       {
         "year": "LTM",
-        "pe": 3.71,
-        "roe": 24.7,
-        "roa": 17.3,
-        "eps": 34.1,
-        "divYield": 21.5,
-        "netProfitBln": 3.41,
-        "capitalizationBln": 12.7
+        "pe": 4.78,
+        "roe": 19.6,
+        "roa": 14.7,
+        "eps": 27.5,
+        "divYield": 20.9,
+        "netProfitBln": 2.75,
+        "capitalizationBln": 13.2
       }
     ]
   }

@@ -1,6 +1,6 @@
 {
   "ticker": "DELI",
-  "name": "iКаршеринг",
+  "name": "DELI",
   "lotSize": 1,
   "candles": [
     {
@@ -5586,6 +5586,14 @@
       "low": 41.7,
       "close": 42.85,
       "volume": 260396
+    },
+    {
+      "time": "2026-11-05",
+      "open": 42.9,
+      "high": 44.55,
+      "low": 42.1,
+      "close": 43.6,
+      "volume": 522874
     }
   ],
   "dividends": [],

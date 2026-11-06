@@ -1,6 +1,6 @@
 {
   "ticker": "ZILL",
-  "name": "ЗИЛ ао",
+  "name": "ZILL",
   "lotSize": 1,
   "candles": [
     {
@@ -7818,6 +7818,14 @@
       "low": 4830.0,
       "close": 4900.0,
       "volume": 83
+    },
+    {
+      "time": "2026-11-05",
+      "open": 4900.0,
+      "high": 4995.0,
+      "low": 4790.0,
+      "close": 4970.0,
+      "volume": 260
     }
   ],
   "dividends": [],
@@ -7826,13 +7834,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 3.67,
+      "pe": 3.87,
       "roe": 8.5,
       "roa": 3.3,
       "eps": 1357.0,
       "divYield": 0.0,
       "netProfitBln": 3.61,
-      "capitalizationBln": 13.2
+      "capitalizationBln": 14.0
     },
     "history": [
       {
@@ -7877,13 +7885,13 @@
       },
       {
         "year": "LTM",
-        "pe": 3.67,
+        "pe": 3.87,
         "roe": 8.5,
         "roa": 3.3,
         "eps": 1357.0,
         "divYield": 0.0,
         "netProfitBln": 3.61,
-        "capitalizationBln": 13.2
+        "capitalizationBln": 14.0
       }
     ]
   }

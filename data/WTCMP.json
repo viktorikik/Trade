@@ -1,7 +1,7 @@
 {
   "ticker": "WTCMP",
-  "name": "ЦМТ ап",
-  "lotSize": 100,
+  "name": "WTCMP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 12.72,
       "close": 12.9,
       "volume": 43800
+    },
+    {
+      "time": "2026-11-05",
+      "open": 12.94,
+      "high": 12.94,
+      "low": 12.52,
+      "close": 12.72,
+      "volume": 69400
     }
   ],
   "dividends": [

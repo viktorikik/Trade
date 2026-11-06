@@ -1,7 +1,7 @@
 {
   "ticker": "YRSB",
-  "name": "ТНСэнЯр",
-  "lotSize": 10,
+  "name": "YRSB",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7794,6 +7794,14 @@
       "low": 614.0,
       "close": 642.0,
       "volume": 1100
+    },
+    {
+      "time": "2026-11-05",
+      "open": 624.0,
+      "high": 638.0,
+      "low": 610.0,
+      "close": 616.0,
+      "volume": 390
     }
   ],
   "dividends": [],
@@ -7802,13 +7810,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 10.2,
+      "pe": 9.36,
       "roe": 56.3,
       "roa": 23.1,
       "eps": 71.0,
       "divYield": 0.0,
       "netProfitBln": 1.22,
-      "capitalizationBln": 12.4
+      "capitalizationBln": 11.4
     },
     "history": [
       {
@@ -7861,13 +7869,13 @@
       },
       {
         "year": "LTM",
-        "pe": 10.2,
+        "pe": 9.36,
         "roe": 56.3,
         "roa": 23.1,
         "eps": 71.0,
         "divYield": 0.0,
         "netProfitBln": 1.22,
-        "capitalizationBln": 12.4
+        "capitalizationBln": 11.4
       }
     ]
   }

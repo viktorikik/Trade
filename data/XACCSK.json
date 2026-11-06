@@ -1,6 +1,6 @@
 {
   "ticker": "XACCSK",
-  "name": "Акцент 5",
+  "name": "XACCSK",
   "lotSize": 1,
   "candles": [
     {
@@ -778,6 +778,14 @@
       "low": 879.0,
       "close": 892.0,
       "volume": 5249
+    },
+    {
+      "time": "2026-11-05",
+      "open": 892.0,
+      "high": 899.0,
+      "low": 871.0,
+      "close": 889.0,
+      "volume": 13210
     }
   ],
   "dividends": [],

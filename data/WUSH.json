@@ -1,6 +1,6 @@
 {
   "ticker": "WUSH",
-  "name": "iВУШХолднг",
+  "name": "WUSH",
   "lotSize": 1,
   "candles": [
     {
@@ -7818,6 +7818,14 @@
       "low": 34.07,
       "close": 34.46,
       "volume": 2281559
+    },
+    {
+      "time": "2026-11-05",
+      "open": 34.46,
+      "high": 38.74,
+      "low": 34.24,
+      "close": 37.77,
+      "volume": 18283403
     }
   ],
   "dividends": [

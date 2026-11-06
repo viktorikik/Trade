@@ -1,6 +1,6 @@
 {
   "ticker": "CNYM",
-  "name": "CNYM ETF",
+  "name": "CNYM",
   "lotSize": 1,
   "candles": [
     {
@@ -778,6 +778,14 @@
       "low": 138.47,
       "close": 139.04,
       "volume": 45527
+    },
+    {
+      "time": "2026-11-05",
+      "open": 140.47,
+      "high": 140.47,
+      "low": 139.03,
+      "close": 139.42,
+      "volume": 72639
     }
   ],
   "dividends": [],

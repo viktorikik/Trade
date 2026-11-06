@@ -1,7 +1,7 @@
 {
   "ticker": "YKEN",
-  "name": "Якутскэнрг",
-  "lotSize": 10000,
+  "name": "YKEN",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 0.363,
       "close": 0.375,
       "volume": 1340000
+    },
+    {
+      "time": "2026-11-05",
+      "open": 0.369,
+      "high": 0.369,
+      "low": 0.364,
+      "close": 0.364,
+      "volume": 570000
     }
   ],
   "dividends": [],
@@ -7826,13 +7834,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": -0.32,
+      "pe": -0.28,
       "roe": 45.9,
       "roa": -17.6,
       "eps": -1.41,
       "divYield": 0.0,
       "netProfitBln": -14.4,
-      "capitalizationBln": 4.55
+      "capitalizationBln": 4.08
     },
     "history": [
       {
@@ -7887,13 +7895,13 @@
       },
       {
         "year": "LTM",
-        "pe": -0.32,
+        "pe": -0.28,
         "roe": 45.9,
         "roa": -17.6,
         "eps": -1.41,
         "divYield": 0.0,
         "netProfitBln": -14.4,
-        "capitalizationBln": 4.55
+        "capitalizationBln": 4.08
       }
     ]
   }

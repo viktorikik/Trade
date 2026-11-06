@@ -1,7 +1,7 @@
 {
   "ticker": "ZVEZ",
-  "name": "ЗВЕЗДА ао",
-  "lotSize": 1000,
+  "name": "ZVEZ",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 5.26,
       "close": 5.38,
       "volume": 35000
+    },
+    {
+      "time": "2026-11-05",
+      "open": 5.28,
+      "high": 5.39,
+      "low": 5.27,
+      "close": 5.37,
+      "volume": 52000
     }
   ],
   "dividends": [],
@@ -7826,13 +7834,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": -32.5,
+      "pe": -31.4,
       "roe": 2.1,
       "roa": -0.9,
       "eps": -0.17,
       "divYield": 0.0,
       "netProfitBln": -0.096,
-      "capitalizationBln": 3.12
+      "capitalizationBln": 3.02
     },
     "history": [
       {
@@ -7877,13 +7885,13 @@
       },
       {
         "year": "LTM",
-        "pe": -32.5,
+        "pe": -31.4,
         "roe": 2.1,
         "roa": -0.9,
         "eps": -0.17,
         "divYield": 0.0,
         "netProfitBln": -0.096,
-        "capitalizationBln": 3.12
+        "capitalizationBln": 3.02
       }
     ]
   }

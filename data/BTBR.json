@@ -1,6 +1,6 @@
 {
   "ticker": "BTBR",
-  "name": "iВ2В-РТС",
+  "name": "BTBR",
   "lotSize": 1,
   "candles": [
     {
@@ -1130,6 +1130,14 @@
       "low": 135.65,
       "close": 138.69,
       "volume": 282576
+    },
+    {
+      "time": "2026-11-05",
+      "open": 138.69,
+      "high": 141.03,
+      "low": 130.56,
+      "close": 136.4,
+      "volume": 395828
     }
   ],
   "dividends": [

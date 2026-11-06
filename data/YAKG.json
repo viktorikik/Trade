@@ -1,7 +1,7 @@
 {
   "ticker": "YAKG",
-  "name": "ЯТЭК ао",
-  "lotSize": 10,
+  "name": "YAKG",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 35.7,
       "close": 36.35,
       "volume": 53230
+    },
+    {
+      "time": "2026-11-05",
+      "open": 36.0,
+      "high": 37.1,
+      "low": 34.55,
+      "close": 35.55,
+      "volume": 102310
     }
   ],
   "dividends": [],
@@ -7826,13 +7834,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 11.2,
+      "pe": 11.5,
       "roe": 12.3,
       "roa": 7.3,
       "eps": 3.09,
       "divYield": 0.0,
       "netProfitBln": 2.56,
-      "capitalizationBln": 28.7
+      "capitalizationBln": 29.3
     },
     "history": [
       {
@@ -7887,13 +7895,13 @@
       },
       {
         "year": "LTM",
-        "pe": 11.2,
+        "pe": 11.5,
         "roe": 12.3,
         "roa": 7.3,
         "eps": 3.09,
         "divYield": 0.0,
         "netProfitBln": 2.56,
-        "capitalizationBln": 28.7
+        "capitalizationBln": 29.3
       }
     ]
   }

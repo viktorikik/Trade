@@ -1,6 +1,6 @@
 {
   "ticker": "XSBORA",
-  "name": "Бора-Бора",
+  "name": "XSBORA",
   "lotSize": 1,
   "candles": [
     {
@@ -682,6 +682,14 @@
       "low": 7200.0,
       "close": 7200.0,
       "volume": 29
+    },
+    {
+      "time": "2026-11-05",
+      "open": 7080.0,
+      "high": 7300.0,
+      "low": 7080.0,
+      "close": 7080.0,
+      "volume": 215
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "CORP",
-  "name": "CORP ETF",
+  "name": "CORP",
   "lotSize": 1,
   "candles": [
     {
@@ -634,6 +634,14 @@
       "low": 103.84,
       "close": 104.38,
       "volume": 883
+    },
+    {
+      "time": "2026-11-05",
+      "open": 103.94,
+      "high": 104.55,
+      "low": 103.76,
+      "close": 103.8,
+      "volume": 6980
     }
   ],
   "dividends": [],

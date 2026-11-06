@@ -1,7 +1,7 @@
 {
   "ticker": "BSPBP",
-  "name": "БСП ап",
-  "lotSize": 100,
+  "name": "BSPBP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 33.05,
       "close": 33.35,
       "volume": 40600
+    },
+    {
+      "time": "2026-11-05",
+      "open": 33.25,
+      "high": 34.3,
+      "low": 33.0,
+      "close": 34.1,
+      "volume": 65300
     }
   ],
   "dividends": [],

@@ -1,7 +1,7 @@
 {
   "ticker": "YKENP",
-  "name": "Якутскэн-п",
-  "lotSize": 10000,
+  "name": "YKENP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7810,6 +7810,14 @@
       "low": 0.282,
       "close": 0.285,
       "volume": 820000
+    },
+    {
+      "time": "2026-11-05",
+      "open": 0.286,
+      "high": 0.286,
+      "low": 0.281,
+      "close": 0.281,
+      "volume": 640000
     }
   ],
   "dividends": [],

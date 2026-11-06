@@ -1,6 +1,6 @@
 {
   "ticker": "X5",
-  "name": "КЦ ИКС 5",
+  "name": "X5",
   "lotSize": 1,
   "candles": [
     {
@@ -3714,6 +3714,14 @@
       "low": 2244.5,
       "close": 2314.0,
       "volume": 949992
+    },
+    {
+      "time": "2026-11-05",
+      "open": 2313.5,
+      "high": 2380.0,
+      "low": 2308.5,
+      "close": 2375.0,
+      "volume": 743507
     }
   ],
   "dividends": [

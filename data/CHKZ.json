@@ -1,6 +1,6 @@
 {
   "ticker": "CHKZ",
-  "name": "ЧКПЗ ао",
+  "name": "CHKZ",
   "lotSize": 1,
   "candles": [
     {
@@ -7746,6 +7746,14 @@
       "low": 14950.0,
       "close": 14950.0,
       "volume": 4
+    },
+    {
+      "time": "2026-11-05",
+      "open": 14850.0,
+      "high": 15000.0,
+      "low": 14800.0,
+      "close": 14850.0,
+      "volume": 15
     }
   ],
   "dividends": [

@@ -1,7 +1,7 @@
 {
   "ticker": "CNTLP",
-  "name": "Телеграф-п",
-  "lotSize": 100,
+  "name": "CNTLP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7818,6 +7818,14 @@
       "low": 4.29,
       "close": 4.3,
       "volume": 58300
+    },
+    {
+      "time": "2026-11-05",
+      "open": 4.34,
+      "high": 4.4,
+      "low": 4.26,
+      "close": 4.35,
+      "volume": 141800
     }
   ],
   "dividends": [],

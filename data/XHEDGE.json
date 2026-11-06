@@ -1,6 +1,6 @@
 {
   "ticker": "XHEDGE",
-  "name": "Тактикреш",
+  "name": "XHEDGE",
   "lotSize": 1,
   "candles": [
     {
@@ -698,6 +698,14 @@
       "low": 266.5,
       "close": 273.15,
       "volume": 10339
+    },
+    {
+      "time": "2026-11-05",
+      "open": 273.3,
+      "high": 273.3,
+      "low": 266.65,
+      "close": 273.3,
+      "volume": 48
     }
   ],
   "dividends": [],

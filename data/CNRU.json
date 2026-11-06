@@ -1,6 +1,6 @@
 {
   "ticker": "CNRU",
-  "name": "iЦиан",
+  "name": "CNRU",
   "lotSize": 1,
   "candles": [
     {
@@ -3234,6 +3234,14 @@
       "low": 738.6,
       "close": 743.0,
       "volume": 263339
+    },
+    {
+      "time": "2026-11-05",
+      "open": 743.6,
+      "high": 800.0,
+      "low": 737.0,
+      "close": 777.8,
+      "volume": 571216
     }
   ],
   "dividends": [

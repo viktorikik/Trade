@@ -1,6 +1,6 @@
 {
   "ticker": "XAVIUM",
-  "name": "Авиум",
+  "name": "XAVIUM",
   "lotSize": 1,
   "candles": [
     {
@@ -722,6 +722,14 @@
       "low": 1028.0,
       "close": 1030.0,
       "volume": 291
+    },
+    {
+      "time": "2026-11-05",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1010.0,
+      "close": 1030.0,
+      "volume": 195
     }
   ],
   "dividends": [],
