@@ -1,6 +1,6 @@
 {
   "ticker": "AKCN",
-  "name": "AKCN",
+  "name": "AKCN ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 77.6,
       "close": 82.3,
       "volume": 1138
+    },
+    {
+      "time": "2026-11-06",
+      "open": 82.4,
+      "high": 82.8,
+      "low": 81.7,
+      "close": 82.5,
+      "volume": 1286
     }
   ],
   "dividends": [],

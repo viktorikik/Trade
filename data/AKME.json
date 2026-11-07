@@ -1,6 +1,6 @@
 {
   "ticker": "AKME",
-  "name": "AKME",
+  "name": "ETF AKME",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 182.12,
       "close": 185.24,
       "volume": 144579
+    },
+    {
+      "time": "2026-11-06",
+      "open": 185.24,
+      "high": 187.52,
+      "low": 185.24,
+      "close": 187.38,
+      "volume": 80372
     }
   ],
   "dividends": [],

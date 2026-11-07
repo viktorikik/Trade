@@ -1,6 +1,6 @@
 {
   "ticker": "AMIX",
-  "name": "AMIX",
+  "name": "AMIX ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 101.3,
       "close": 103.6,
       "volume": 19248
+    },
+    {
+      "time": "2026-11-06",
+      "open": 101.7,
+      "high": 103.9,
+      "low": 101.7,
+      "close": 103.8,
+      "volume": 64670
     }
   ],
   "dividends": [],

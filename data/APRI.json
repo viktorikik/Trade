@@ -1,7 +1,7 @@
 {
   "ticker": "APRI",
-  "name": "APRI",
-  "lotSize": 1,
+  "name": "АПРИ",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2024-07-30",
@@ -4634,6 +4634,14 @@
       "low": 14.98,
       "close": 15.35,
       "volume": 114950
+    },
+    {
+      "time": "2026-11-06",
+      "open": 15.49,
+      "high": 15.92,
+      "low": 15.0,
+      "close": 15.56,
+      "volume": 72570
     }
   ],
   "dividends": [],

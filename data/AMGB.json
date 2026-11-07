@@ -1,6 +1,6 @@
 {
   "ticker": "AMGB",
-  "name": "AMGB",
+  "name": "AMGB ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 127.8,
       "close": 128.0,
       "volume": 28713
+    },
+    {
+      "time": "2026-11-06",
+      "open": 128.0,
+      "high": 128.4,
+      "low": 127.9,
+      "close": 128.3,
+      "volume": 986
     }
   ],
   "dividends": [],

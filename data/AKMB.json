@@ -1,6 +1,6 @@
 {
   "ticker": "AKMB",
-  "name": "AKMB",
+  "name": "ETF AKMB",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1.9936,
       "close": 1.9944,
       "volume": 65263001
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1.9948,
+      "high": 2.0004,
+      "low": 1.9948,
+      "close": 1.9994,
+      "volume": 32242195
     }
   ],
   "dividends": [],

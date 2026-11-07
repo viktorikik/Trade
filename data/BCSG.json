@@ -1,6 +1,6 @@
 {
   "ticker": "BCSG",
-  "name": "BCSG",
+  "name": "BCSG ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 12.35,
       "close": 12.82,
       "volume": 723927
+    },
+    {
+      "time": "2026-11-06",
+      "open": 12.46,
+      "high": 12.75,
+      "low": 12.46,
+      "close": 12.69,
+      "volume": 64109
     }
   ],
   "dividends": [],

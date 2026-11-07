@@ -1,6 +1,6 @@
 {
   "ticker": "XXXXXX",
-  "name": "XXXXXX",
+  "name": "Рентал ПРО",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 891.4,
       "close": 897.5,
       "volume": 5754
+    },
+    {
+      "time": "2026-11-06",
+      "open": 897.7,
+      "high": 902.2,
+      "low": 896.0,
+      "close": 900.4,
+      "volume": 2391
     }
   ],
   "dividends": [],

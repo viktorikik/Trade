@@ -1,6 +1,6 @@
 {
   "ticker": "BNDA",
-  "name": "BNDA",
+  "name": "BNDA ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -770,6 +770,14 @@
       "low": 1258.0,
       "close": 1260.4,
       "volume": 45
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1260.3,
+      "high": 1260.3,
+      "low": 1260.2,
+      "close": 1260.2,
+      "volume": 48
     }
   ],
   "dividends": [],

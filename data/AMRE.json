@@ -1,6 +1,6 @@
 {
   "ticker": "AMRE",
-  "name": "AMRE",
+  "name": "AMRE ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 107.0,
       "close": 108.9,
       "volume": 17519
+    },
+    {
+      "time": "2026-11-06",
+      "open": 108.9,
+      "high": 109.7,
+      "low": 108.5,
+      "close": 109.7,
+      "volume": 1870
     }
   ],
   "dividends": [],

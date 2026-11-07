@@ -1,6 +1,6 @@
 {
   "ticker": "AKUP",
-  "name": "AKUP",
+  "name": "AKUP ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 12.6,
       "close": 12.69,
       "volume": 132510
+    },
+    {
+      "time": "2026-11-06",
+      "open": 12.69,
+      "high": 12.71,
+      "low": 12.65,
+      "close": 12.71,
+      "volume": 23481
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "AMNR",
-  "name": "AMNR",
+  "name": "AMNR ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 159.729,
       "close": 159.797,
       "volume": 688100
+    },
+    {
+      "time": "2026-11-06",
+      "open": 159.8,
+      "high": 159.976,
+      "low": 159.788,
+      "close": 159.972,
+      "volume": 757716
     }
   ],
   "dividends": [],

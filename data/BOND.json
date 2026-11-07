@@ -1,6 +1,6 @@
 {
   "ticker": "BOND",
-  "name": "BOND",
+  "name": "BOND ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1669.0,
       "close": 1681.6,
       "volume": 11869
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1684.4,
+      "high": 1690.4,
+      "low": 1678.6,
+      "close": 1690.4,
+      "volume": 6041
     }
   ],
   "dividends": [],

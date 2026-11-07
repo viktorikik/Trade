@@ -1,7 +1,7 @@
 {
   "ticker": "ZAYM",
-  "name": "ZAYM",
-  "lotSize": 1,
+  "name": "Займер ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2024-04-12",
@@ -5234,6 +5234,14 @@
       "low": 127.35,
       "close": 131.5,
       "volume": 128680
+    },
+    {
+      "time": "2026-11-06",
+      "open": 131.45,
+      "high": 132.2,
+      "low": 130.15,
+      "close": 131.45,
+      "volume": 48770
     }
   ],
   "dividends": [

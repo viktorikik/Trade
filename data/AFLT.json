@@ -1,7 +1,7 @@
 {
   "ticker": "AFLT",
-  "name": "AFLT",
-  "lotSize": 1,
+  "name": "Аэрофлот",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 36.7,
       "close": 38.46,
       "volume": 35261220
+    },
+    {
+      "time": "2026-11-06",
+      "open": 38.45,
+      "high": 38.89,
+      "low": 38.03,
+      "close": 38.42,
+      "volume": 22008720
     }
   ],
   "dividends": [

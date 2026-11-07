@@ -1,6 +1,6 @@
 {
   "ticker": "AKFB",
-  "name": "AKFB",
+  "name": "AKFB ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 143.53,
       "close": 143.62,
       "volume": 6139044
+    },
+    {
+      "time": "2026-11-06",
+      "open": 143.7,
+      "high": 143.83,
+      "low": 143.69,
+      "close": 143.83,
+      "volume": 2535239
     }
   ],
   "dividends": [],

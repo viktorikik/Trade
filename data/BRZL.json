@@ -1,6 +1,6 @@
 {
   "ticker": "BRZL",
-  "name": "BRZL",
+  "name": "БурЗолото",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 1158.0,
       "close": 1204.0,
       "volume": 3755
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1202.0,
+      "high": 1206.0,
+      "low": 1138.0,
+      "close": 1184.0,
+      "volume": 876
     }
   ],
   "dividends": [],

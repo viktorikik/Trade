@@ -1,6 +1,6 @@
 {
   "ticker": "AKAI",
-  "name": "AKAI",
+  "name": "AKAI ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 99.21,
       "close": 99.65,
       "volume": 1087
+    },
+    {
+      "time": "2026-11-06",
+      "open": 99.65,
+      "high": 100.5,
+      "low": 99.36,
+      "close": 100.0,
+      "volume": 824
     }
   ],
   "dividends": [],

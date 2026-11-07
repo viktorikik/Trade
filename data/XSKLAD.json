@@ -1,7 +1,7 @@
 {
   "ticker": "XSKLAD",
-  "name": "XSKLAD",
-  "lotSize": 1,
+  "name": "ЗПИФСовр10",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2026-06-22",
@@ -786,6 +786,14 @@
       "low": 108.99,
       "close": 108.99,
       "volume": 930
+    },
+    {
+      "time": "2026-11-06",
+      "open": 110.37,
+      "high": 113.24,
+      "low": 109.31,
+      "close": 111.0,
+      "volume": 2170
     }
   ],
   "dividends": [],

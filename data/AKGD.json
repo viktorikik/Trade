@@ -1,6 +1,6 @@
 {
   "ticker": "AKGD",
-  "name": "AKGD",
+  "name": "AKGD ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 230.82,
       "close": 238.81,
       "volume": 1697831
+    },
+    {
+      "time": "2026-11-06",
+      "open": 238.5,
+      "high": 239.65,
+      "low": 231.8,
+      "close": 238.39,
+      "volume": 138115
     }
   ],
   "dividends": [],

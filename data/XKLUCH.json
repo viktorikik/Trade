@@ -1,7 +1,7 @@
 {
   "ticker": "XKLUCH",
-  "name": "XKLUCH",
-  "lotSize": 1,
+  "name": "КлючАктив",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2026-06-23",
@@ -730,6 +730,14 @@
       "low": 10.998,
       "close": 10.998,
       "volume": 10080
+    },
+    {
+      "time": "2026-11-06",
+      "open": 11.01,
+      "high": 11.011,
+      "low": 11.01,
+      "close": 11.01,
+      "volume": 2969830
     }
   ],
   "dividends": [],

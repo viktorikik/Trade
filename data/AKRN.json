@@ -1,6 +1,6 @@
 {
   "ticker": "AKRN",
-  "name": "AKRN",
+  "name": "Акрон",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 17210.0,
       "close": 17580.0,
       "volume": 397
+    },
+    {
+      "time": "2026-11-06",
+      "open": 17690.0,
+      "high": 17755.0,
+      "low": 17600.0,
+      "close": 17755.0,
+      "volume": 338
     }
   ],
   "dividends": [

@@ -1,7 +1,7 @@
 {
   "ticker": "CBOM",
-  "name": "CBOM",
-  "lotSize": 1,
+  "name": "МКБ ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 10.13,
       "close": 10.871,
       "volume": 11435600
+    },
+    {
+      "time": "2026-11-06",
+      "open": 10.849,
+      "high": 11.249,
+      "low": 10.849,
+      "close": 11.222,
+      "volume": 9880700
     }
   ],
   "dividends": [],
@@ -7834,12 +7842,12 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 10.6,
-      "pb": 0.85,
+      "pe": 12.0,
+      "pb": 0.96,
       "eps": 0.94,
       "divYield": 0.0,
       "netProfitBln": 31.3,
-      "capitalizationBln": 331.8,
+      "capitalizationBln": 374.6,
       "equityBln": 388.6
     },
     "history": [
@@ -7905,12 +7913,12 @@
       },
       {
         "year": "LTM",
-        "pe": 10.6,
-        "pb": 0.85,
+        "pe": 12.0,
+        "pb": 0.96,
         "eps": 0.94,
         "divYield": 0.0,
         "netProfitBln": 31.3,
-        "capitalizationBln": 331.8,
+        "capitalizationBln": 374.6,
         "equityBln": 388.6
       }
     ]

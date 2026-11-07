@@ -1,6 +1,6 @@
 {
   "ticker": "AKGP",
-  "name": "AKGP",
+  "name": "AKGP ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1.146,
       "close": 1.152,
       "volume": 354939719
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1.152,
+      "high": 1.161,
+      "low": 1.15,
+      "close": 1.159,
+      "volume": 18067170
     }
   ],
   "dividends": [],

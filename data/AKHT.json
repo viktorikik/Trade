@@ -1,6 +1,6 @@
 {
   "ticker": "AKHT",
-  "name": "AKHT",
+  "name": "AKHT ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 98.0,
       "close": 99.77,
       "volume": 4064
+    },
+    {
+      "time": "2026-11-06",
+      "open": 99.7,
+      "high": 102.68,
+      "low": 99.7,
+      "close": 102.5,
+      "volume": 14593
     }
   ],
   "dividends": [],

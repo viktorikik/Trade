@@ -1,6 +1,6 @@
 {
   "ticker": "AKMC",
-  "name": "AKMC",
+  "name": "AKMC ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1287.6,
       "close": 1292.3,
       "volume": 52113
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1291.71,
+      "high": 1300.22,
+      "low": 1289.09,
+      "close": 1298.02,
+      "volume": 638
     }
   ],
   "dividends": [],

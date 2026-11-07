@@ -1,6 +1,6 @@
 {
   "ticker": "AKMP",
-  "name": "AKMP",
+  "name": "AKMP ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1.2873,
       "close": 1.288,
       "volume": 625117700
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1.2892,
+      "high": 1.2895,
+      "low": 1.2889,
+      "close": 1.2891,
+      "volume": 450583117
     }
   ],
   "dividends": [],

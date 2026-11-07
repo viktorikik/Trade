@@ -1,6 +1,6 @@
 {
   "ticker": "ZILL",
-  "name": "ZILL",
+  "name": "ЗИЛ ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 4790.0,
       "close": 4970.0,
       "volume": 260
+    },
+    {
+      "time": "2026-11-06",
+      "open": 4945.0,
+      "high": 4945.0,
+      "low": 4805.0,
+      "close": 4895.0,
+      "volume": 45
     }
   ],
   "dividends": [],

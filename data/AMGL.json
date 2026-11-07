@@ -1,6 +1,6 @@
 {
   "ticker": "AMGL",
-  "name": "AMGL",
+  "name": "AMGL ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 123.6,
       "close": 128.7,
       "volume": 133651
+    },
+    {
+      "time": "2026-11-06",
+      "open": 128.7,
+      "high": 128.7,
+      "low": 125.8,
+      "close": 127.9,
+      "volume": 400312
     }
   ],
   "dividends": [],

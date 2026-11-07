@@ -1,7 +1,7 @@
 {
   "ticker": "BSPB",
-  "name": "BSPB",
-  "lotSize": 1,
+  "name": "БСП ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 249.22,
       "close": 255.32,
       "volume": 308700
+    },
+    {
+      "time": "2026-11-06",
+      "open": 255.32,
+      "high": 258.84,
+      "low": 253.34,
+      "close": 253.8,
+      "volume": 290630
     }
   ],
   "dividends": [
@@ -7899,14 +7907,14 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 3.82,
+      "pe": 3.83,
       "pb": 0.52,
       "roe": 10.1,
       "roa": 1.6,
       "eps": 66.6,
       "divYield": 17.9,
       "netProfitBln": 29.7,
-      "capitalizationBln": 113.4,
+      "capitalizationBln": 113.7,
       "equityBln": 218.4
     },
     "history": [
@@ -7972,14 +7980,14 @@
       },
       {
         "year": "LTM",
-        "pe": 3.82,
+        "pe": 3.83,
         "pb": 0.52,
         "roe": 10.1,
         "roa": 1.6,
         "eps": 66.6,
         "divYield": 17.9,
         "netProfitBln": 29.7,
-        "capitalizationBln": 113.4,
+        "capitalizationBln": 113.7,
         "equityBln": 218.4
       }
     ]

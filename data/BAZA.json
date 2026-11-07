@@ -1,7 +1,7 @@
 {
   "ticker": "BAZA",
-  "name": "BAZA",
-  "lotSize": 1,
+  "name": "iБАЗИС",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2025-12-10",
@@ -1834,6 +1834,14 @@
       "low": 139.5,
       "close": 144.24,
       "volume": 433910
+    },
+    {
+      "time": "2026-11-06",
+      "open": 144.34,
+      "high": 149.4,
+      "low": 142.84,
+      "close": 147.4,
+      "volume": 461910
     }
   ],
   "dividends": [],

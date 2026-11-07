@@ -1,7 +1,7 @@
 {
   "ticker": "BISVP",
-  "name": "BISVP",
-  "lotSize": 1,
+  "name": "БашИнСв ап",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 9.99,
       "close": 10.27,
       "volume": 33600
+    },
+    {
+      "time": "2026-11-06",
+      "open": 10.26,
+      "high": 10.45,
+      "low": 10.23,
+      "close": 10.44,
+      "volume": 12500
     }
   ],
   "dividends": [],

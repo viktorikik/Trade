@@ -1,6 +1,6 @@
 {
   "ticker": "AKIE",
-  "name": "AKIE",
+  "name": "ETF AKIE",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 909.52,
       "close": 922.99,
       "volume": 201
+    },
+    {
+      "time": "2026-11-06",
+      "open": 923.24,
+      "high": 937.97,
+      "low": 923.24,
+      "close": 937.35,
+      "volume": 77
     }
   ],
   "dividends": [],

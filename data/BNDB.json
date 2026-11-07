@@ -1,6 +1,6 @@
 {
   "ticker": "BNDB",
-  "name": "BNDB",
+  "name": "BNDB ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 804.7,
       "close": 1339.9,
       "volume": 1526
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1339.1,
+      "high": 1340.9,
+      "low": 1335.1,
+      "close": 1335.6,
+      "volume": 99
     }
   ],
   "dividends": [],

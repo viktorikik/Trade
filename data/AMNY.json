@@ -1,6 +1,6 @@
 {
   "ticker": "AMNY",
-  "name": "AMNY",
+  "name": "AMNY ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1305.76,
       "close": 1309.97,
       "volume": 294415
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1305.31,
+      "high": 1315.41,
+      "low": 1303.93,
+      "close": 1315.03,
+      "volume": 41448
     }
   ],
   "dividends": [],

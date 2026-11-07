@@ -1,7 +1,7 @@
 {
   "ticker": "ABRD",
-  "name": "ABRD",
-  "lotSize": 1,
+  "name": "АбрауДюрсо",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 119.2,
       "close": 126.6,
       "volume": 167760
+    },
+    {
+      "time": "2026-11-06",
+      "open": 126.8,
+      "high": 130.0,
+      "low": 125.8,
+      "close": 127.8,
+      "volume": 79230
     }
   ],
   "dividends": [

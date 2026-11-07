@@ -1,7 +1,7 @@
 {
   "ticker": "AFKS",
-  "name": "AFKS",
-  "lotSize": 1,
+  "name": "Система ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 8.041,
       "close": 8.593,
       "volume": 184511800
+    },
+    {
+      "time": "2026-11-06",
+      "open": 8.63,
+      "high": 9.198,
+      "low": 8.61,
+      "close": 9.035,
+      "volume": 309306100
     }
   ],
   "dividends": [
@@ -7843,13 +7851,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": -0.46,
+      "pe": -0.53,
       "roe": 79.4,
       "roa": -5.5,
       "eps": -16.9,
       "divYield": 0.0,
       "netProfitBln": -163.5,
-      "capitalizationBln": 75.0
+      "capitalizationBln": 87.2
     },
     "history": [
       {
@@ -7904,13 +7912,13 @@
       },
       {
         "year": "LTM",
-        "pe": -0.46,
+        "pe": -0.53,
         "roe": 79.4,
         "roa": -5.5,
         "eps": -16.9,
         "divYield": 0.0,
         "netProfitBln": -163.5,
-        "capitalizationBln": 75.0
+        "capitalizationBln": 87.2
       }
     ]
   }

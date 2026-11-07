@@ -1,7 +1,7 @@
 {
   "ticker": "CNTL",
-  "name": "CNTL",
-  "lotSize": 1,
+  "name": "Телеграф",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 8.04,
       "close": 8.32,
       "volume": 101200
+    },
+    {
+      "time": "2026-11-06",
+      "open": 8.32,
+      "high": 8.38,
+      "low": 8.24,
+      "close": 8.38,
+      "volume": 27400
     }
   ],
   "dividends": [

@@ -1,6 +1,6 @@
 {
   "ticker": "CHMK",
-  "name": "CHMK",
+  "name": "ЧМК ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 3160.0,
       "close": 3365.0,
       "volume": 1426
+    },
+    {
+      "time": "2026-11-06",
+      "open": 3380.0,
+      "high": 3540.0,
+      "low": 3365.0,
+      "close": 3525.0,
+      "volume": 577
     }
   ],
   "dividends": [],

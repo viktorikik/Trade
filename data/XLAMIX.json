@@ -1,6 +1,6 @@
 {
   "ticker": "XLAMIX",
-  "name": "XLAMIX",
+  "name": "2xAMIX",
   "lotSize": 1,
   "candles": [
     {
@@ -114,6 +114,14 @@
       "low": 1062.0,
       "close": 1083.0,
       "volume": 1822
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1098.0,
+      "high": 1102.0,
+      "low": 1098.0,
+      "close": 1102.0,
+      "volume": 14
     }
   ],
   "dividends": [],

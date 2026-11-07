@@ -1,7 +1,7 @@
 {
   "ticker": "YAKG",
-  "name": "YAKG",
-  "lotSize": 1,
+  "name": "ЯТЭК ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 34.55,
       "close": 35.55,
       "volume": 102310
+    },
+    {
+      "time": "2026-11-06",
+      "open": 35.15,
+      "high": 36.0,
+      "low": 33.25,
+      "close": 35.65,
+      "volume": 75390
     }
   ],
   "dividends": [],

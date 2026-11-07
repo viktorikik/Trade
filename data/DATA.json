@@ -1,6 +1,6 @@
 {
   "ticker": "DATA",
-  "name": "DATA",
+  "name": "iАренадата",
   "lotSize": 1,
   "candles": [
     {
@@ -4274,6 +4274,14 @@
       "low": 93.84,
       "close": 97.74,
       "volume": 1321567
+    },
+    {
+      "time": "2026-11-06",
+      "open": 98.0,
+      "high": 100.9,
+      "low": 97.86,
+      "close": 99.8,
+      "volume": 991902
     }
   ],
   "dividends": [

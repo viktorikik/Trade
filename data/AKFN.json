@@ -1,6 +1,6 @@
 {
   "ticker": "AKFN",
-  "name": "AKFN",
+  "name": "AKFN ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 98.0,
       "close": 99.2,
       "volume": 448
+    },
+    {
+      "time": "2026-11-06",
+      "open": 99.8,
+      "high": 100.7,
+      "low": 99.6,
+      "close": 100.2,
+      "volume": 741
     }
   ],
   "dividends": [],

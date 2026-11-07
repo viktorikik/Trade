@@ -1,6 +1,6 @@
 {
   "ticker": "AIIQ",
-  "name": "AIIQ",
+  "name": "AIIQ ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -170,6 +170,14 @@
       "low": 11.22,
       "close": 11.429,
       "volume": 666432
+    },
+    {
+      "time": "2026-11-06",
+      "open": 11.471,
+      "high": 11.53,
+      "low": 11.386,
+      "close": 11.462,
+      "volume": 1058178
     }
   ],
   "dividends": [],

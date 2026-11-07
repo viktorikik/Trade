@@ -1,6 +1,6 @@
 {
   "ticker": "BCSD",
-  "name": "BCSD",
+  "name": "BCSD ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 14.64,
       "close": 14.645,
       "volume": 61709526
+    },
+    {
+      "time": "2026-11-06",
+      "open": 14.654,
+      "high": 14.657,
+      "low": 14.653,
+      "close": 14.654,
+      "volume": 37252208
     }
   ],
   "dividends": [],

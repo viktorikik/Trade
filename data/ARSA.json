@@ -1,7 +1,7 @@
 {
   "ticker": "ARSA",
-  "name": "ARSA",
-  "lotSize": 1,
+  "name": "Арсагера",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 6.84,
       "close": 7.06,
       "volume": 347400
+    },
+    {
+      "time": "2026-11-06",
+      "open": 7.06,
+      "high": 7.16,
+      "low": 7.01,
+      "close": 7.12,
+      "volume": 26000
     }
   ],
   "dividends": [

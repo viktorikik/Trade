@@ -1,7 +1,7 @@
 {
   "ticker": "YKEN",
-  "name": "YKEN",
-  "lotSize": 1,
+  "name": "Якутскэнрг",
+  "lotSize": 10000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 0.364,
       "close": 0.364,
       "volume": 570000
+    },
+    {
+      "time": "2026-11-06",
+      "open": 0.363,
+      "high": 0.371,
+      "low": 0.345,
+      "close": 0.37,
+      "volume": 3970000
     }
   ],
   "dividends": [],

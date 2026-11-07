@@ -1,6 +1,6 @@
 {
   "ticker": "AKPP",
-  "name": "AKPP",
+  "name": "AKPP ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 112.0,
       "close": 114.51,
       "volume": 133505
+    },
+    {
+      "time": "2026-11-06",
+      "open": 114.65,
+      "high": 117.0,
+      "low": 114.31,
+      "close": 115.31,
+      "volume": 48731
     }
   ],
   "dividends": [],

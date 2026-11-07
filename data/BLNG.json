@@ -1,7 +1,7 @@
 {
   "ticker": "BLNG",
-  "name": "BLNG",
-  "lotSize": 1,
+  "name": "Белон ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7066,6 +7066,14 @@
       "low": 8.31,
       "close": 8.5,
       "volume": 111900
+    },
+    {
+      "time": "2026-11-06",
+      "open": 8.54,
+      "high": 8.98,
+      "low": 8.5,
+      "close": 8.8,
+      "volume": 342600
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "AQUA",
-  "name": "AQUA",
+  "name": "ИНАРКТИКА",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 317.0,
       "close": 325.1,
       "volume": 169570
+    },
+    {
+      "time": "2026-11-06",
+      "open": 326.7,
+      "high": 327.5,
+      "low": 322.3,
+      "close": 326.3,
+      "volume": 114697
     }
   ],
   "dividends": [

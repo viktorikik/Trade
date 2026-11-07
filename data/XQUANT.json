@@ -1,7 +1,7 @@
 {
   "ticker": "XQUANT",
-  "name": "XQUANT",
-  "lotSize": 1,
+  "name": "ПИФ КВАНТ",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2026-06-22",

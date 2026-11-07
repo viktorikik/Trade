@@ -1,6 +1,6 @@
 {
   "ticker": "BELU",
-  "name": "BELU",
+  "name": "НоваБев ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7794,6 +7794,14 @@
       "low": 260.0,
       "close": 270.2,
       "volume": 570482
+    },
+    {
+      "time": "2026-11-06",
+      "open": 269.6,
+      "high": 274.0,
+      "low": 268.6,
+      "close": 272.0,
+      "volume": 227020
     }
   ],
   "dividends": [

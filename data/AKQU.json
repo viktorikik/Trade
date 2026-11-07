@@ -1,6 +1,6 @@
 {
   "ticker": "AKQU",
-  "name": "AKQU",
+  "name": "AKQU ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 68.01,
       "close": 69.2,
       "volume": 2896
+    },
+    {
+      "time": "2026-11-06",
+      "open": 69.38,
+      "high": 69.99,
+      "low": 69.36,
+      "close": 69.8,
+      "volume": 1852
     }
   ],
   "dividends": [],

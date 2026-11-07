@@ -1,6 +1,6 @@
 {
   "ticker": "CHMF",
-  "name": "CHMF",
+  "name": "СевСт-ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 674.2,
       "close": 692.8,
       "volume": 1801609
+    },
+    {
+      "time": "2026-11-06",
+      "open": 693.4,
+      "high": 708.0,
+      "low": 687.2,
+      "close": 692.2,
+      "volume": 1453496
     }
   ],
   "dividends": [
@@ -7851,13 +7859,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": -964.0,
-      "roe": -0.1,
-      "roa": -0.1,
-      "eps": -0.76,
+      "pe": 375.6,
+      "roe": 0.3,
+      "roa": 0.2,
+      "eps": 1.84,
       "divYield": 0.0,
-      "netProfitBln": -0.637,
-      "capitalizationBln": 614.0
+      "netProfitBln": 1.54,
+      "capitalizationBln": 579.5
     },
     "history": [
       {
@@ -7912,13 +7920,13 @@
       },
       {
         "year": "LTM",
-        "pe": -964.0,
-        "roe": -0.1,
-        "roa": -0.1,
-        "eps": -0.76,
+        "pe": 375.6,
+        "roe": 0.3,
+        "roa": 0.2,
+        "eps": 1.84,
         "divYield": 0.0,
-        "netProfitBln": -0.637,
-        "capitalizationBln": 614.0
+        "netProfitBln": 1.54,
+        "capitalizationBln": 579.5
       }
     ]
   }

@@ -1,7 +1,7 @@
 {
   "ticker": "ZVEZ",
-  "name": "ZVEZ",
-  "lotSize": 1,
+  "name": "ЗВЕЗДА ао",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 5.27,
       "close": 5.37,
       "volume": 52000
+    },
+    {
+      "time": "2026-11-06",
+      "open": 5.39,
+      "high": 5.39,
+      "low": 5.27,
+      "close": 5.35,
+      "volume": 23000
     }
   ],
   "dividends": [],

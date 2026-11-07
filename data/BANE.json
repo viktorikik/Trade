@@ -1,6 +1,6 @@
 {
   "ticker": "BANE",
-  "name": "BANE",
+  "name": "Башнефт ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 1230.0,
       "close": 1273.5,
       "volume": 29739
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1285.5,
+      "high": 1299.5,
+      "low": 1279.0,
+      "close": 1287.0,
+      "volume": 7834
     }
   ],
   "dividends": [

@@ -1,6 +1,6 @@
 {
   "ticker": "BNDC",
-  "name": "BNDC",
+  "name": "BNDC ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 1288.3,
       "close": 1297.5,
       "volume": 15
+    },
+    {
+      "time": "2026-11-06",
+      "open": 1299.7,
+      "high": 1299.8,
+      "low": 1299.7,
+      "close": 1299.8,
+      "volume": 177
     }
   ],
   "dividends": [],

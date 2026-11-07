@@ -1,6 +1,6 @@
 {
   "ticker": "YUAN",
-  "name": "YUAN",
+  "name": "YUAN ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 129.3,
       "close": 130.02,
       "volume": 649
+    },
+    {
+      "time": "2026-11-06",
+      "open": 129.99,
+      "high": 130.57,
+      "low": 129.53,
+      "close": 130.35,
+      "volume": 467
     }
   ],
   "dividends": [],

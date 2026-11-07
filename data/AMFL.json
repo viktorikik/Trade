@@ -1,6 +1,6 @@
 {
   "ticker": "AMFL",
-  "name": "AMFL",
+  "name": "AMFL ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 143.6,
       "close": 144.0,
       "volume": 428795
+    },
+    {
+      "time": "2026-11-06",
+      "open": 143.8,
+      "high": 144.2,
+      "low": 143.8,
+      "close": 144.2,
+      "volume": 324146
     }
   ],
   "dividends": [],

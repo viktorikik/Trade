@@ -1,6 +1,6 @@
 {
   "ticker": "AKMM",
-  "name": "AKMM",
+  "name": "AKMM ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 180.9,
       "close": 180.94,
       "volume": 33536627
+    },
+    {
+      "time": "2026-11-06",
+      "open": 181.08,
+      "high": 181.13,
+      "low": 181.08,
+      "close": 181.13,
+      "volume": 17840222
     }
   ],
   "dividends": [],

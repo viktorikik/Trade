@@ -1,6 +1,6 @@
 {
   "ticker": "BCSB",
-  "name": "BCSB",
+  "name": "BCSB ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 16.436,
       "close": 16.5,
       "volume": 160038
+    },
+    {
+      "time": "2026-11-06",
+      "open": 16.45,
+      "high": 16.554,
+      "low": 16.45,
+      "close": 16.554,
+      "volume": 209740
     }
   ],
   "dividends": [],

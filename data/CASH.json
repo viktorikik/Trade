@@ -1,7 +1,7 @@
 {
   "ticker": "CASH",
-  "name": "CASH",
-  "lotSize": 1,
+  "name": "CASH ETF",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2026-06-22",
@@ -786,6 +786,14 @@
       "low": 13.951,
       "close": 13.952,
       "volume": 12194750
+    },
+    {
+      "time": "2026-11-06",
+      "open": 13.966,
+      "high": 13.968,
+      "low": 13.966,
+      "close": 13.968,
+      "volume": 7210640
     }
   ],
   "dividends": [],

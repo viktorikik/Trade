@@ -1,7 +1,7 @@
 {
   "ticker": "ASSB",
-  "name": "ASSB",
-  "lotSize": 1,
+  "name": "АстрЭнСб",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 2.645,
       "close": 2.745,
       "volume": 1087000
+    },
+    {
+      "time": "2026-11-06",
+      "open": 2.73,
+      "high": 2.9,
+      "low": 2.68,
+      "close": 2.855,
+      "volume": 1456000
     }
   ],
   "dividends": [],

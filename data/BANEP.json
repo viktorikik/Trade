@@ -1,6 +1,6 @@
 {
   "ticker": "BANEP",
-  "name": "BANEP",
+  "name": "Башнефт ап",
   "lotSize": 1,
   "candles": [
     {
@@ -7826,6 +7826,14 @@
       "low": 771.5,
       "close": 799.0,
       "volume": 100756
+    },
+    {
+      "time": "2026-11-06",
+      "open": 799.0,
+      "high": 800.0,
+      "low": 780.5,
+      "close": 791.0,
+      "volume": 97239
     }
   ],
   "dividends": [],

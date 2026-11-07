@@ -1,7 +1,7 @@
 {
   "ticker": "APTK",
-  "name": "APTK",
-  "lotSize": 1,
+  "name": "Аптеки36и6",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7826,6 +7826,14 @@
       "low": 6.434,
       "close": 6.742,
       "volume": 3145860
+    },
+    {
+      "time": "2026-11-06",
+      "open": 6.744,
+      "high": 6.958,
+      "low": 6.676,
+      "close": 6.736,
+      "volume": 1783410
     }
   ],
   "dividends": [],

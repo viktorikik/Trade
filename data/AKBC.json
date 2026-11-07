@@ -1,6 +1,6 @@
 {
   "ticker": "AKBC",
-  "name": "AKBC",
+  "name": "AKBC ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 93.6,
       "close": 95.7,
       "volume": 60876
+    },
+    {
+      "time": "2026-11-06",
+      "open": 95.6,
+      "high": 96.3,
+      "low": 95.0,
+      "close": 95.9,
+      "volume": 64973
     }
   ],
   "dividends": [],

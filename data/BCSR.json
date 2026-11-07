@@ -1,6 +1,6 @@
 {
   "ticker": "BCSR",
-  "name": "BCSR",
+  "name": "BCSR ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 10.57,
       "close": 10.8,
       "volume": 649551
+    },
+    {
+      "time": "2026-11-06",
+      "open": 10.82,
+      "high": 10.88,
+      "low": 10.76,
+      "close": 10.87,
+      "volume": 70697
     }
   ],
   "dividends": [],

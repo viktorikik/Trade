@@ -1,6 +1,6 @@
 {
   "ticker": "AMRH",
-  "name": "AMRH",
+  "name": "AMRH ETF",
   "lotSize": 1,
   "candles": [
     {
@@ -786,6 +786,14 @@
       "low": 167.2,
       "close": 167.2,
       "volume": 853
+    },
+    {
+      "time": "2026-11-06",
+      "open": 167.3,
+      "high": 167.9,
+      "low": 167.3,
+      "close": 167.8,
+      "volume": 591
     }
   ],
   "dividends": [],
