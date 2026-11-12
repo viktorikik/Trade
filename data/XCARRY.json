@@ -1,0 +1,18 @@
+{
+  "ticker": "XCARRY",
+  "name": "ИПИФ УК2",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-11-11",
+      "open": 998.3,
+      "high": 998.3,
+      "low": 998.3,
+      "close": 998.3,
+      "volume": 5
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

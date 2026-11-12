@@ -7850,6 +7850,14 @@
       "low": 8.05,
       "close": 8.44,
       "volume": 47600
+    },
+    {
+      "time": "2026-11-11",
+      "open": 8.25,
+      "high": 8.39,
+      "low": 8.07,
+      "close": 8.18,
+      "volume": 76200
     }
   ],
   "dividends": [
@@ -7879,9 +7887,9 @@
       "roe": -11.1,
       "roa": -7.3,
       "eps": -0.78,
-      "divYield": 14.0,
+      "divYield": 13.9,
       "netProfitBln": -0.071,
-      "capitalizationBln": 0.74
+      "capitalizationBln": 0.75
     },
     "history": [
       {
@@ -7940,9 +7948,9 @@
         "roe": -11.1,
         "roa": -7.3,
         "eps": -0.78,
-        "divYield": 14.0,
+        "divYield": 13.9,
         "netProfitBln": -0.071,
-        "capitalizationBln": 0.74
+        "capitalizationBln": 0.75
       }
     ]
   }

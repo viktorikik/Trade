@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-11",
+  "updatedAt": "2026-11-12",
   "board": "TQBR",
-  "count": 480,
+  "count": 481,
   "tickers": [
     {
       "ticker": "ABIO",
@@ -1846,12 +1846,6 @@
       "lotSize": 1
     },
     {
-      "ticker": "RU000A109G79",
-      "name": "ПИФГРИНФЛО",
-      "sector": "Прочее",
-      "lotSize": 1
-    },
-    {
       "ticker": "RU000A109GQ8",
       "name": "ПИФСкладК2",
       "sector": "Прочее",
@@ -2344,6 +2338,12 @@
       "lotSize": 1
     },
     {
+      "ticker": "TCNY",
+      "name": "TCNY ETF",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
       "ticker": "TDIV",
       "name": "TDIV ETF",
       "sector": "Прочее",
@@ -2700,6 +2700,12 @@
     {
       "ticker": "XAVIUM",
       "name": "Авиум",
+      "sector": "Прочее",
+      "lotSize": 1
+    },
+    {
+      "ticker": "XCARRY",
+      "name": "ИПИФ УК2",
       "sector": "Прочее",
       "lotSize": 1
     },

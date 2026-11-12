@@ -7850,6 +7850,14 @@
       "low": 1098.9,
       "close": 1104.5,
       "volume": 1752763
+    },
+    {
+      "time": "2026-11-11",
+      "open": 1099.0,
+      "high": 1143.0,
+      "low": 1077.8,
+      "close": 1133.9,
+      "volume": 5610726
     }
   ],
   "dividends": [
@@ -7891,13 +7899,13 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 19.1,
+      "pe": 19.5,
       "roe": 6.1,
       "roa": 4.7,
       "eps": 58.0,
-      "divYield": 7.5,
+      "divYield": 7.3,
       "netProfitBln": 176.0,
-      "capitalizationBln": 3355.0
+      "capitalizationBln": 3436.0
     },
     "history": [
       {
@@ -7948,13 +7956,13 @@
       },
       {
         "year": "LTM",
-        "pe": 19.1,
+        "pe": 19.5,
         "roe": 6.1,
         "roa": 4.7,
         "eps": 58.0,
-        "divYield": 7.5,
+        "divYield": 7.3,
         "netProfitBln": 176.0,
-        "capitalizationBln": 3355.0
+        "capitalizationBln": 3436.0
       }
     ]
   }
