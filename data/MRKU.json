@@ -1,7 +1,7 @@
 {
   "ticker": "MRKU",
-  "name": "Россети Ур",
-  "lotSize": 10000,
+  "name": "MRKU",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 0.6458,
       "close": 0.6526,
       "volume": 18510000
+    },
+    {
+      "time": "2026-11-12",
+      "open": 0.6516,
+      "high": 0.6702,
+      "low": 0.6502,
+      "close": 0.6684,
+      "volume": 18670000
     }
   ],
   "dividends": [

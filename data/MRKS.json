@@ -1,7 +1,7 @@
 {
   "ticker": "MRKS",
-  "name": "РсетСиб ао",
-  "lotSize": 1000,
+  "name": "MRKS",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 0.4655,
       "close": 0.474,
       "volume": 5207000
+    },
+    {
+      "time": "2026-11-12",
+      "open": 0.4745,
+      "high": 0.478,
+      "low": 0.4705,
+      "close": 0.473,
+      "volume": 3886000
     }
   ],
   "dividends": [],

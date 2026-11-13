@@ -1,6 +1,6 @@
 {
   "ticker": "OFZS",
-  "name": "OFZS ETF",
+  "name": "OFZS",
   "lotSize": 1,
   "candles": [
     {
@@ -754,6 +754,14 @@
       "low": 103.71,
       "close": 104.44,
       "volume": 2835
+    },
+    {
+      "time": "2026-11-12",
+      "open": 104.43,
+      "high": 104.78,
+      "low": 103.81,
+      "close": 104.0,
+      "volume": 5101
     }
   ],
   "dividends": [],

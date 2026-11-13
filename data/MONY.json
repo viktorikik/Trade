@@ -1,6 +1,6 @@
 {
   "ticker": "MONY",
-  "name": "MONY ETF",
+  "name": "MONY",
   "lotSize": 1,
   "candles": [
     {
@@ -818,6 +818,14 @@
       "low": 135.2,
       "close": 135.55,
       "volume": 3650
+    },
+    {
+      "time": "2026-11-12",
+      "open": 135.92,
+      "high": 135.97,
+      "low": 135.31,
+      "close": 135.58,
+      "volume": 3158
     }
   ],
   "dividends": [],

@@ -1,7 +1,7 @@
 {
   "ticker": "MSTT",
-  "name": "Мостотрест",
-  "lotSize": 10,
+  "name": "MSTT",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 78.6,
       "close": 80.4,
       "volume": 53340
+    },
+    {
+      "time": "2026-11-12",
+      "open": 80.5,
+      "high": 85.0,
+      "low": 80.5,
+      "close": 84.05,
+      "volume": 63040
     }
   ],
   "dividends": [],

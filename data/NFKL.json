@@ -1,6 +1,6 @@
 {
   "ticker": "NFKL",
-  "name": "NFKL ETF",
+  "name": "NFKL",
   "lotSize": 1,
   "candles": [
     {
@@ -810,6 +810,14 @@
       "low": 104.92,
       "close": 104.92,
       "volume": 3590
+    },
+    {
+      "time": "2026-11-12",
+      "open": 105.05,
+      "high": 105.05,
+      "low": 104.95,
+      "close": 105.05,
+      "volume": 30480
     }
   ],
   "dividends": [],

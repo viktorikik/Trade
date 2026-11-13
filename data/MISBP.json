@@ -1,7 +1,7 @@
 {
   "ticker": "MISBP",
-  "name": "ТНСэМаЭл-п",
-  "lotSize": 100,
+  "name": "MISBP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 49.1,
       "close": 49.3,
       "volume": 5200
+    },
+    {
+      "time": "2026-11-12",
+      "open": 49.4,
+      "high": 49.4,
+      "low": 49.0,
+      "close": 49.2,
+      "volume": 4300
     }
   ],
   "dividends": [],

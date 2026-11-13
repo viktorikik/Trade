@@ -1,7 +1,7 @@
 {
   "ticker": "MRKP",
-  "name": "РСетиЦП ао",
-  "lotSize": 10000,
+  "name": "MRKP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 0.5771,
       "close": 0.588,
       "volume": 40890000
+    },
+    {
+      "time": "2026-11-12",
+      "open": 0.5861,
+      "high": 0.5938,
+      "low": 0.5814,
+      "close": 0.5888,
+      "volume": 32040000
     }
   ],
   "dividends": [

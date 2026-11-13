@@ -1,7 +1,7 @@
 {
   "ticker": "NKNCP",
-  "name": "НКНХ ап",
-  "lotSize": 10,
+  "name": "NKNCP",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 43.36,
       "close": 43.92,
       "volume": 115310
+    },
+    {
+      "time": "2026-11-12",
+      "open": 44.2,
+      "high": 44.3,
+      "low": 42.68,
+      "close": 43.74,
+      "volume": 88930
     }
   ],
   "dividends": [],

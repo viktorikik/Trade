@@ -1,0 +1,18 @@
+{
+  "ticker": "TCNY",
+  "name": "TCNY ETF",
+  "lotSize": 1,
+  "candles": [
+    {
+      "time": "2026-11-12",
+      "open": 13.13,
+      "high": 13.21,
+      "low": 13.05,
+      "close": 13.09,
+      "volume": 881008
+    }
+  ],
+  "dividends": [],
+  "splits": [],
+  "fundamentals": null
+}

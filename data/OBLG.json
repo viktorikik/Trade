@@ -1,6 +1,6 @@
 {
   "ticker": "OBLG",
-  "name": "OBLG ETF",
+  "name": "OBLG",
   "lotSize": 1,
   "candles": [
     {
@@ -818,6 +818,14 @@
       "low": 214.78,
       "close": 215.52,
       "volume": 361683
+    },
+    {
+      "time": "2026-11-12",
+      "open": 215.52,
+      "high": 215.68,
+      "low": 215.1,
+      "close": 215.4,
+      "volume": 150374
     }
   ],
   "dividends": [],

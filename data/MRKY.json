@@ -1,7 +1,7 @@
 {
   "ticker": "MRKY",
-  "name": "РоссЮг ао",
-  "lotSize": 10000,
+  "name": "MRKY",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 0.0761,
       "close": 0.0769,
       "volume": 31570000
+    },
+    {
+      "time": "2026-11-12",
+      "open": 0.0769,
+      "high": 0.0808,
+      "low": 0.0766,
+      "close": 0.079,
+      "volume": 68040000
     }
   ],
   "dividends": [

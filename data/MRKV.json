@@ -1,7 +1,7 @@
 {
   "ticker": "MRKV",
-  "name": "РсетВол ао",
-  "lotSize": 10000,
+  "name": "MRKV",
+  "lotSize": 1,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7858,6 +7858,14 @@
       "low": 0.2163,
       "close": 0.2185,
       "volume": 170280000
+    },
+    {
+      "time": "2026-11-12",
+      "open": 0.2182,
+      "high": 0.2219,
+      "low": 0.2172,
+      "close": 0.2199,
+      "volume": 152240000
     }
   ],
   "dividends": [

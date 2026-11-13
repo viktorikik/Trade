@@ -1,6 +1,6 @@
 {
   "ticker": "MVID",
-  "name": "М.видео",
+  "name": "MVID",
   "lotSize": 1,
   "candles": [
     {
@@ -7858,6 +7858,14 @@
       "low": 50.1,
       "close": 53.7,
       "volume": 1987743
+    },
+    {
+      "time": "2026-11-12",
+      "open": 53.2,
+      "high": 53.9,
+      "low": 52.05,
+      "close": 52.7,
+      "volume": 1300835
     }
   ],
   "dividends": [],
