@@ -1,7 +1,7 @@
 {
   "ticker": "MSNG",
-  "name": "MSNG",
-  "lotSize": 1,
+  "name": "+МосЭнерго",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 1.344,
       "close": 1.3595,
       "volume": 76687000
+    },
+    {
+      "time": "2026-11-13",
+      "open": 1.3595,
+      "high": 1.3785,
+      "low": 1.3525,
+      "close": 1.3665,
+      "volume": 82998000
     }
   ],
   "dividends": [

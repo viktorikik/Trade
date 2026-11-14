@@ -1,7 +1,7 @@
 {
   "ticker": "NLMK",
-  "name": "NLMK",
-  "lotSize": 1,
+  "name": "НЛМК ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 75.62,
       "close": 76.6,
       "volume": 7743640
+    },
+    {
+      "time": "2026-11-13",
+      "open": 76.72,
+      "high": 77.64,
+      "low": 76.04,
+      "close": 76.26,
+      "volume": 5290130
     }
   ],
   "dividends": [

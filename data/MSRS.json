@@ -1,7 +1,7 @@
 {
   "ticker": "MSRS",
-  "name": "MSRS",
-  "lotSize": 1,
+  "name": "РСетиМР ао",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 1.7485,
       "close": 1.7605,
       "volume": 10730000
+    },
+    {
+      "time": "2026-11-13",
+      "open": 1.7655,
+      "high": 1.82,
+      "low": 1.763,
+      "close": 1.809,
+      "volume": 21048000
     }
   ],
   "dividends": [

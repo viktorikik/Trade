@@ -1,7 +1,7 @@
 {
   "ticker": "NAUK",
-  "name": "NAUK",
-  "lotSize": 1,
+  "name": "iНПОНаука",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 423.5,
       "close": 428.0,
       "volume": 850
+    },
+    {
+      "time": "2026-11-13",
+      "open": 425.0,
+      "high": 429.5,
+      "low": 423.0,
+      "close": 428.0,
+      "volume": 530
     }
   ],
   "dividends": [

@@ -1,7 +1,7 @@
 {
   "ticker": "MTLRP",
-  "name": "MTLRP",
-  "lotSize": 1,
+  "name": "Мечел ап",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 41.9,
       "close": 42.9,
       "volume": 898760
+    },
+    {
+      "time": "2026-11-13",
+      "open": 42.95,
+      "high": 43.55,
+      "low": 42.8,
+      "close": 43.1,
+      "volume": 1121750
     }
   ],
   "dividends": [],

@@ -1,6 +1,6 @@
 {
   "ticker": "NNSB",
-  "name": "NNSB",
+  "name": "ТНСэнНН ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7802,6 +7802,14 @@
       "low": 2590.0,
       "close": 2620.0,
       "volume": 258
+    },
+    {
+      "time": "2026-11-13",
+      "open": 2600.0,
+      "high": 2710.0,
+      "low": 2600.0,
+      "close": 2630.0,
+      "volume": 1347
     }
   ],
   "dividends": [],

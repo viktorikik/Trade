@@ -1,7 +1,7 @@
 {
   "ticker": "MRKZ",
-  "name": "MRKZ",
-  "lotSize": 1,
+  "name": "РСетиСЗ ао",
+  "lotSize": 10000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 0.1364,
       "close": 0.1381,
       "volume": 57600000
+    },
+    {
+      "time": "2026-11-13",
+      "open": 0.137,
+      "high": 0.1392,
+      "low": 0.1368,
+      "close": 0.139,
+      "volume": 39740000
     }
   ],
   "dividends": [],

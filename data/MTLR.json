@@ -1,6 +1,6 @@
 {
   "ticker": "MTLR",
-  "name": "MTLR",
+  "name": "Мечел ао",
   "lotSize": 1,
   "candles": [
     {
@@ -7866,6 +7866,14 @@
       "low": 43.92,
       "close": 44.77,
       "volume": 8623537
+    },
+    {
+      "time": "2026-11-13",
+      "open": 44.77,
+      "high": 45.9,
+      "low": 44.62,
+      "close": 45.34,
+      "volume": 9728129
     }
   ],
   "dividends": [],

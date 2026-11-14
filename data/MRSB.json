@@ -1,7 +1,7 @@
 {
   "ticker": "MRSB",
-  "name": "MRSB",
-  "lotSize": 1,
+  "name": "МордЭнСб",
+  "lotSize": 10000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 1.128,
       "close": 1.136,
       "volume": 590000
+    },
+    {
+      "time": "2026-11-13",
+      "open": 1.136,
+      "high": 1.16,
+      "low": 1.134,
+      "close": 1.146,
+      "volume": 1820000
     }
   ],
   "dividends": [

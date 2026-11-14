@@ -1,7 +1,7 @@
 {
   "ticker": "MTSS",
-  "name": "MTSS",
-  "lotSize": 1,
+  "name": "МТС-ао",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 178.75,
       "close": 182.4,
       "volume": 3786910
+    },
+    {
+      "time": "2026-11-13",
+      "open": 182.45,
+      "high": 186.05,
+      "low": 181.35,
+      "close": 184.05,
+      "volume": 5191350
     }
   ],
   "dividends": [

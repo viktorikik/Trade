@@ -1,7 +1,7 @@
 {
   "ticker": "MRKC",
-  "name": "MRKC",
-  "lotSize": 1,
+  "name": "РоссЦентр",
+  "lotSize": 1000,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 0.7342,
       "close": 0.7442,
       "volume": 32173000
+    },
+    {
+      "time": "2026-11-13",
+      "open": 0.747,
+      "high": 0.758,
+      "low": 0.7462,
+      "close": 0.7522,
+      "volume": 28351000
     }
   ],
   "dividends": [

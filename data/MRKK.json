@@ -1,7 +1,7 @@
 {
   "ticker": "MRKK",
-  "name": "MRKK",
-  "lotSize": 1,
+  "name": "Россети СК",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 15.44,
       "close": 15.46,
       "volume": 60400
+    },
+    {
+      "time": "2026-11-13",
+      "open": 15.66,
+      "high": 15.8,
+      "low": 15.52,
+      "close": 15.52,
+      "volume": 75020
     }
   ],
   "dividends": [],

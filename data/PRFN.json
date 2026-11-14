@@ -1,7 +1,7 @@
 {
   "ticker": "PRFN",
-  "name": "PRFN",
-  "lotSize": 1,
+  "name": "ТЕПЛАНТ ао",
+  "lotSize": 100,
   "candles": [
     {
       "time": "2023-07-19",
@@ -6778,6 +6778,14 @@
       "low": 3.11,
       "close": 3.124,
       "volume": 62100
+    },
+    {
+      "time": "2026-11-13",
+      "open": 3.124,
+      "high": 3.18,
+      "low": 3.112,
+      "close": 3.154,
+      "volume": 253700
     }
   ],
   "dividends": [],

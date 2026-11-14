@@ -1,7 +1,7 @@
 {
   "ticker": "MOEX",
-  "name": "MOEX",
-  "lotSize": 1,
+  "name": "МосБиржа",
+  "lotSize": 10,
   "candles": [
     {
       "time": "2023-01-03",
@@ -7866,6 +7866,14 @@
       "low": 163.22,
       "close": 165.18,
       "volume": 6713450
+    },
+    {
+      "time": "2026-11-13",
+      "open": 165.18,
+      "high": 168.0,
+      "low": 164.42,
+      "close": 167.4,
+      "volume": 4523860
     }
   ],
   "dividends": [
