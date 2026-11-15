@@ -5219,14 +5219,14 @@
     "asOf": "LTM",
     "source": "smart-lab.ru",
     "metrics": {
-      "pe": 1.94,
-      "pb": 0.28,
+      "pe": 2.07,
+      "pb": 0.3,
       "roe": 17.6,
       "roa": 2.6,
       "eps": 485.0,
-      "divYield": 10.2,
+      "divYield": 9.6,
       "netProfitBln": 18.2,
-      "capitalizationBln": 35.2,
+      "capitalizationBln": 37.7,
       "equityBln": 126.2
     },
     "history": [
@@ -5292,14 +5292,14 @@
       },
       {
         "year": "LTM",
-        "pe": 1.94,
-        "pb": 0.28,
+        "pe": 2.07,
+        "pb": 0.3,
         "roe": 17.6,
         "roa": 2.6,
         "eps": 485.0,
-        "divYield": 10.2,
+        "divYield": 9.6,
         "netProfitBln": 18.2,
-        "capitalizationBln": 35.2,
+        "capitalizationBln": 37.7,
         "equityBln": 126.2
       }
     ]
